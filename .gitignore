@@ -39,6 +39,11 @@ data/failed_cvs/*
 # Claude Code internal
 .claude/
 
+# Internal project tracking (not for collaborators)
+CLAUDE.md
+docs/PLAN.md
+docs/PROGRESS.md
+
 # OS
 .DS_Store
 Thumbs.db
