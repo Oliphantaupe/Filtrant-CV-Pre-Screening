@@ -22,13 +22,15 @@ export const api = {
     page?: number
     page_size?: number
     recommendation?: string
-    date?: string
+    date_from?: string
+    date_to?: string
   }): Promise<ListResponse> => {
     const qs = new URLSearchParams()
     if (params.page) qs.set('page', String(params.page))
     if (params.page_size) qs.set('page_size', String(params.page_size))
     if (params.recommendation) qs.set('recommendation', params.recommendation)
-    if (params.date) qs.set('date', params.date)
+    if (params.date_from) qs.set('date_from', params.date_from)
+    if (params.date_to) qs.set('date_to', params.date_to)
     return request(`/api/v1/candidates?${qs}`)
   },
 
