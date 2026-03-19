@@ -11,6 +11,7 @@ __pycache__/
 .Python
 .venv/
 venv/
+backend/.venv/
 dist/
 build/
 *.egg-info/
@@ -35,6 +36,9 @@ data/failed_cvs/*
 
 # Docker
 *.log
+
+# IDE
+.vscode/
 
 # Claude Code internal
 .claude/
