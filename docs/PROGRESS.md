@@ -18,7 +18,7 @@
 - [x] Create `docs/PROGRESS.md` (this file)
 - [x] Initialize project structure (folders, Docker Compose, `.env.example`, `.gitignore`)
 - [x] Create `CLAUDE.md` with session protocol and conventions
-- [ ] Set up Git repository
+- [x] Set up Git repository (local, commit d3bb65d)
 
 ---
 
