@@ -2,9 +2,9 @@
 Sends extracted CV text to the Claude API and returns a validated CVSchema.
 Client is lazy-initialised so a bad key doesn't crash the app at startup.
 """
+import asyncio
 import json
 import logging
-import time
 import anthropic
 
 from src.config import settings
@@ -44,7 +44,7 @@ def _get_client() -> anthropic.Anthropic:
     return _client
 
 
-def parse_cv(raw_text: str, max_retries: int = 2) -> CVSchema:
+async def parse_cv(raw_text: str, max_retries: int = 2) -> CVSchema:
     """
     Call Claude API to parse raw CV text into a validated CVSchema.
     Retries up to max_retries times on rate-limit (429) or overload (529) errors.
@@ -53,8 +53,9 @@ def parse_cv(raw_text: str, max_retries: int = 2) -> CVSchema:
 
     for attempt in range(max_retries + 1):
         try:
-            message = client.messages.create(
-                model="claude-haiku-4-5-20251001",
+            message = await asyncio.to_thread(
+                client.messages.create,
+                model="claude-sonnet-4-6",
                 max_tokens=2048,
                 system=SYSTEM_PROMPT,
                 messages=[
@@ -68,14 +69,14 @@ def parse_cv(raw_text: str, max_retries: int = 2) -> CVSchema:
             if attempt < max_retries:
                 wait = 2 ** attempt
                 logger.warning("Claude rate-limited, retrying in %ss (attempt %d)", wait, attempt + 1)
-                time.sleep(wait)
+                await asyncio.sleep(wait)
                 continue
             raise
         except anthropic.APIStatusError as e:
             if attempt < max_retries and e.status_code in (529,):
                 wait = 2 ** attempt
                 logger.warning("Claude overloaded (%s), retrying in %ss", e.status_code, wait)
-                time.sleep(wait)
+                await asyncio.sleep(wait)
                 continue
             raise
 

@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1", tags=["upload"])
 
 
-@router.post("/upload", status_code=200)
+@router.post("/upload", status_code=201)
 async def upload_cv(file: UploadFile = File(...)):
     filename = file.filename or "unknown"
     logger.info("Upload received: %s", filename)
@@ -53,7 +53,7 @@ async def upload_cv(file: UploadFile = File(...)):
 
     # ── Parse via Claude ─────────────────────────────────────────────────────
     try:
-        cv = parse_cv(raw_text)
+        cv = await parse_cv(raw_text)
         logger.info(
             "Parsed [%s] %s — quality=%s missing=%d",
             candidate_id[:8], filename, cv.parse_quality, len(cv.missing_fields),

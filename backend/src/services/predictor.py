@@ -14,7 +14,17 @@ def _load_model():
     global _model
     if os.path.exists(settings.ml_model_path):
         import joblib
-        _model = joblib.load(settings.ml_model_path)
+        import logging
+        candidate = joblib.load(settings.ml_model_path)
+        # Verify class ordering: pipeline exposes classes_ via the final step
+        clf = candidate.named_steps.get("clf") or candidate
+        classes = list(getattr(clf, "classes_", [0, 1]))
+        if classes != [0, 1]:
+            logging.getLogger(__name__).warning(
+                "Unexpected model class ordering %s — predictions may be inverted. "
+                "Retrain with 0=Reject / 1=Invite.", classes
+            )
+        _model = candidate
 
 
 def predict(features: dict) -> tuple[str, float | None]:

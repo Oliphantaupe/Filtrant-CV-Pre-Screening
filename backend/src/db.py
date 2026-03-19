@@ -36,6 +36,11 @@ def _create_tables() -> None:
                     detail TEXT,
                     created_at TIMESTAMPTZ DEFAULT NOW()
                 );
+
+                CREATE INDEX IF NOT EXISTS idx_candidates_processed_at
+                    ON candidates (processed_at DESC);
+                CREATE INDEX IF NOT EXISTS idx_candidates_recommendation
+                    ON candidates (recommendation);
             """)
         conn.commit()
 

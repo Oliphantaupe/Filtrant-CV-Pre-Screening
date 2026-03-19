@@ -14,7 +14,8 @@ def list_candidates(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     recommendation: str | None = Query(None),
-    date: str | None = Query(None, description="YYYY-MM-DD"),
+    date_from: str | None = Query(None, description="YYYY-MM-DD — inclusive start date"),
+    date_to: str | None = Query(None, description="YYYY-MM-DD — inclusive end date"),
 ):
     offset = (page - 1) * page_size
     filters = []
@@ -23,9 +24,12 @@ def list_candidates(
     if recommendation:
         filters.append("recommendation = %s")
         params.append(recommendation)
-    if date:
-        filters.append("processed_at::date = %s")
-        params.append(date)
+    if date_from:
+        filters.append("processed_at::date >= %s")
+        params.append(date_from)
+    if date_to:
+        filters.append("processed_at::date <= %s")
+        params.append(date_to)
 
     where = ("WHERE " + " AND ".join(filters)) if filters else ""
     params += [page_size, offset]
