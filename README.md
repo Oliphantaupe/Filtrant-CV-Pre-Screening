@@ -30,8 +30,10 @@ Uploads a CV (PDF, DOCX, or image) → Claude API parses it into structured JSON
 |---|---|---|
 | Docker Desktop | 4.x | Includes Docker Compose v2 |
 | Node.js | 18 LTS | For the frontend dev server |
-| Python | 3.11+ | Only needed to retrain the ML model |
+| Python | 3.11+ | For the local IDE venv and ML retraining |
 | Anthropic API key | — | `sk-ant-...` from console.anthropic.com |
+
+> **VS Code users:** the Python extension (`ms-python.python`) is strongly recommended. The repo ships a `.vscode/settings.json` that points to the local venv automatically — see [IDE Setup](#ide-setup-vs-code) below.
 
 ---
 
@@ -103,6 +105,38 @@ Health check:
 ```bash
 curl http://localhost:8000/api/v1/health
 ```
+
+---
+
+## IDE Setup (VS Code)
+
+The app runs inside Docker, but your IDE needs the packages locally to resolve imports and show IntelliSense instead of red underlines.
+
+### Create the local venv (one-time, per machine)
+
+```bash
+cd backend
+python -m venv .venv
+```
+
+Then install pre-built wheels (no compiler required — works on Python 3.11–3.13):
+
+```bash
+# Windows
+.venv\Scripts\pip install --only-binary=:all: fastapi uvicorn[standard] python-multipart "anthropic>=0.40.0" PyPDF2 python-docx pdfplumber scikit-learn pandas numpy joblib pydantic pydantic-settings python-dotenv psycopg2-binary
+
+# macOS / Linux
+.venv/bin/pip install --only-binary=:all: fastapi "uvicorn[standard]" python-multipart "anthropic>=0.40.0" PyPDF2 python-docx pdfplumber scikit-learn pandas numpy joblib pydantic pydantic-settings python-dotenv psycopg2-binary
+```
+
+### Point VS Code to the venv
+
+The repo includes `.vscode/settings.json` which sets the interpreter automatically. If VS Code doesn't pick it up:
+
+1. `Ctrl+Shift+P` → **Python: Select Interpreter**
+2. Choose `backend/.venv/Scripts/python.exe` (Windows) or `backend/.venv/bin/python` (macOS/Linux)
+
+> This venv is for IDE use only — the application always runs through `docker compose up`.
 
 ---
 
