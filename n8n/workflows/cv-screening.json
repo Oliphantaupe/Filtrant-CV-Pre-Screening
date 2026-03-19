@@ -1,0 +1,90 @@
+{
+  "name": "CV Screening Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "/data/incoming_cvs",
+        "events": ["add"],
+        "options": {}
+      },
+      "name": "Watch incoming_cvs",
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8000/api/v1/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "value": "={{ $binary.data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "POST to Filtrant API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $response.statusCode }}",
+              "operation": "equal",
+              "value2": 200
+            }
+          ]
+        }
+      },
+      "name": "Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [750, 300]
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "sourcePath": "={{ $('Watch incoming_cvs').item.json.path }}",
+        "destinationPath": "/data/processed_cvs/={{ $('Watch incoming_cvs').item.json.name }}"
+      },
+      "name": "Move to processed",
+      "type": "n8n-nodes-base.moveFile",
+      "typeVersion": 1,
+      "position": [1000, 200]
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "sourcePath": "={{ $('Watch incoming_cvs').item.json.path }}",
+        "destinationPath": "/data/failed_cvs/={{ $('Watch incoming_cvs').item.json.name }}"
+      },
+      "name": "Move to failed",
+      "type": "n8n-nodes-base.moveFile",
+      "typeVersion": 1,
+      "position": [1000, 400]
+    }
+  ],
+  "connections": {
+    "Watch incoming_cvs": {
+      "main": [[{ "node": "POST to Filtrant API", "type": "main", "index": 0 }]]
+    },
+    "POST to Filtrant API": {
+      "main": [[{ "node": "Success?", "type": "main", "index": 0 }]]
+    },
+    "Success?": {
+      "main": [
+        [{ "node": "Move to processed", "type": "main", "index": 0 }],
+        [{ "node": "Move to failed", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}
