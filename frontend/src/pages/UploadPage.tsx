@@ -52,12 +52,12 @@ export default function UploadPage() {
 
       {/* Drop zone */}
       <div
-        className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all duration-200 ${
+        className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all duration-200 backdrop-blur-sm ${
           dragging
-            ? 'border-blue-500 bg-blue-50 scale-[1.01]'
+            ? 'border-blue-400 bg-blue-50/80 scale-[1.01]'
             : loading
-            ? 'border-gray-200 bg-gray-50 cursor-default'
-            : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+            ? 'border-gray-200/70 bg-white/50 cursor-default'
+            : 'border-gray-300/70 bg-white/60 hover:border-blue-300 hover:bg-white/80'
         }`}
         onDragOver={e => { e.preventDefault(); if (!loading) setDragging(true) }}
         onDragLeave={() => setDragging(false)}
@@ -132,8 +132,8 @@ export default function UploadPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-            className={`mt-6 rounded-2xl border overflow-hidden shadow-sm ${
-              isInvite ? 'border-green-200' : isReject ? 'border-red-200' : 'border-gray-200'
+            className={`mt-6 rounded-2xl border overflow-hidden shadow-sm backdrop-blur-sm ${
+              isInvite ? 'border-green-200/80 bg-white/80' : isReject ? 'border-red-200/80 bg-white/80' : 'border-gray-200/80 bg-white/80'
             }`}
           >
             {/* Verdict header */}

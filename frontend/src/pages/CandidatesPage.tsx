@@ -209,19 +209,10 @@ export default function CandidatesPage() {
 // ─── Stat card ────────────────────────────────────────────────────────────────
 
 function StatCard({ label, value, color }: { label: string; value: number; color: 'blue' | 'green' | 'red' }) {
-  const colors = {
-    blue: 'bg-blue-50 text-blue-700 border-blue-100',
-    green: 'bg-green-50 text-green-700 border-green-100',
-    red: 'bg-red-50 text-red-700 border-red-100',
-  }
-  const numColors = {
-    blue: 'text-blue-800',
-    green: 'text-green-800',
-    red: 'text-red-800',
-  }
+  const numColors = { blue: 'text-blue-600', green: 'text-green-600', red: 'text-red-500' }
   return (
-    <div className={`rounded-2xl border px-5 py-4 ${colors[color]}`}>
-      <p className="text-xs font-semibold uppercase tracking-wider opacity-60 mb-1">{label}</p>
+    <div className="rounded-2xl border border-gray-200/70 bg-white/70 backdrop-blur-sm shadow-sm px-5 py-4">
+      <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">{label}</p>
       <p className={`text-3xl font-black tabular-nums ${numColors[color]}`}>
         <CountUp to={value} duration={1.2} />
       </p>
@@ -251,7 +242,7 @@ function SimpleView({ items, onOpen }: { items: CandidateRow[]; onOpen: (id: str
           transition={{ delay: i * 0.04, duration: 0.3 }}
         >
           <SpotlightCard
-            className="bg-white rounded-2xl border border-gray-200 p-5 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all"
+            className="bg-white/75 backdrop-blur-sm rounded-2xl border border-gray-200/70 p-5 cursor-pointer hover:shadow-md hover:border-blue-200/70 hover:bg-white/90 transition-all"
             onClick={() => onOpen(c.id)}
           >
             {/* Avatar + name */}
@@ -311,7 +302,7 @@ function AdvancedView({ items, onOpen }: { items: CandidateRow[]; onOpen: (id: s
     return <p className="text-center text-gray-400 py-16">No candidates yet.</p>
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+    <div className="bg-white/75 backdrop-blur-sm rounded-2xl border border-gray-200/70 overflow-hidden shadow-sm">
       <table className="w-full text-sm">
         <thead className="bg-gray-50 border-b border-gray-200">
           <tr>
@@ -389,7 +380,7 @@ function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClo
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="ml-auto bg-white w-full max-w-4xl h-full overflow-hidden flex flex-col shadow-2xl"
+          className="ml-auto bg-white/90 backdrop-blur-2xl w-full max-w-4xl h-full overflow-hidden flex flex-col shadow-2xl border-l border-gray-200/50"
           onClick={e => e.stopPropagation()}
         >
           {/* Header */}
@@ -533,7 +524,7 @@ function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClo
             <div className="w-64 shrink-0 overflow-y-auto px-5 py-5 space-y-5 bg-gray-50">
 
               {/* Decision card */}
-              <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm text-center">
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/70 p-4 shadow-sm text-center">
                 <p className="text-xs text-gray-400 uppercase tracking-wider mb-3">AI Recommendation</p>
                 <RecommendationBadge value={candidate.recommendation} large />
                 {candidate.confidence !== null && (

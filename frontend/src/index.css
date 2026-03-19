@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@keyframes orb-drift-1 {
+  0%   { transform: translate(0px,   0px)   scale(1); }
+  33%  { transform: translate(60px,  80px)  scale(1.08); }
+  66%  { transform: translate(-40px, 50px)  scale(0.95); }
+  100% { transform: translate(20px,  -30px) scale(1.03); }
+}
+
+@keyframes orb-drift-2 {
+  0%   { transform: translate(0px,    0px)   scale(1); }
+  33%  { transform: translate(-70px, -40px)  scale(1.05); }
+  66%  { transform: translate(50px,  -80px)  scale(0.97); }
+  100% { transform: translate(-20px,  60px)  scale(1.06); }
+}
+
+@keyframes orb-drift-3 {
+  0%   { transform: translate(0px,  0px)   scale(1); }
+  33%  { transform: translate(80px, -50px)  scale(0.94); }
+  66%  { transform: translate(-30px, 70px)  scale(1.07); }
+  100% { transform: translate(40px,  20px)  scale(0.98); }
+}
