@@ -133,6 +133,7 @@ export default function CandidatesPage() {
   const [dateOpen, setDateOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [stats, setStats] = useState({ invited: 0, rejected: 0, total: 0 })
+  const [view, setView] = useState<'simple' | 'advanced'>('simple')
 
   // Fetch stats once on mount
   useEffect(() => {
@@ -190,6 +191,14 @@ export default function CandidatesPage() {
           {filter ? `${filter} — ` : ''}{total} candidate{total !== 1 ? 's' : ''}
         </h2>
         <div className="flex items-center gap-2">
+          <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+            <button onClick={() => setView('simple')}
+              className={`px-3 py-1 rounded-lg text-sm font-medium transition-all duration-150 ${view === 'simple' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >Cards</button>
+            <button onClick={() => setView('advanced')}
+              className={`px-3 py-1 rounded-lg text-sm font-medium transition-all duration-150 ${view === 'advanced' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >Table</button>
+          </div>
           <button
             onClick={api.exportCsv}
             className="hidden sm:block text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
