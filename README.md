@@ -12,15 +12,15 @@ Uploads a CV (PDF, DOCX, or image) → Claude API parses it into structured JSON
               ↓
          FastAPI (backend :8000)
               ↓
-    1. Text extraction (PyPDF2 / python-docx / Claude vision)
+    1. Text extraction (pdfplumber / python-docx)
     2. Claude API  →  Universal JSON schema
-    3. LogisticRegression  →  Invite / Reject + confidence
+    3. ML model  →  Invite / Reject + confidence
     4. Store in PostgreSQL
               ↓
          React dashboard (:3000) reads /api/v1/candidates
 ```
 
-**Stack:** FastAPI · Claude API (`claude-sonnet-4-6`) · scikit-learn · PostgreSQL · n8n · React + Vite + TypeScript + Tailwind · Docker Compose
+**Stack:** FastAPI · Claude API (`claude-haiku-4-5`) · scikit-learn · PostgreSQL · n8n · React + Vite + TypeScript + Tailwind · Docker Compose
 
 ---
 
@@ -123,10 +123,10 @@ Then install pre-built wheels (no compiler required — works on Python 3.11–3
 
 ```bash
 # Windows
-.venv\Scripts\pip install --only-binary=:all: fastapi uvicorn[standard] python-multipart "anthropic>=0.40.0" PyPDF2 python-docx pdfplumber scikit-learn pandas numpy joblib pydantic pydantic-settings python-dotenv psycopg2-binary
+.venv\Scripts\pip install --only-binary=:all: fastapi uvicorn[standard] python-multipart "anthropic>=0.40.0" python-docx pdfplumber scikit-learn pandas numpy joblib pydantic pydantic-settings python-dotenv psycopg2-binary
 
 # macOS / Linux
-.venv/bin/pip install --only-binary=:all: fastapi "uvicorn[standard]" python-multipart "anthropic>=0.40.0" PyPDF2 python-docx pdfplumber scikit-learn pandas numpy joblib pydantic pydantic-settings python-dotenv psycopg2-binary
+.venv/bin/pip install --only-binary=:all: fastapi "uvicorn[standard]" python-multipart "anthropic>=0.40.0" python-docx pdfplumber scikit-learn pandas numpy joblib pydantic pydantic-settings python-dotenv psycopg2-binary
 ```
 
 ### Point VS Code to the venv
@@ -170,17 +170,19 @@ All endpoints are prefixed `/api/v1/`.
 
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/upload` | Upload a CV file → parse → predict → store. Returns the full candidate record. |
+| `POST` | `/upload` | Upload a CV file (multipart) → parse → predict → store. Returns the full candidate record. |
+| `POST` | `/process-file` | Process a file already on disk by path (used by n8n). Moves file to `processed_cvs/` or `failed_cvs/`. |
+| `POST` | `/process-folder` | Process all files currently in `incoming_cvs/` in one batch. |
 | `GET` | `/candidates` | Paginated list. Query params: `page`, `page_size`, `recommendation` (`Invite`/`Reject`/`pending`), `date_from`, `date_to`. |
 | `GET` | `/candidates/{id}` | Full candidate record including raw CV JSON. |
 | `GET` | `/candidates/export.csv` | ML-ready CSV of all candidates (features + recommendation). |
-| `GET` | `/health` | Returns DB status and Claude API reachability. |
+| `GET` | `/health` | Returns DB status and model file presence. |
 
 ---
 
 ## n8n Automation (file-watch → auto-process)
 
-n8n watches `data/incoming_cvs/` and automatically POSTs new files to the upload endpoint.
+n8n watches `data/incoming_cvs/` and automatically triggers the backend when a new file appears. The backend handles parsing, prediction, and moving the file to `processed_cvs/` or `failed_cvs/`.
 
 **To activate the workflow:**
 
@@ -189,7 +191,7 @@ n8n watches `data/incoming_cvs/` and automatically POSTs new files to the upload
 3. Import `n8n/workflows/cv-screening.json`.
 4. Click **Activate**.
 
-Drop any CV into `data/incoming_cvs/` — it will be processed within ~30 seconds and appear in the dashboard. Processed files move to `data/processed_cvs/`, failed ones to `data/failed_cvs/`.
+Drop any CV into `data/incoming_cvs/` — it will be processed within ~30 seconds and appear in the dashboard.
 
 ---
 
@@ -219,7 +221,7 @@ filtrant/
 │       │   ├── features.py        # JSON → ML feature vector
 │       │   └── predictor.py       # Load model, run prediction
 │       └── routers/
-│           ├── upload.py     # POST /upload
+│           ├── upload.py     # POST /upload, /process-file, /process-folder
 │           └── export.py     # GET /candidates, /export.csv
 │
 ├── frontend/
@@ -229,9 +231,12 @@ filtrant/
 │       ├── App.tsx
 │       ├── api/client.ts     # Typed API client
 │       ├── types/cv.ts       # TypeScript types matching Pydantic schema
+│       ├── utils/date.ts     # Shared date helpers
+│       ├── components/       # AnimatedBackground, DatePicker, ScrollArea, etc.
 │       └── pages/
+│           ├── DashboardPage.tsx    # Stats, activity chart, recent uploads
 │           ├── UploadPage.tsx       # Drag-and-drop upload + result
-│           └── CandidatesPage.tsx   # Paginated table + detail modal
+│           └── CandidatesPage.tsx   # Paginated candidates + detail modal
 │
 ├── n8n/
 │   └── workflows/cv-screening.json  # Import into n8n UI
