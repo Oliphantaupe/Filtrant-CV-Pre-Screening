@@ -6,6 +6,7 @@ import SpotlightCard from '../components/SpotlightCard'
 import CountUp from '../components/CountUp'
 import RecommendationBadge from '../components/RecommendationBadge'
 import DatePicker from '../components/DatePicker'
+import ScrollArea from '../components/ScrollArea'
 
 // ─── Feature derivation ───────────────────────────────────────────────────────
 
@@ -13,13 +14,13 @@ function deriveFeatures(cv: CVData) {
   const totalMonths = cv.experience.reduce((s, e) => s + (e.duration_months ?? 0), 0)
   const numPositions = cv.experience.length
   const eduScore = cv.education.length ? Math.max(...cv.education.map(e => e.level_score)) : 0
-  const sections = [
-    !!(cv.personal.full_name || cv.personal.email),
-    !!cv.summary,
-    cv.education.length > 0,
-    cv.experience.length > 0,
-    cv.skills.technical.length > 0 || cv.skills.methods.length > 0,
-    cv.languages.length > 0,
+  const sectionFlags = [
+    { label: 'Personal info', ok: !!(cv.personal.full_name || cv.personal.email) },
+    { label: 'Summary',       ok: !!cv.summary },
+    { label: 'Education',     ok: cv.education.length > 0 },
+    { label: 'Experience',    ok: cv.experience.length > 0 },
+    { label: 'Skills',        ok: cv.skills.technical.length > 0 || cv.skills.methods.length > 0 },
+    { label: 'Languages',     ok: cv.languages.length > 0 },
   ]
   return {
     yearsExp: Math.round((totalMonths / 12) * 10) / 10,
@@ -29,9 +30,48 @@ function deriveFeatures(cv: CVData) {
     skillsCount: cv.skills.technical.length + cv.skills.methods.length + cv.skills.management.length,
     hasCerts: cv.certifications.length > 0,
     langCount: cv.languages.length,
-    completeness: sections.filter(Boolean).length,
-    totalSections: sections.length,
+    completeness: sectionFlags.filter(s => s.ok).length,
+    totalSections: sectionFlags.length,
+    sectionFlags,
   }
+}
+
+const FIELD_LABELS: Record<string, string> = {
+  'personal.full_name': 'Full name',
+  'personal.email': 'Email address',
+  'personal.phone': 'Phone number',
+  'personal.address': 'Address',
+  'target_role': 'Target role',
+  'summary': 'Professional summary',
+  'education': 'Education',
+  'experience': 'Work experience',
+  'skills': 'Skills',
+  'skills.technical': 'Technical skills',
+  'skills.methods': 'Methods & practices',
+  'skills.management': 'Management skills',
+  'languages': 'Languages',
+  'certifications': 'Certifications',
+  'duration_months': 'Employment duration',
+  'company': 'Company name',
+  'title': 'Job title',
+  'degree': 'Degree',
+  'institution': 'Institution',
+}
+
+function humanizeField(raw: string): string {
+  if (FIELD_LABELS[raw]) return FIELD_LABELS[raw]
+  // prefix match — e.g. "experience[0].company" → "Company name"
+  const stripped = raw.replace(/\[\d+\]/g, '')
+  if (FIELD_LABELS[stripped]) return FIELD_LABELS[stripped]
+  const lastSegment = stripped.split('.').pop() ?? raw
+  if (FIELD_LABELS[lastSegment]) return FIELD_LABELS[lastSegment]
+  // fallback: snake_case → Title Case
+  return lastSegment.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+}
+
+function humanizeMissingFields(fields: string[]): string[] {
+  // deduplicate after humanizing (e.g. experience[0].company + experience[1].company → one entry)
+  return [...new Set(fields.map(humanizeField))]
 }
 
 const EDU_LABEL: Record<number, string> = {
@@ -574,7 +614,8 @@ function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClo
           <div className="flex flex-col md:flex-row flex-1 overflow-hidden md:divide-x divide-y md:divide-y-0 divide-gray-100">
 
             {/* LEFT — CV */}
-            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+            <ScrollArea className="flex-1">
+              <div className="px-6 py-5 space-y-6">
               {/* Contact */}
               <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-gray-600">
                 {cv.personal.email   && <span>✉ {cv.personal.email}</span>}
@@ -589,7 +630,9 @@ function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClo
                     {cv.parse_quality === 'partial' ? 'Partially parsed CV' : 'Poorly parsed CV — low reliability'}
                   </span>
                   {cv.missing_fields.length > 0 && (
-                    <p className="text-amber-600 mt-0.5 text-xs">Missing: {cv.missing_fields.join(' · ')}</p>
+                    <p className="text-amber-600 mt-0.5 text-xs">
+                      Missing: {humanizeMissingFields(cv.missing_fields).join(' · ')}
+                    </p>
                   )}
                 </div>
               )}
@@ -691,10 +734,12 @@ function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClo
                   </div>
                 </CvSection>
               )}
-            </div>
+              </div>
+            </ScrollArea>
 
             {/* RIGHT — assessment */}
-            <div className="w-full md:w-64 shrink-0 overflow-y-auto px-5 py-5 space-y-5 bg-gray-50">
+            <ScrollArea className="w-full md:w-64 shrink-0 bg-gray-50">
+              <div className="px-5 py-5 space-y-5">
 
               {/* Decision card */}
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/70 p-4 shadow-sm text-center">
@@ -728,7 +773,21 @@ function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClo
                   <ScoreFactor label="Total skills" display={`${f.skillsCount}`} value={f.skillsCount} max={20} hint="Technical + methods + management" />
                   <ScoreFactor label="Certifications" display={f.hasCerts ? 'Yes' : 'None'} value={f.hasCerts ? 1 : 0} max={1} hint="Any professional certification" />
                   <ScoreFactor label="Languages" display={`${f.langCount}`} value={f.langCount} max={5} hint="Number of languages declared" />
-                  <ScoreFactor label="Profile completeness" display={`${f.completeness}/${f.totalSections}`} value={f.completeness} max={f.totalSections} hint="Personal · Summary · Education · Experience · Skills · Languages" />
+                  <div className="pt-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium text-gray-600">Profile completeness</span>
+                      <span className="text-xs font-semibold text-gray-900">{f.completeness}/{f.totalSections}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {f.sectionFlags.map(({ label, ok }) => (
+                        <span key={label} className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                          ok ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-400 line-through'
+                        }`}>
+                          {label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -739,7 +798,8 @@ function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClo
                 <p><span className="font-medium text-gray-500">Parsed:</span> {new Date(candidate.processed_at).toLocaleString()}</p>
                 <p><span className="font-medium text-gray-500">Quality: </span><ParseQualityBadge value={candidate.parse_quality} /></p>
               </div>
-            </div>
+              </div>
+            </ScrollArea>
           </div>
         </motion.div>
       </motion.div>
