@@ -16,6 +16,7 @@ export default function App() {
 
           {/* Nav */}
           <nav className="flex items-center gap-1">
+            <NavItem to="/dashboard">Dashboard</NavItem>
             <NavItem to="/candidates">Candidates</NavItem>
             <NavItem to="/upload">Upload CV</NavItem>
           </nav>
