@@ -1,3 +1,4 @@
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 
 
@@ -19,8 +20,7 @@ class Settings(BaseSettings):
     failed_cvs_path: str = "./data/failed_cvs"
     ml_model_path: str = "./ml/model.joblib"
 
-    class Config:
-        env_file = ".env"
+    model_config = ConfigDict(env_file=".env")
 
     @property
     def cors_origins_list(self) -> list[str]:

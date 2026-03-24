@@ -10,7 +10,8 @@ interface DatePickerProps {
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
 const DAYS = ['Mo','Tu','We','Th','Fr','Sa','Su']
 
-function pad(n: number) { return String(n).padStart(2, '0') }
+import { pad } from '../utils/date'
+
 function toISO(y: number, m: number, d: number) { return `${y}-${pad(m + 1)}-${pad(d)}` }
 function todayISO() {
   const n = new Date()

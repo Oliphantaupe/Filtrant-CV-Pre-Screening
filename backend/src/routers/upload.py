@@ -16,9 +16,9 @@ from src.services.predictor import predict
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1", tags=["upload"])
 
-INCOMING_DIR  = "/app/data/incoming_cvs"
-PROCESSED_DIR = "/app/data/processed_cvs"
-FAILED_DIR    = "/app/data/failed_cvs"
+INCOMING_DIR = settings.incoming_cvs_path
+PROCESSED_DIR = settings.processed_cvs_path
+FAILED_DIR = settings.failed_cvs_path
 
 
 async def _process_cv_bytes(file_bytes: bytes, filename: str) -> dict:

@@ -4,9 +4,7 @@ import { api } from '../api/client'
 import type { CandidateRow } from '../types/cv'
 import CountUp from '../components/CountUp'
 import RecommendationBadge from '../components/RecommendationBadge'
-
-function pad(n: number) { return String(n).padStart(2, '0') }
-function fmtUTC(d: Date) { return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}` }
+import { fmtUTC } from '../utils/date'
 
 function lastNDays(n: number): string[] {
   const days: string[] = []
