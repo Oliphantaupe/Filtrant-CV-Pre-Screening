@@ -42,6 +42,7 @@ def predict(features: dict) -> tuple[str, float | None]:
     X = np.array([[features[col] for col in FEATURE_COLUMNS]])
     proba = _model.predict_proba(X)[0]
     label_idx = int(np.argmax(proba))
+
     confidence = round(float(proba[label_idx]), 3)
 
     # Model classes: 0 = Reject, 1 = Invite

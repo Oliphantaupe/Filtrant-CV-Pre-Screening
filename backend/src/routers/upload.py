@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+import shutil
 import uuid
 
 from fastapi import APIRouter, UploadFile, File, HTTPException
@@ -14,14 +16,13 @@ from src.services.predictor import predict
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1", tags=["upload"])
 
+INCOMING_DIR  = "/app/data/incoming_cvs"
+PROCESSED_DIR = "/app/data/processed_cvs"
+FAILED_DIR    = "/app/data/failed_cvs"
 
-@router.post("/upload", status_code=201)
-async def upload_cv(file: UploadFile = File(...)):
-    filename = file.filename or "unknown"
-    logger.info("Upload received: %s", filename)
 
-    # ── Read & size-check ────────────────────────────────────────────────────
-    file_bytes = await file.read()
+async def _process_cv_bytes(file_bytes: bytes, filename: str) -> dict:
+    """Core CV processing logic shared by /upload and /process-folder."""
     if len(file_bytes) > settings.max_file_size_bytes:
         raise HTTPException(
             status_code=413,
@@ -30,7 +31,6 @@ async def upload_cv(file: UploadFile = File(...)):
     if len(file_bytes) == 0:
         raise HTTPException(status_code=400, detail="Uploaded file is empty.")
 
-    # ── Extract text ─────────────────────────────────────────────────────────
     try:
         raw_text, fmt = extract_text(file_bytes, filename)
     except ValueError as e:
@@ -39,7 +39,6 @@ async def upload_cv(file: UploadFile = File(...)):
     if not raw_text.strip():
         raise HTTPException(status_code=422, detail="No readable text found in the file.")
 
-    # ── Dedup ────────────────────────────────────────────────────────────────
     file_hash = compute_hash(file_bytes)
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -51,7 +50,6 @@ async def upload_cv(file: UploadFile = File(...)):
 
     candidate_id = str(uuid.uuid4())
 
-    # ── Parse via Claude ─────────────────────────────────────────────────────
     try:
         cv = await parse_cv(raw_text)
         logger.info(
@@ -63,7 +61,6 @@ async def upload_cv(file: UploadFile = File(...)):
         _log_event(candidate_id, "parse_failed", str(e), filename, fmt, file_hash)
         raise HTTPException(status_code=502, detail=f"CV parsing failed: {e}")
 
-    # ── Features & prediction ────────────────────────────────────────────────
     features = extract_features(cv)
     recommendation, confidence = predict(features)
     logger.info(
@@ -71,7 +68,6 @@ async def upload_cv(file: UploadFile = File(...)):
         candidate_id[:8], recommendation, confidence or 0,
     )
 
-    # ── Persist ──────────────────────────────────────────────────────────────
     cv_dict = cv.model_dump()
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -104,6 +100,83 @@ async def upload_cv(file: UploadFile = File(...)):
         "parse_quality": cv.parse_quality,
         "missing_fields": cv.missing_fields,
     }
+
+
+@router.post("/upload", status_code=201)
+async def upload_cv(file: UploadFile = File(...)):
+    filename = file.filename or "unknown"
+    logger.info("Upload received: %s", filename)
+    file_bytes = await file.read()
+    return await _process_cv_bytes(file_bytes, filename)
+
+
+@router.post("/process-file", status_code=201)
+async def process_file(payload: dict):
+    """Accept a file path from n8n trigger, process it, move to processed/failed."""
+    raw_path = payload.get("path", "")
+    filename = os.path.basename(raw_path)
+    if not filename:
+        raise HTTPException(status_code=400, detail="Missing or invalid path.")
+
+    src = os.path.join(INCOMING_DIR, filename)
+    if not os.path.isfile(src):
+        raise HTTPException(status_code=404, detail=f"File not found: {filename}")
+
+    try:
+        with open(src, "rb") as f:
+            file_bytes = f.read()
+        result = await _process_cv_bytes(file_bytes, filename)
+        shutil.move(src, os.path.join(PROCESSED_DIR, filename))
+        logger.info("process-file: moved %s → processed", filename)
+        return result
+    except HTTPException as e:
+        if e.status_code == 409:
+            shutil.move(src, os.path.join(PROCESSED_DIR, filename))
+            logger.info("process-file: duplicate %s → processed", filename)
+            return {"duplicate": True, "detail": e.detail}
+        shutil.move(src, os.path.join(FAILED_DIR, filename))
+        logger.warning("process-file: moved %s → failed (%s)", filename, e.detail)
+        raise
+    except Exception as e:
+        shutil.move(src, os.path.join(FAILED_DIR, filename))
+        logger.error("process-file: moved %s → failed (unexpected: %s)", filename, e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/process-folder", status_code=200)
+async def process_folder():
+    """Process all files in incoming_cvs, move each to processed_cvs or failed_cvs."""
+    results = []
+
+    try:
+        filenames = [f for f in os.listdir(INCOMING_DIR)
+                     if os.path.isfile(os.path.join(INCOMING_DIR, f))]
+    except FileNotFoundError:
+        return {"processed": 0, "results": []}
+
+    for filename in filenames:
+        src = os.path.join(INCOMING_DIR, filename)
+        try:
+            with open(src, "rb") as f:
+                file_bytes = f.read()
+            result = await _process_cv_bytes(file_bytes, filename)
+            shutil.move(src, os.path.join(PROCESSED_DIR, filename))
+            results.append({"file": filename, "status": "ok", **result})
+            logger.info("process-folder: moved %s → processed", filename)
+        except HTTPException as e:
+            if e.status_code == 409:
+                shutil.move(src, os.path.join(PROCESSED_DIR, filename))
+                results.append({"file": filename, "status": "duplicate", "detail": e.detail})
+            else:
+                shutil.move(src, os.path.join(FAILED_DIR, filename))
+                results.append({"file": filename, "status": "failed", "detail": e.detail})
+                logger.warning("process-folder: moved %s → failed (%s)", filename, e.detail)
+        except Exception as e:
+            shutil.move(src, os.path.join(FAILED_DIR, filename))
+            results.append({"file": filename, "status": "error", "detail": str(e)})
+            logger.error("process-folder: moved %s → failed (unexpected: %s)", filename, e)
+
+    return {"processed": len(results), "results": results}
 
 
 def _log_event(candidate_id: str, event: str, detail: str,
