@@ -5,6 +5,7 @@ import type { CandidateRow, CandidateDetail, CVData } from '../types/cv'
 import SpotlightCard from '../components/SpotlightCard'
 import CountUp from '../components/CountUp'
 import RecommendationBadge from '../components/RecommendationBadge'
+import DatePicker from '../components/DatePicker'
 
 // ─── Feature derivation ───────────────────────────────────────────────────────
 
@@ -238,15 +239,11 @@ export default function CandidatesPage() {
               initial={{ opacity: 0, scaleX: 0.8 }} animate={{ opacity: 1, scaleX: 1 }}
               exit={{ opacity: 0, scaleX: 0.8 }} transition={{ duration: 0.18, ease: 'easeInOut' }}
               style={{ transformOrigin: 'left' }}
-              className="flex items-center gap-1.5 text-sm text-gray-500"
+              className="flex items-center gap-1 bg-gray-100 rounded-xl p-1"
             >
-              <input type="date"
-                className="border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm bg-white text-gray-700"
-                value={dateFrom} onChange={e => { setDateFrom(e.target.value); setPage(1) }} />
-              <span>→</span>
-              <input type="date"
-                className="border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm bg-white text-gray-700"
-                value={dateTo} onChange={e => { setDateTo(e.target.value); setPage(1) }} />
+              <DatePicker value={dateFrom} onChange={v => { setDateFrom(v); setPage(1) }} placeholder="Start date" />
+              <span className="text-gray-400 text-xs px-1">→</span>
+              <DatePicker value={dateTo} onChange={v => { setDateTo(v); setPage(1) }} placeholder="End date" />
             </motion.div>
           )}
         </AnimatePresence>
