@@ -7,7 +7,7 @@ export default function App() {
       <AnimatedBackground />
 
       {/* Frosted glass nav */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/70 border-b border-gray-200/50">
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/90 border-b border-gray-200/60">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           {/* Logo */}
           <span className="text-base font-bold tracking-tight bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent select-none">

@@ -47,17 +47,17 @@ export default function UploadPage() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold text-gray-800 mb-1">Upload CV</h1>
-      <p className="text-sm text-gray-500 mb-6">PDF, DOCX, or TXT — up to 5 MB</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-1">Upload CV</h1>
+      <p className="text-sm text-gray-700 mb-6">PDF, DOCX, or TXT — up to 5 MB</p>
 
       {/* Drop zone */}
       <div
-        className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all duration-200 backdrop-blur-sm ${
+        className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all duration-200 ${
           dragging
-            ? 'border-blue-400 bg-blue-50/80 scale-[1.01]'
+            ? 'border-blue-400 bg-blue-50 scale-[1.01]'
             : loading
-            ? 'border-gray-200/70 bg-white/50 cursor-default'
-            : 'border-gray-300/70 bg-white/60 hover:border-blue-300 hover:bg-white/80'
+            ? 'border-gray-200 bg-white/80 cursor-default'
+            : 'border-gray-300 bg-white/90 hover:border-blue-300 hover:bg-white'
         }`}
         onDragOver={e => { e.preventDefault(); if (!loading) setDragging(true) }}
         onDragLeave={() => setDragging(false)}
@@ -132,8 +132,8 @@ export default function UploadPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-            className={`mt-6 rounded-2xl border overflow-hidden shadow-sm backdrop-blur-sm ${
-              isInvite ? 'border-green-200/80 bg-white/80' : isReject ? 'border-red-200/80 bg-white/80' : 'border-gray-200/80 bg-white/80'
+            className={`mt-6 rounded-2xl border overflow-hidden shadow-sm ${
+              isInvite ? 'border-green-200 bg-white' : isReject ? 'border-red-200 bg-white' : 'border-gray-200 bg-white'
             }`}
           >
             {/* Verdict header */}

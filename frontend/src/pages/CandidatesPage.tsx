@@ -41,6 +41,36 @@ const EDU_LABEL: Record<number, string> = {
 // ─── Candidates page ──────────────────────────────────────────────────────────
 
 type FilterValue = '' | 'Invite' | 'Reject' | 'pending'
+type DatePreset = 'all' | 'today' | 'week' | 'month' | 'custom'
+
+function computeDateRange(preset: DatePreset): { from: string; to: string } {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  // Use UTC dates to match how the backend casts TIMESTAMPTZ AT TIME ZONE 'UTC'
+  const fmtUTC = (d: Date) => `${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())}`
+  const now = new Date()
+  if (preset === 'today') { const s = fmtUTC(now); return { from: s, to: s } }
+  if (preset === 'week') {
+    const day = now.getUTCDay()
+    const monday = new Date(now)
+    monday.setUTCDate(now.getUTCDate() + (day === 0 ? -6 : 1 - day))
+    return { from: fmtUTC(monday), to: fmtUTC(now) }
+  }
+  if (preset === 'month') {
+    return { from: `${now.getUTCFullYear()}-${pad(now.getUTCMonth()+1)}-01`, to: fmtUTC(now) }
+  }
+  return { from: '', to: '' }
+}
+
+const DATE_PRESET_LABELS: Record<DatePreset, string> = {
+  all: 'All time', today: 'Today', week: 'This week', month: 'This month', custom: 'Custom',
+}
+const DATE_PRESET_OPTIONS: { label: string; value: DatePreset }[] = [
+  { label: 'All time', value: 'all' },
+  { label: 'Today', value: 'today' },
+  { label: 'This week', value: 'week' },
+  { label: 'This month', value: 'month' },
+  { label: 'Custom range', value: 'custom' },
+]
 
 const FILTER_OPTIONS: { label: string; value: FilterValue }[] = [
   { label: 'All', value: '' },
@@ -56,7 +86,10 @@ export default function CandidatesPage() {
   const [filter, setFilter] = useState<FilterValue>('')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
+  const [datePreset, setDatePreset] = useState<DatePreset>('all')
   const [selected, setSelected] = useState<CandidateDetail | null>(null)
+  const [quickLook, setQuickLook] = useState<CandidateRow | null>(null)
+  const [dateOpen, setDateOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [view, setView] = useState<'simple' | 'advanced'>('simple')
   const [stats, setStats] = useState({ invited: 0, rejected: 0, total: 0 })
@@ -81,8 +114,19 @@ export default function CandidatesPage() {
       date_to: dateTo || undefined,
     })
       .then(res => { setItems(res.items); setTotal(res.total) })
+      .catch(() => { setItems([]); setTotal(0) })
       .finally(() => setLoading(false))
   }, [page, filter, dateFrom, dateTo])
+
+  const handleDatePreset = (preset: DatePreset) => {
+    setDatePreset(preset)
+    setPage(1)
+    if (preset !== 'custom') {
+      const { from, to } = computeDateRange(preset)
+      setDateFrom(from)
+      setDateTo(to)
+    }
+  }
 
   const openDetail = async (id: string) => {
     const detail = await api.getCandidate(id)
@@ -94,36 +138,36 @@ export default function CandidatesPage() {
   return (
     <div>
       {/* Stats row */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <StatCard label="Total CVs" value={stats.total} color="blue" />
         <StatCard label="Invited" value={stats.invited} color="green" />
         <StatCard label="Rejected" value={stats.rejected} color="red" />
       </div>
 
       {/* Toolbar */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-700">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <h2 className="text-lg font-semibold text-gray-900">
           {filter ? `${filter} — ` : ''}{total} candidate{total !== 1 ? 's' : ''}
         </h2>
         <div className="flex items-center gap-2">
           {/* View toggle */}
-          <div className="flex rounded-lg border border-gray-200 overflow-hidden text-sm">
+          <div className="flex gap-1 bg-gray-100 rounded-xl p-1 text-sm">
             <button
               onClick={() => setView('simple')}
-              className={`px-3 py-1.5 transition-colors ${view === 'simple' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`px-3 py-1 rounded-lg font-medium transition-all duration-150 ${view === 'simple' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
             >
               Cards
             </button>
             <button
               onClick={() => setView('advanced')}
-              className={`px-3 py-1.5 border-l border-gray-200 transition-colors ${view === 'advanced' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`px-3 py-1 rounded-lg font-medium transition-all duration-150 ${view === 'advanced' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
             >
               Table
             </button>
           </div>
           <button
             onClick={api.exportCsv}
-            className="text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
+            className="hidden sm:block text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
           >
             Export CSV
           </button>
@@ -132,59 +176,108 @@ export default function CandidatesPage() {
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
-        {/* Pill nav */}
+        {/* Recommendation pills */}
         <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
           {FILTER_OPTIONS.map(opt => (
-            <button
-              key={opt.value}
+            <button key={opt.value}
               onClick={() => { setFilter(opt.value); setPage(1) }}
               className={`px-3 py-1 rounded-lg text-sm font-medium transition-all duration-150 ${
-                filter === opt.value
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
+                filter === opt.value ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
               }`}
-            >
-              {opt.label}
-            </button>
+            >{opt.label}</button>
           ))}
         </div>
 
-        {/* Date range */}
-        <div className="flex items-center gap-1.5 text-sm text-gray-500">
-          <input
-            type="date"
-            className="border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm bg-white text-gray-700"
-            value={dateFrom}
-            onChange={e => { setDateFrom(e.target.value); setPage(1) }}
-          />
-          <span>→</span>
-          <input
-            type="date"
-            className="border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm bg-white text-gray-700"
-            value={dateTo}
-            onChange={e => { setDateTo(e.target.value); setPage(1) }}
-          />
-          {(dateFrom || dateTo) && (
+        {/* Date dropdown — styled like pill group */}
+        <div className="relative">
+          {dateOpen && <div className="fixed inset-0 z-10" onClick={() => setDateOpen(false)} />}
+          <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
             <button
-              onClick={() => { setDateFrom(''); setDateTo(''); setPage(1) }}
-              className="text-gray-400 hover:text-gray-600 text-xs px-1"
+              onClick={() => setDateOpen(o => !o)}
+              className={`px-3 py-1 rounded-lg text-sm font-medium transition-all duration-150 flex items-center gap-1.5 ${
+                datePreset !== 'all' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              }`}
             >
-              ✕
+              {DATE_PRESET_LABELS[datePreset]}
+              <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
-          )}
+          </div>
+          <AnimatePresence>
+            {dateOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                transition={{ duration: 0.12 }}
+                className="absolute top-full mt-1 left-0 z-20 bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden min-w-[140px]"
+              >
+                {DATE_PRESET_OPTIONS.map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={() => { handleDatePreset(opt.value); setDateOpen(false) }}
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                      datePreset === opt.value
+                        ? 'bg-gray-50 text-gray-900 font-medium'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
+
+        {/* Custom date pickers — only when preset === 'custom' */}
+        <AnimatePresence>
+          {datePreset === 'custom' && (
+            <motion.div key="custom-dates"
+              initial={{ opacity: 0, scaleX: 0.8 }} animate={{ opacity: 1, scaleX: 1 }}
+              exit={{ opacity: 0, scaleX: 0.8 }} transition={{ duration: 0.18, ease: 'easeInOut' }}
+              style={{ transformOrigin: 'left' }}
+              className="flex items-center gap-1.5 text-sm text-gray-500"
+            >
+              <input type="date"
+                className="border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm bg-white text-gray-700"
+                value={dateFrom} onChange={e => { setDateFrom(e.target.value); setPage(1) }} />
+              <span>→</span>
+              <input type="date"
+                className="border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm bg-white text-gray-700"
+                value={dateTo} onChange={e => { setDateTo(e.target.value); setPage(1) }} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Content */}
-      {loading ? (
-        <div className="flex items-center justify-center py-16">
-          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        </div>
-      ) : view === 'simple' ? (
-        <SimpleView items={items} onOpen={openDetail} />
-      ) : (
-        <AdvancedView items={items} onOpen={openDetail} />
-      )}
+      {/* Content — keeps old items visible while loading (no layout shake) */}
+      <div style={{ minHeight: '420px' }} className={`relative transition-opacity duration-150 ${loading ? 'opacity-40 pointer-events-none' : ''}`}>
+        {loading && items.length === 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-white/70 rounded-2xl border border-gray-200/70 h-32 animate-pulse" />
+            ))}
+          </div>
+        )}
+        {!loading && items.length === 0 && (
+          <div className="text-center py-20 text-gray-400">
+            <p className="text-4xl mb-3 font-light text-gray-200">—</p>
+            <p className="font-medium text-gray-500">
+              {datePreset !== 'all' || filter ? 'No candidates match this filter' : 'No candidates yet'}
+            </p>
+            <p className="text-sm mt-1">
+              {datePreset !== 'all' || filter ? 'Try a different date range or recommendation filter' : 'Upload a CV to get started'}
+            </p>
+          </div>
+        )}
+        {items.length > 0 && (
+          view === 'simple'
+            ? <SimpleView items={items} onOpen={(c) => setQuickLook(c)} />
+            : <AdvancedView items={items} onOpen={openDetail} />
+        )}
+      </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
@@ -201,6 +294,20 @@ export default function CandidatesPage() {
         </div>
       )}
 
+      <AnimatePresence>
+        {quickLook && (
+          <QuickLookModal
+            candidate={quickLook}
+            onClose={() => setQuickLook(null)}
+            onOpenFull={() => {
+              const id = quickLook.id
+              setQuickLook(null)
+              openDetail(id)
+            }}
+          />
+        )}
+      </AnimatePresence>
+
       {selected && <DetailPanel candidate={selected} onClose={() => setSelected(null)} />}
     </div>
   )
@@ -211,7 +318,7 @@ export default function CandidatesPage() {
 function StatCard({ label, value, color }: { label: string; value: number; color: 'blue' | 'green' | 'red' }) {
   const numColors = { blue: 'text-blue-600', green: 'text-green-600', red: 'text-red-500' }
   return (
-    <div className="rounded-2xl border border-gray-200/70 bg-white/70 backdrop-blur-sm shadow-sm px-5 py-4">
+    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm px-5 py-4">
       <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">{label}</p>
       <p className={`text-3xl font-black tabular-nums ${numColors[color]}`}>
         <CountUp to={value} duration={1.2} />
@@ -222,16 +329,7 @@ function StatCard({ label, value, color }: { label: string; value: number; color
 
 // ─── Simple view — card grid ──────────────────────────────────────────────────
 
-function SimpleView({ items, onOpen }: { items: CandidateRow[]; onOpen: (id: string) => void }) {
-  if (items.length === 0)
-    return (
-      <div className="text-center py-20 text-gray-400">
-        <div className="text-4xl mb-3">📭</div>
-        <p className="font-medium">No candidates yet</p>
-        <p className="text-sm mt-1">Upload a CV to get started</p>
-      </div>
-    )
-
+function SimpleView({ items, onOpen }: { items: CandidateRow[]; onOpen: (candidate: CandidateRow) => void }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {items.map((c, i) => (
@@ -242,8 +340,8 @@ function SimpleView({ items, onOpen }: { items: CandidateRow[]; onOpen: (id: str
           transition={{ delay: i * 0.04, duration: 0.3 }}
         >
           <SpotlightCard
-            className="bg-white/75 backdrop-blur-sm rounded-2xl border border-gray-200/70 p-5 cursor-pointer hover:shadow-md hover:border-blue-200/70 hover:bg-white/90 transition-all"
-            onClick={() => onOpen(c.id)}
+            className="bg-white rounded-2xl border border-gray-200 p-5 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all"
+            onClick={() => onOpen(c)}
           >
             {/* Avatar + name */}
             <div className="flex items-center gap-3 mb-4">
@@ -298,12 +396,9 @@ function SimpleView({ items, onOpen }: { items: CandidateRow[]; onOpen: (id: str
 // ─── Advanced view — table ────────────────────────────────────────────────────
 
 function AdvancedView({ items, onOpen }: { items: CandidateRow[]; onOpen: (id: string) => void }) {
-  if (items.length === 0)
-    return <p className="text-center text-gray-400 py-16">No candidates yet.</p>
-
   return (
-    <div className="bg-white/75 backdrop-blur-sm rounded-2xl border border-gray-200/70 overflow-hidden shadow-sm">
-      <table className="w-full text-sm">
+    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden overflow-x-auto shadow-sm">
+      <table className="w-full min-w-[640px] text-sm">
         <thead className="bg-gray-50 border-b border-gray-200">
           <tr>
             <th className="text-left px-4 py-3 font-medium text-gray-500">Candidate</th>
@@ -360,6 +455,87 @@ function AdvancedView({ items, onOpen }: { items: CandidateRow[]; onOpen: (id: s
   )
 }
 
+// ─── Quick-look modal ─────────────────────────────────────────────────────────
+
+function QuickLookModal({ candidate, onClose, onOpenFull }: {
+  candidate: CandidateRow; onClose: () => void; onOpenFull: () => void
+}) {
+  return (
+    <motion.div key="ql-backdrop"
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+      className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 16 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+        className="bg-white/95 backdrop-blur-2xl rounded-2xl border border-gray-200/60 shadow-2xl w-full max-w-sm p-6 relative"
+        onClick={e => e.stopPropagation()}
+      >
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl leading-none">×</button>
+
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-700 font-bold text-base flex items-center justify-center shrink-0">
+            {initials(candidate.name)}
+          </div>
+          <div className="min-w-0">
+            <p className="font-bold text-gray-900 text-base truncate">{candidate.name ?? 'Unknown'}</p>
+            <p className="text-sm text-blue-600 font-medium truncate">
+              {candidate.target_role ?? <span className="text-gray-400 font-normal">No role</span>}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex justify-center mb-4">
+          <RecommendationBadge value={candidate.recommendation} large />
+        </div>
+
+        {candidate.confidence !== null && (
+          <div className="text-center mb-5">
+            <p className="text-4xl font-black tabular-nums text-gray-900">
+              {(candidate.confidence * 100).toFixed(0)}<span className="text-xl text-gray-400">%</span>
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">model confidence</p>
+            <div className="mt-2 h-2 bg-gray-100 rounded-full overflow-hidden mx-4">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${(candidate.confidence * 100).toFixed(0)}%` }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+                className={`h-full rounded-full ${candidate.recommendation === 'Invite' ? 'bg-green-400' : candidate.recommendation === 'Reject' ? 'bg-red-400' : 'bg-gray-300'}`}
+              />
+            </div>
+          </div>
+        )}
+
+        {candidate.email && (
+          <div className="bg-gray-50 rounded-xl px-4 py-3 text-sm text-gray-600 mb-4 flex items-center gap-2 min-w-0">
+            <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+            </svg>
+            <span className="truncate">{candidate.email}</span>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between mb-5">
+          <span className="text-xs text-gray-500 font-medium">Parse quality</span>
+          <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+            candidate.parse_quality === 'complete' ? 'bg-green-100 text-green-700' :
+            candidate.parse_quality === 'partial'  ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
+          }`}>{candidate.parse_quality}</span>
+        </div>
+
+        <button onClick={onOpenFull}
+          className="w-full py-2.5 rounded-2xl text-sm font-semibold bg-gray-900 text-white hover:bg-gray-700 transition-colors flex items-center justify-center gap-2">
+          Full profile <span className="text-gray-400">→</span>
+        </button>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 // ─── Detail side panel ────────────────────────────────────────────────────────
 
 function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClose: () => void }) {
@@ -380,7 +556,7 @@ function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClo
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="ml-auto bg-white/90 backdrop-blur-2xl w-full max-w-4xl h-full overflow-hidden flex flex-col shadow-2xl border-l border-gray-200/50"
+          className="ml-auto bg-white w-full max-w-4xl h-full overflow-hidden flex flex-col shadow-2xl border-l border-gray-200/50"
           onClick={e => e.stopPropagation()}
         >
           {/* Header */}
@@ -398,7 +574,7 @@ function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClo
           </div>
 
           {/* Body */}
-          <div className="flex flex-1 overflow-hidden divide-x divide-gray-100">
+          <div className="flex flex-col md:flex-row flex-1 overflow-hidden md:divide-x divide-y md:divide-y-0 divide-gray-100">
 
             {/* LEFT — CV */}
             <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
@@ -521,7 +697,7 @@ function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClo
             </div>
 
             {/* RIGHT — assessment */}
-            <div className="w-64 shrink-0 overflow-y-auto px-5 py-5 space-y-5 bg-gray-50">
+            <div className="w-full md:w-64 shrink-0 overflow-y-auto px-5 py-5 space-y-5 bg-gray-50">
 
               {/* Decision card */}
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/70 p-4 shadow-sm text-center">

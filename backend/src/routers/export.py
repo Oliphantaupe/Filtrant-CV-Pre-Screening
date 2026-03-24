@@ -25,10 +25,10 @@ def list_candidates(
         filters.append("recommendation = %s")
         params.append(recommendation)
     if date_from:
-        filters.append("processed_at::date >= %s")
+        filters.append("(processed_at AT TIME ZONE 'UTC')::date >= %s")
         params.append(date_from)
     if date_to:
-        filters.append("processed_at::date <= %s")
+        filters.append("(processed_at AT TIME ZONE 'UTC')::date <= %s")
         params.append(date_to)
 
     where = ("WHERE " + " AND ".join(filters)) if filters else ""
