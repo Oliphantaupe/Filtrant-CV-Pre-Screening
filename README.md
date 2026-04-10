@@ -141,25 +141,41 @@ The repo includes `.vscode/settings.json` which sets the interpreter automatical
 
 ## ML Model
 
-The repo ships with a pre-trained `backend/ml/model.joblib` (LogisticRegression, trained on a synthetic 40-row dataset). It is gitignored by default — commit it intentionally once you have a real trained model.
+`backend/ml/model.joblib` is gitignored and must be generated before predictions work. Without it, every candidate returns `pending`.
+
+### First-time setup — train on synthetic data
+
+```bash
+docker compose exec backend python ml/train.py --data ml/synthetic_train.csv
+```
+
+This trains a LogisticRegression on the bundled 500-row synthetic dataset and writes `model.joblib` into `backend/ml/`. The model is picked up immediately — no restart needed.
 
 ### Retraining on real data
 
-Export labelled candidates first:
+Once you have real candidates in the system, export them:
 
 ```bash
 curl http://localhost:8000/api/v1/candidates/export.csv -o candidates.csv
 ```
 
-Manually add a `recommendation` column (`Invite` / `Reject`) to the CSV if it is not already labelled, then:
+The export already contains the feature columns and the `recommendation` column. Run:
 
 ```bash
-cd backend
-pip install -r requirements.txt
-python ml/train.py --data path/to/candidates.csv
+docker compose exec backend python ml/train.py --data ml/candidates.csv
 ```
 
-The updated `ml/model.joblib` is loaded automatically on the next container restart (the volume mounts `./backend/ml` into the container).
+Or locally if your venv is active:
+
+```bash
+# Windows
+cd backend && .venv\Scripts\python ml/train.py --data ml/candidates.csv
+
+# macOS / Linux
+cd backend && .venv/bin/python ml/train.py --data ml/candidates.csv
+```
+
+The updated `model.joblib` is loaded on the next prediction call (the volume mounts `./backend/ml` into the container — no rebuild needed).
 
 ---
 
