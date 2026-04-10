@@ -30,7 +30,7 @@ async def watch_incoming() -> None:
         try:
             files = [
                 f for f in os.listdir(incoming)
-                if os.path.isfile(os.path.join(incoming, f))
+                if os.path.isfile(os.path.join(incoming, f)) and not f.startswith(".")
             ]
             for filename in files:
                 src = os.path.join(incoming, filename)
