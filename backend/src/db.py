@@ -1,15 +1,27 @@
+import logging
+import time
+
 import psycopg2
 from psycopg2 import pool
 from contextlib import contextmanager
 from src.config import settings
 
+logger = logging.getLogger(__name__)
 _pool: pool.SimpleConnectionPool | None = None
 
 
-def init_db() -> None:
+def init_db(retries: int = 10, delay: float = 3.0) -> None:
     global _pool
-    _pool = pool.SimpleConnectionPool(1, 10, dsn=settings.database_url)
-    _create_tables()
+    for attempt in range(1, retries + 1):
+        try:
+            _pool = pool.SimpleConnectionPool(1, 10, dsn=settings.database_url)
+            _create_tables()
+            return
+        except psycopg2.OperationalError as e:
+            if attempt == retries:
+                raise
+            logger.warning("DB not ready (attempt %d/%d): %s — retrying in %.0fs", attempt, retries, e, delay)
+            time.sleep(delay)
 
 
 def _create_tables() -> None:
