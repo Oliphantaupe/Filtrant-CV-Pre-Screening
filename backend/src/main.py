@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 
@@ -8,6 +9,7 @@ from fastapi.responses import JSONResponse
 from src.config import settings
 from src.db import init_db, close_db
 from src.routers import upload, export
+from src.services.watcher import watch_incoming
 
 # ─── Logging setup ────────────────────────────────────────────────────────────
 
@@ -26,7 +28,10 @@ async def lifespan(app: FastAPI):
     logger.info("Starting Filtrant API (env=%s)", settings.env)
     init_db()
     logger.info("Database ready")
+    watcher = asyncio.create_task(watch_incoming())
     yield
+    watcher.cancel()
+    await asyncio.gather(watcher, return_exceptions=True)
     close_db()
     logger.info("Shutdown complete")
 

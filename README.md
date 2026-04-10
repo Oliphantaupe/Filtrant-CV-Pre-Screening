@@ -163,6 +163,14 @@ The updated `ml/model.joblib` is loaded automatically on the next container rest
 
 ---
 
+## File Watcher (auto-processing)
+
+The backend includes a built-in file watcher that polls `data/incoming_cvs/` every 10 seconds. Drop any CV into that folder and it will be processed automatically — parsed, scored, saved to PostgreSQL, and moved to `data/processed_cvs/` on success or `data/failed_cvs/` on failure.
+
+The interval is configurable via the `WATCHER_INTERVAL` env variable (seconds).
+
+---
+
 ## API Reference
 
 All endpoints are prefixed `/api/v1/`.
@@ -201,7 +209,8 @@ filtrant/
 │       │   ├── extractor.py       # PDF/DOCX/TXT → raw text + SHA-256
 │       │   ├── claude_parser.py   # Claude API → structured JSON
 │       │   ├── features.py        # JSON → ML feature vector
-│       │   └── predictor.py       # Load model, run prediction
+│       │   ├── predictor.py       # Load model, run prediction
+│       │   └── watcher.py         # Background task: polls incoming_cvs/ auto-processes
 │       └── routers/
 │           ├── upload.py     # POST /upload
 │           └── export.py     # GET /candidates, /export.csv
@@ -219,6 +228,11 @@ filtrant/
 │           ├── DashboardPage.tsx    # Stats, activity chart, recent uploads
 │           ├── UploadPage.tsx       # Drag-and-drop upload + result
 │           └── CandidatesPage.tsx   # Paginated candidates + detail modal
+│
+├── data/
+│   ├── incoming_cvs/         # Drop CVs here — watcher picks them up automatically
+│   ├── processed_cvs/        # Moved here on success
+│   └── failed_cvs/           # Moved here on failure
 │
 └── docs/
     └── SPECS.md              # Client requirements (Work Package 1)
