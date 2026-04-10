@@ -8,7 +8,7 @@ Uploads a CV (PDF, DOCX, or image) → Claude API parses it into structured JSON
 ## Architecture
 
 ```
-[HR uploads via React UI]  OR  [n8n file-watch trigger]
+[HR uploads via React UI]
               ↓
          FastAPI (backend :8000)
               ↓
@@ -20,7 +20,7 @@ Uploads a CV (PDF, DOCX, or image) → Claude API parses it into structured JSON
          React dashboard (:3000) reads /api/v1/candidates
 ```
 
-**Stack:** FastAPI · Claude API (`claude-haiku-4-5`) · scikit-learn · PostgreSQL · n8n · React + Vite + TypeScript + Tailwind · Docker Compose
+**Stack:** FastAPI · Claude API (`claude-haiku-4-5`) · scikit-learn · PostgreSQL · React + Vite + TypeScript + Tailwind · Docker Compose
 
 ---
 
@@ -61,13 +61,12 @@ Leave the rest as-is for local development.
 docker compose up --build
 ```
 
-This starts three containers:
+This starts two containers:
 
 | Container | Port | Description |
 |---|---|---|
 | `backend` | 8000 | FastAPI + auto-creates DB tables on first boot |
 | `postgres` | 5432 | PostgreSQL 16, data persisted in a named volume |
-| `n8n` | 5678 | Workflow automation (optional for local testing) |
 
 Wait until you see:
 ```
@@ -171,27 +170,10 @@ All endpoints are prefixed `/api/v1/`.
 | Method | Path | Description |
 |---|---|---|
 | `POST` | `/upload` | Upload a CV file (multipart) → parse → predict → store. Returns the full candidate record. |
-| `POST` | `/process-file` | Process a file already on disk by path (used by n8n). Moves file to `processed_cvs/` or `failed_cvs/`. |
-| `POST` | `/process-folder` | Process all files currently in `incoming_cvs/` in one batch. |
 | `GET` | `/candidates` | Paginated list. Query params: `page`, `page_size`, `recommendation` (`Invite`/`Reject`/`pending`), `date_from`, `date_to`. |
 | `GET` | `/candidates/{id}` | Full candidate record including raw CV JSON. |
 | `GET` | `/candidates/export.csv` | ML-ready CSV of all candidates (features + recommendation). |
 | `GET` | `/health` | Returns DB status and model file presence. |
-
----
-
-## n8n Automation (file-watch → auto-process)
-
-n8n watches `data/incoming_cvs/` and automatically triggers the backend when a new file appears. The backend handles parsing, prediction, and moving the file to `processed_cvs/` or `failed_cvs/`.
-
-**To activate the workflow:**
-
-1. Open [http://localhost:5678](http://localhost:5678) and create an account on first run.
-2. Go to **Workflows → Import from file**.
-3. Import `n8n/workflows/cv-screening.json`.
-4. Click **Activate**.
-
-Drop any CV into `data/incoming_cvs/` — it will be processed within ~30 seconds and appear in the dashboard.
 
 ---
 
@@ -200,7 +182,7 @@ Drop any CV into `data/incoming_cvs/` — it will be processed within ~30 second
 ```
 filtrant/
 ├── .env.example              # Copy to .env and fill in your key
-├── docker-compose.yml        # backend + postgres + n8n
+├── docker-compose.yml        # backend + postgres
 ├── .gitignore
 │
 ├── backend/
@@ -221,7 +203,7 @@ filtrant/
 │       │   ├── features.py        # JSON → ML feature vector
 │       │   └── predictor.py       # Load model, run prediction
 │       └── routers/
-│           ├── upload.py     # POST /upload, /process-file, /process-folder
+│           ├── upload.py     # POST /upload
 │           └── export.py     # GET /candidates, /export.csv
 │
 ├── frontend/
@@ -237,14 +219,6 @@ filtrant/
 │           ├── DashboardPage.tsx    # Stats, activity chart, recent uploads
 │           ├── UploadPage.tsx       # Drag-and-drop upload + result
 │           └── CandidatesPage.tsx   # Paginated candidates + detail modal
-│
-├── n8n/
-│   └── workflows/cv-screening.json  # Import into n8n UI
-│
-├── data/
-│   ├── incoming_cvs/         # Drop CVs here for n8n auto-processing
-│   ├── processed_cvs/        # n8n moves files here on success
-│   └── failed_cvs/           # n8n moves files here on failure
 │
 └── docs/
     └── SPECS.md              # Client requirements (Work Package 1)
@@ -266,13 +240,12 @@ filtrant/
 
 ## Deployment
 
-### Railway (backend + PostgreSQL + n8n)
+### Railway (backend + PostgreSQL)
 
 1. Create a new Railway project.
 2. Add a **PostgreSQL** plugin — Railway injects `DATABASE_URL` automatically.
 3. Add a service from this repo, set root to `backend/`, Dockerfile is auto-detected.
 4. Set the `ANTHROPIC_API_KEY` environment variable in Railway.
-5. Add an **n8n** service using the `n8nio/n8n` Docker image and configure it to point at the backend service URL.
 
 ### Vercel (frontend)
 

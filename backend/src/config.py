@@ -15,9 +15,6 @@ class Settings(BaseSettings):
     max_file_size_mb: int = 5
 
     # Paths (relative to /app inside Docker, override locally)
-    incoming_cvs_path: str = "./data/incoming_cvs"
-    processed_cvs_path: str = "./data/processed_cvs"
-    failed_cvs_path: str = "./data/failed_cvs"
     ml_model_path: str = "./ml/model.joblib"
 
     model_config = ConfigDict(env_file=".env")

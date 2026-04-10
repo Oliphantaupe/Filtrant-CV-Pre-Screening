@@ -31,25 +31,5 @@ services:
       timeout: 5s
       retries: 5
 
-  n8n:
-    image: n8nio/n8n
-    ports:
-      - "5678:5678"
-    environment:
-      N8N_HOST: localhost
-      N8N_PORT: 5678
-      WEBHOOK_URL: http://localhost:5678/
-      FILESYSTEM_ALLOW_LOCAL_FILE_ACCESS: "true"
-      N8N_RESTRICT_FILE_ACCESS_TO: "/data:/home/node/.n8n-files"
-      NODES_EXCLUDE: "[]"
-    volumes:
-      - n8n_data:/home/node/.n8n
-      - ./data:/data
-      - ./n8n/workflows:/workflows
-    depends_on:
-      - backend
-    restart: unless-stopped
-
 volumes:
   postgres_data:
-  n8n_data:
