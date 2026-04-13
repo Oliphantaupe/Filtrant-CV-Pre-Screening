@@ -7,7 +7,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException
 from src.config import settings
 from src.db import get_conn
 from src.services.extractor import extract_text, compute_hash
-from src.services.claude_parser import parse_cv
+from src.services.llm_parser import parse_cv
 from src.services.features import extract_features
 from src.services.predictor import predict
 
