@@ -13,10 +13,10 @@ pdfplumber==0.11.0
 psycopg2-binary==2.9.9
 
 # ML
-scikit-learn==1.5.0
-pandas==2.2.2
-numpy==1.26.4
-joblib==1.4.2
+scikit-learn==1.8.0
+pandas>=2.2
+numpy>=1.26
+joblib>=1.4
 
 # Validation
 pydantic==2.7.4
