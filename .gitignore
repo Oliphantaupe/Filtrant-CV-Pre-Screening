@@ -26,13 +26,19 @@ frontend/dist/
 frontend/.env
 *.tsbuildinfo
 
-# Data (CVs are private)
+# Data (CVs are private — never commit)
 data/incoming_cvs/*
 data/processed_cvs/*
 data/failed_cvs/*
 !data/incoming_cvs/.gitkeep
 !data/processed_cvs/.gitkeep
 !data/failed_cvs/.gitkeep
+data/raw/
+CVs/
+student_labels.csv
+
+# Generated ML artifacts
+backend/ml/candidates_export.csv
 
 # Docker
 *.log

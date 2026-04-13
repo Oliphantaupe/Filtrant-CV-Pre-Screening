@@ -20,7 +20,7 @@ Uploads a CV (PDF, DOCX, or image) → Claude API parses it into structured JSON
          React dashboard (:3000) reads /api/v1/candidates
 ```
 
-**Stack:** FastAPI · Claude API (`claude-haiku-4-5`) · scikit-learn · PostgreSQL · React + Vite + TypeScript + Tailwind · Docker Compose
+**Stack:** FastAPI · OpenRouter (`gemini-2.0-flash`) · scikit-learn · PostgreSQL · React + Vite + TypeScript + Tailwind · Docker Compose
 
 ---
 
@@ -149,7 +149,7 @@ The repo includes `.vscode/settings.json` which sets the interpreter automatical
 
 `backend/ml/model.joblib` is gitignored and must be generated before predictions work. Without it, every candidate returns `pending`.
 
-The entire ML pipeline lives in **`backend/ml/cv_screening_ml.ipynb`** — open it in VS Code or Jupyter, run all cells, and `model.joblib` is written automatically.
+The entire ML pipeline lives in **`backend/ml/cv_screening_ml.ipynb`** — open it in the JupyterLab service (`http://localhost:8888`) or VS Code, run all cells, and `model.joblib` is written automatically.
 
 The notebook covers:
 - EDA (distributions, correlation matrix)
@@ -158,9 +158,19 @@ The notebook covers:
 - Feature importance chart
 - Export of the best model to `model.joblib`
 
-### First-time setup — train on synthetic data
+### First-time setup — real training data
 
-Open `backend/ml/cv_screening_ml.ipynb`, make sure `DATA_PATH = "synthetic_train.csv"` (default), then **Run All**.
+The raw CV files and labels are not stored in the repo (private client data). To set them up:
+
+1. Place `student_labels.csv` and `CVs/` folder next to `backend/ml/setup_data.py`
+2. Run:
+```bash
+cd backend/ml
+python setup_data.py
+```
+This copies everything to `data/raw/` where the notebook expects it.
+
+3. Open `backend/ml/cv_screening_ml.ipynb` and **Run All**.
 
 ### Retraining on real data
 
@@ -170,7 +180,7 @@ Once you have real candidates in the system, export them:
 curl http://localhost:8000/api/v1/candidates/export.csv -o backend/ml/candidates_export.csv
 ```
 
-Open the notebook, set `DATA_PATH = "candidates_export.csv"`, review/correct the `recommendation` column, then **Run All**.
+Open the notebook, set `DATA_PATH` to the export path, then **Run All**.
 
 The updated `model.joblib` is loaded on the next prediction call — no restart needed.
 
@@ -221,7 +231,7 @@ filtrant/
 │       │   └── cv_schema.py  # Pydantic CV schema (universal JSON)
 │       ├── services/
 │       │   ├── extractor.py       # PDF/DOCX/TXT → raw text + SHA-256
-│       │   ├── claude_parser.py   # Claude API → structured JSON
+│       │   ├── llm_parser.py      # OpenRouter (Gemini 2.0 Flash) → structured JSON
 │       │   ├── features.py        # JSON → ML feature vector
 │       │   ├── predictor.py       # Load model, run prediction
 │       │   └── watcher.py         # Background task: polls incoming_cvs/ auto-processes
