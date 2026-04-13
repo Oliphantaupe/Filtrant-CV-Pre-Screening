@@ -1,0 +1,39 @@
+Name: Ethan Costa
+Gender: Male
+Date of Birth: 1994-07-10
+Address: 897 Birch Street, 39737 Cologne, Germany
+Email: ethan.costa94@inboxmail.net
+Phone: +351-673-508-4250
+Target Role: Data Engineer
+
+Professional Summary:
+Data Engineer with 5+ years of experience delivering reliable technical solutions and measurable business impact. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning. Used to learning new tools quickly when projects require broader technical coverage.
+
+Education:
+Bachelor of Science — Information Systems — University of Warsaw — 2019
+
+Experience:
+Data Engineer — Core Solutions — Cologne, Germany — 2021-11 to 2023-02
+
+* Implemented data quality checks that reduced downstream incidents.
+* Cut pipeline runtime by 30% through incremental processing improvements.
+* Supported analytics and ML teams with curated data models.
+
+Analytics Engineer — Vector Analytics — Cologne, Germany — 2024-11 to Present
+
+* Designed reliable ingestion jobs for operational and product datasets.
+* Cut pipeline runtime by 20% through incremental processing improvements.
+* Implemented data quality checks that reduced downstream incidents.
+* Supported analytics and ML teams with curated data models.
+
+Skills:
+Technical: Kafka, Spark, AWS, Monitoring, CI/CD, Python, Airflow, SQL
+Methods: Batch processing, Pipeline orchestration, Data quality management, ETL design
+Management: Incident communication, Communication, Planning
+
+Languages:
+English — C2
+Spanish — B2
+
+Certifications:
+Professional Scrum Master I

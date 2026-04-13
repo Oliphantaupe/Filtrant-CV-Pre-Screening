@@ -1,0 +1,47 @@
+Name: Aisha Patel
+Gender: Female
+Date of Birth: 1993-10-25
+Address: 721 Oakridge Street, 47722 Milan, Italy
+Email: aisha.patel93@mailhub.com
+Phone: +39-750-192-6236
+Target Role: Backend Developer
+
+Professional Summary:
+Analytical professional targeting Backend Developer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Has supported mentoring, planning, and coordination activities alongside individual technical work. Comfortable contributing in environments with evolving priorities and shared ownership.
+
+Education:
+Master of Science — Computer Science — Politecnico di Milano — 2014
+
+Experience:
+Backend Developer — Data Works — Milan, Italy — 2016-01 to 2019-08
+
+* Designed service integrations used across multiple product teams.
+* Reduced API response time by 25% through query and caching improvements.
+* Expanded automated test coverage for payment and account workflows.
+* Improved reliability of core backend services handling business-critical traffic.
+
+Backend Engineer — North Systems — Milan, Italy — 2020-08 to 2023-03
+
+* Expanded automated test coverage for payment and account workflows.
+* Reduced API response time by 27% through query and caching improvements while coordinating work across engineers and analysts.
+* Designed service integrations used across multiple product teams.
+* Improved reliability of core backend services handling business-critical traffic.
+
+Senior Backend Developer — Cloud Networks — Milan, Italy — 2024-04 to Present
+
+* Improved reliability of core backend services handling business-critical traffic.
+* Expanded automated test coverage for payment and account workflows.
+* Designed service integrations used across multiple product teams while coordinating work across engineers and analysts.
+* Reduced API response time by 18% through query and caching improvements.
+
+Skills:
+Technical: Redis, Docker, REST APIs, Java, Go
+Methods: System design, Microservices, API design, Unit testing, Performance tuning
+Management: Task estimation, Code review, Technical communication, Planning, Collaboration
+
+Languages:
+English — C2
+Spanish — B2
+
+Certifications:
+Azure Developer Associate

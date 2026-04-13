@@ -1,0 +1,33 @@
+Name: Thomas Novak
+Gender: Male
+Date of Birth: 2002-11-06
+Address: 340 Park Avenue, Denver, CO 30119, USA
+Email: thomas.novak02@inboxmail.net
+Phone: +39-234-691-1969
+Target Role: BI Developer
+
+Professional Summary:
+BI Developer focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Used to learning new tools quickly when projects require broader technical coverage.
+
+Education:
+Bachelor of Science — Information Systems — Trinity College Dublin — 2025
+
+Experience:
+BI Developer — Cloud Platform — Denver, CO — 2025-10 to Present
+
+* Translated stakeholder requests into reusable metrics and semantic layers.
+* Consolidated fragmented reporting into dashboards used by executives.
+* Partnered with analysts to validate business definitions across domains.
+* Improved data refresh reliability and reduced manual reporting effort by 27%.
+
+Skills:
+Technical: Tableau, Power BI, Excel, DAX, SSIS
+Methods: KPI definition, Business analysis, Dashboard design, Dimensional modeling
+Management: Requirement gathering, Documentation, Stakeholder communication, Planning
+
+Languages:
+English — C2
+Spanish — B2
+
+Certifications:
+ITIL Foundation

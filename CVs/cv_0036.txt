@@ -1,0 +1,31 @@
+Name: Mina Okafor
+Gender: Female
+Date of Birth: 1988-05-07
+Address: 160 Riverside Street, 17307 Lyon, France
+Email: mina.okafor88@email.com
+Phone: +353-715-265-7535
+Target Role: DevOps Engineer
+
+Professional Summary:
+DevOps Engineer focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Master of Science — Computer Science — University of Texas at Austin — 2018
+
+Experience:
+Senior DevOps Engineer — Core Works — Lyon, France — 2018-02 to Present
+
+* Standardized infrastructure provisioning across environments.
+* Reduced release lead time by 14% through CI/CD automation.
+* Improved platform reliability with stronger observability and runbooks.
+
+Skills:
+Technical: Docker, AWS, GitHub Actions
+Methods: Incident response, Infrastructure as code, CI/CD
+Management: Technical mentoring, Collaboration
+
+Languages:
+English — C2
+
+Certifications:
+None listed

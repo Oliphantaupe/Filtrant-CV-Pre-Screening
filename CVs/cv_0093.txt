@@ -1,0 +1,31 @@
+Name: Gabriel Popescu
+Gender: Male
+Date of Birth: 2001-11-02
+Address: 717 Birch Street, 94445 Lisbon, Portugal
+Email: gabriel.popescu01@mailhub.com
+Phone: +48-801-929-1920
+Target Role: DevOps Engineer
+
+Professional Summary:
+Professional pursuing DevOps Engineer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning. Used to learning new tools quickly when projects require broader technical coverage.
+
+Education:
+Bachelor of Science — Software Engineering — University of Warsaw — 2022
+
+Experience:
+DevOps Engineer — Blue Analytics — Lisbon, Portugal — 2023-09 to Present
+
+* Reduced release lead time by 12% through CI/CD automation.
+* Standardized infrastructure provisioning across environments.
+
+Skills:
+Technical: Terraform, Python, Kubernetes, Excel, GitHub Actions, AWS, Linux
+Methods: Monitoring, Automation, CI/CD, Infrastructure as code
+Management: Collaboration, Documentation, Incident coordination
+
+Languages:
+English — C2
+German — B1
+
+Certifications:
+HashiCorp Terraform Associate

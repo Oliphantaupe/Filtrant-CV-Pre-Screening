@@ -1,0 +1,43 @@
+Name: Luca Patel
+Gender: Male
+Date of Birth: 1992-01-09
+Address: 520 Admiralty Avenue, Denver, CO 48254, USA
+Email: luca.patel92@inboxmail.net
+Phone: +39-439-333-2091
+Target Role: Backend Developer
+
+Professional Summary:
+Backend Developer with 10+ years of experience delivering reliable technical solutions and measurable business impact. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Master of Science — Information Technology — Trinity College Dublin — 2015
+
+Experience:
+Backend Developer — Blue Dynamics — Denver, CO — 2016-12 to 2019-08
+
+* Improved reliability of core backend services handling business-critical traffic.
+* Designed service integrations used across multiple product teams.
+* Reduced API response time by 14% through query and caching improvements.
+
+Backend Engineer — Nova Analytics — Denver, CO — 2020-11 to 2023-07
+
+* Designed service integrations used across multiple product teams.
+* Improved reliability of core backend services handling business-critical traffic.
+
+Senior Backend Developer — Signal Works — Denver, CO — 2024-04 to Present
+
+* Expanded automated test coverage for payment and account workflows.
+* Designed service integrations used across multiple product teams.
+
+Skills:
+Technical: REST APIs, Java, Docker, Redis, PostgreSQL
+Methods: API design, Root cause analysis, Performance tuning, System design, Unit testing, Microservices
+Management: Task estimation, Code review, Collaboration, Technical communication
+
+Languages:
+English — C2
+
+Certifications:
+Scrum Fundamentals Certified
+ITIL Foundation
+Oracle Java Certification

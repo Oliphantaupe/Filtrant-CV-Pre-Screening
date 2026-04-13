@@ -1,0 +1,41 @@
+Name: Anna Dubois
+Gender: Female
+Date of Birth: 1987-02-24
+Address: 137 Linden Street, 59176 Dublin, Ireland
+Email: anna.dubois87@email.com
+Phone: +91-758-588-1634
+Target Role: Backend Developer
+
+Professional Summary:
+Backend Developer focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Master of Science — Information Technology — University of Warsaw — 2013
+
+Experience:
+Backend Developer — Vector Insight — Dublin, Ireland — 2015-11 to 2018-02
+
+* Designed service integrations used across multiple product teams.
+* Reduced API response time by 26% through query and caching improvements.
+
+Backend Engineer — Core Platform — Dublin, Ireland — 2019-12 to 2022-03
+
+* Expanded automated test coverage for payment and account workflows.
+* Improved reliability of core backend services handling business-critical traffic.
+
+Senior Backend Developer — Quantum Solutions — Dublin, Ireland — 2023-09 to Present
+
+* Reduced API response time by 13% through query and caching improvements.
+* Expanded automated test coverage for payment and account workflows.
+
+Skills:
+Technical: Go, Notion, REST APIs, Jira, Redis, Python, Java, Docker
+Methods: API design, Performance tuning, System design, Unit testing
+Management: Technical communication, Code review
+
+Languages:
+English — C1
+French — C2
+
+Certifications:
+Oracle Java Certification

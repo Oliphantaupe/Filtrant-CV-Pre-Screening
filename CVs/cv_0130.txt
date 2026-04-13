@@ -1,0 +1,38 @@
+Name: Isla Garcia
+Gender: Female
+Date of Birth: 1997-10-05
+Address: 465 Riverside Street, 13700 Bengaluru, India
+Email: isla.garcia97@mailhub.com
+Phone: +31-823-831-9672
+Target Role: Cybersecurity Analyst
+
+Professional Summary:
+Analytical professional targeting Cybersecurity Analyst opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Known for clear communication, structured problem solving, and strong execution in fast-moving environments.
+
+Education:
+Bachelor of Science — Information Security — University of Bonn — 2018
+
+Experience:
+Cybersecurity Analyst — Atlas Analytics — Bengaluru, India — 2019-05 to 2022-02
+
+* Reduced mean time to detect by 18% through stronger alert triage.
+* Supported incident investigations with structured evidence collection.
+
+Security Analyst — Signal Labs — Bengaluru, India — 2023-02 to Present
+
+* Improved vulnerability remediation reporting across infrastructure teams.
+* Reduced mean time to detect by 13% through stronger alert triage.
+
+Skills:
+Technical: SIEM, Bash, Splunk, Vulnerability scanning
+Methods: Log analysis, Problem solving, Risk assessment, Threat analysis, Security monitoring
+Management: Incident communication, Cross-team coordination, Policy awareness, Documentation
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+GIAC Security Essentials
+Professional Scrum Master I
+Google Data Analytics Certificate

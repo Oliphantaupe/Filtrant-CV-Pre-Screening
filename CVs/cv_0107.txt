@@ -1,0 +1,33 @@
+Name: Daniel Fischer
+Gender: Male
+Date of Birth: 1989-07-07
+Address: 872 Birch Street, 64454 Dublin, Ireland
+Email: daniel.fischer89@email.com
+Phone: +353-874-293-6407
+Target Role: Frontend Developer
+
+Professional Summary:
+Analytical professional targeting Frontend Developer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Bachelor of Arts — Information Technology — Trinity College Dublin — 2016
+
+Experience:
+Senior Frontend Developer — Vector Platform — Dublin, Ireland — 2018-09 to Present
+
+* Built reusable component libraries that accelerated feature delivery.
+* Reduced UI defects through stronger test automation and QA collaboration.
+
+Skills:
+Technical: HTML, JavaScript, CSS, Testing Library, TypeScript
+Methods: Accessibility, Component architecture, Performance optimization, State management
+Management: Sprint planning, Requirement clarification, Design collaboration
+
+Languages:
+English — C1
+Italian — B2
+
+Certifications:
+Scrum Fundamentals Certified
+Google Data Analytics Certificate
+Professional Scrum Master I

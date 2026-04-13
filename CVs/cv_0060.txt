@@ -1,0 +1,44 @@
+Name: Arjun Hassan
+Gender: Male
+Date of Birth: 1990-04-05
+Address: 741 Maple Street, 38272 Lagos, Nigeria
+Email: arjun.hassan90@inboxmail.net
+Phone: +33-319-323-5851
+Target Role: Backend Developer
+
+Professional Summary:
+Analytical professional targeting Backend Developer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Science — Software Engineering — University of Warsaw — 2018
+
+Experience:
+Backend Developer — Data Systems — Lagos, Nigeria — 2020-07 to 2022-07
+
+* Designed service integrations used across multiple product teams.
+* Expanded automated test coverage for payment and account workflows.
+* Improved reliability of core backend services handling business-critical traffic.
+
+Software Developer — Signal Systems — Lagos, Nigeria — 2023-04 to 2024-04
+
+* Designed service integrations used across multiple product teams.
+* Expanded automated test coverage for payment and account workflows.
+
+Backend Engineer — Nova Networks — Lagos, Nigeria — 2025-08 to Present
+
+* Expanded automated test coverage for payment and account workflows.
+* Designed service integrations used across multiple product teams.
+* Improved reliability of core backend services handling business-critical traffic.
+* Reduced API response time by 13% through query and caching improvements.
+
+Skills:
+Technical: REST APIs, Linux, Python, Go
+Methods: API design, Performance tuning, Unit testing, System design
+Management: Code review, Task estimation, Technical communication, Collaboration
+
+Languages:
+English — C1
+Italian — B2
+
+Certifications:
+Oracle Java Certification

@@ -1,0 +1,44 @@
+Name: Hannah Patel
+Gender: Female
+Date of Birth: 1992-06-25
+Address: 478 Birch Avenue, Denver, CO 56735, USA
+Email: hannah.patel92@inboxmail.net
+Phone: +353-546-917-5057
+Target Role: Software Engineer
+
+Professional Summary:
+Analytical professional targeting Software Engineer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Used to learning new tools quickly when projects require broader technical coverage.
+
+Education:
+Master of Science — Software Engineering — University of Lagos — 2013
+
+Experience:
+Software Engineer — Vector Dynamics — Denver, CO — 2015-08 to 2018-10
+
+* Maintained core application modules with strong uptime and defect control.
+* Contributed to CI/CD and release quality across multiple services.
+
+Software Developer — Data Tech — Denver, CO — 2019-04 to 2022-07
+
+* Collaborated on architectural improvements for long-term scalability.
+* Maintained core application modules with strong uptime and defect control.
+
+Senior Software Engineer — Core Analytics — Denver, CO — 2023-11 to Present
+
+* Collaborated on architectural improvements for long-term scalability.
+* Contributed to CI/CD and release quality across multiple services.
+* Maintained core application modules with strong uptime and defect control.
+
+Skills:
+Technical: C#, Git, Docker
+Methods: Agile delivery, System integration, Debugging, Object-oriented design, Testing
+Management: Planning, Mentoring, Collaboration
+
+Languages:
+English — C2
+
+Certifications:
+Azure Developer Associate
+Google Data Analytics Certificate
+AWS Certified Developer
+Scrum Fundamentals Certified

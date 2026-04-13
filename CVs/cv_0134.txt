@@ -1,0 +1,46 @@
+Name: Aisha Silva
+Gender: Female
+Date of Birth: 1986-04-07
+Address: 662 Cedar Street, 11716 Amsterdam, Netherlands
+Email: aisha.silva86@email.com
+Phone: +31-921-658-2561
+Target Role: Data Scientist
+
+Professional Summary:
+Analytical professional targeting Data Scientist opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Master of Science — Data Science — University of Texas at Austin — 2015
+
+Experience:
+Data Scientist — Cloud Insight — Amsterdam, Netherlands — 2015-06 to 2018-07
+
+* Translated ambiguous business questions into measurable ML experiments.
+* Improved model accuracy by 34% on a customer behavior prediction use case.
+* Delivered experimentation frameworks used to prioritize product changes.
+* Built production-ready models with monitoring for drift and data quality.
+
+Junior Data Scientist — Quantum Insight — Amsterdam, Netherlands — 2019-07 to 2022-01
+
+* Translated ambiguous business questions into measurable ML experiments.
+* Improved model accuracy by 14% on a customer behavior prediction use case.
+
+Senior Data Scientist — Signal Labs — Amsterdam, Netherlands — 2023-04 to Present
+
+* Translated ambiguous business questions into measurable ML experiments.
+* Built production-ready models with monitoring for drift and data quality.
+* Improved model accuracy by 14% on a customer behavior prediction use case.
+* Delivered experimentation frameworks used to prioritize product changes.
+
+Skills:
+Technical: SQL, scikit-learn, Pandas, TensorFlow, PyTorch, Python
+Methods: Model validation, Feature engineering, Experiment design
+Management: Cross-functional communication, Stakeholder alignment, Task coordination, Mentoring, Project planning
+
+Languages:
+English — C1
+German — C2
+
+Certifications:
+Google Data Analytics Certificate
+AWS Certified Machine Learning

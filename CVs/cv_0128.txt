@@ -1,0 +1,43 @@
+Name: Daniel Petrov
+Gender: Male
+Date of Birth: 1987-06-18
+Address: 99 Birch Street, 92720 Lisbon, Portugal
+Email: daniel.petrov87@mailhub.com
+Phone: +234-768-402-4343
+Target Role: Software Engineer
+
+Professional Summary:
+Software Engineer focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones.
+
+Education:
+Master of Science — Computer Science — University of Bonn — 2014
+
+Experience:
+Software Engineer — North Solutions — Lisbon, Portugal — 2016-02 to 2019-05
+
+* Delivered software features that improved internal process efficiency by 29%.
+* Maintained core application modules with strong uptime and defect control.
+* Collaborated on architectural improvements for long-term scalability.
+* Contributed to CI/CD and release quality across multiple services.
+
+Software Developer — Signal Platform — Lisbon, Portugal — 2020-05 to 2023-07
+
+* Delivered software features that improved internal process efficiency by 22%.
+* Maintained core application modules with strong uptime and defect control.
+
+Senior Software Engineer — Quantum Systems — Lisbon, Portugal — 2024-06 to Present
+
+* Collaborated on architectural improvements for long-term scalability.
+* Delivered software features that improved internal process efficiency by 21%.
+
+Skills:
+Technical: REST APIs, SQL, Python
+Methods: System integration, Debugging, Object-oriented design, Agile delivery, Testing
+Management: Communication, Planning, Mentoring, Task coordination
+
+Languages:
+English — C1
+Italian — B2
+
+Certifications:
+Professional Scrum Master I

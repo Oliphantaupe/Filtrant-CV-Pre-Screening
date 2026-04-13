@@ -1,0 +1,31 @@
+Name: Victor Dubois
+Gender: Male
+Date of Birth: 1996-02-19
+Address: 680 Oakridge Street, 79520 Lyon, France
+Email: victor.dubois96@mailhub.com
+Phone: +234-593-984-4430
+Target Role: Software Engineer
+
+Professional Summary:
+Analytical professional targeting Software Engineer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Science — Information Systems — University of Lagos — 2020
+
+Experience:
+Software Developer — Atlas Analytics — Lyon, France — 2021-12 to Present
+
+* Delivered software features that improved internal process efficiency by 20%.
+* Maintained core application modules with strong uptime and defect control.
+
+Skills:
+Technical: Confluence, Python, Excel, Git, Docker
+Methods: Agile delivery, Object-oriented design, System integration, Debugging, Testing
+Management: Teamwork, Mentoring, Planning
+
+Languages:
+English — C1
+Italian — B2
+
+Certifications:
+AWS Certified Developer

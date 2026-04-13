@@ -1,0 +1,39 @@
+Name: Zoe Santos
+Gender: Female
+Date of Birth: 1996-03-20
+Address: 122 Birch Street, 93630 Lagos, Nigeria
+Email: zoe.santos96@mailhub.com
+Phone: +351-377-332-3070
+Target Role: ML Engineer
+
+Professional Summary:
+ML Engineer focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Comfortable contributing in environments with evolving priorities and shared ownership.
+
+Education:
+Bachelor of Science — Software Engineering — University of Lagos — 2020
+
+Experience:
+ML Engineer — Signal Analytics — Lagos, Nigeria — 2021-07 to 2023-11
+
+* Operationalized training and inference workflows for multiple production models.
+* Reduced model deployment time by 12% by standardizing CI/CD pipelines.
+* Partnered with data scientists to convert prototypes into resilient services.
+* Improved observability for inference latency and feature freshness.
+
+Machine Learning Engineer — Core Analytics — Lagos, Nigeria — 2024-12 to Present
+
+* Operationalized training and inference workflows for multiple production models.
+* Improved observability for inference latency and feature freshness.
+* Reduced model deployment time by 15% by standardizing CI/CD pipelines.
+
+Skills:
+Technical: AWS, MLflow, TensorFlow
+Methods: Feature stores, Monitoring, Model deployment, CI/CD
+Management: Sprint planning, Technical mentoring, Roadmap communication, Collaboration
+
+Languages:
+English — C1
+French — C2
+
+Certifications:
+CKA

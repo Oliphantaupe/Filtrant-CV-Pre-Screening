@@ -1,0 +1,49 @@
+Name: Nora Popescu
+Gender: Female
+Date of Birth: 1991-08-07
+Address: 569 Maple Street, 94950 Dublin, Ireland
+Email: nora.popescu91@email.com
+Phone: +353-769-464-2249
+Target Role: Frontend Developer
+
+Professional Summary:
+Professional pursuing Frontend Developer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Arts — Human-Computer Interaction — University of Lisbon — 2017
+
+Experience:
+Frontend Developer — Quantum Works — Dublin, Ireland — 2019-04 to 2021-08
+
+* Reduced UI defects through stronger test automation and QA collaboration.
+* Built reusable component libraries that accelerated feature delivery.
+* Improved page performance scores by 23% across key user journeys.
+* Partnered with designers to deliver accessible interfaces at scale.
+
+UI Developer — Cloud Solutions — Dublin, Ireland — 2022-04 to 2024-12
+
+* Partnered with designers to deliver accessible interfaces at scale.
+* Reduced UI defects through stronger test automation and QA collaboration.
+* Built reusable component libraries that accelerated feature delivery.
+* Improved page performance scores by 21% across key user journeys.
+
+Frontend Engineer — Blue Works — Dublin, Ireland — 2025-11 to Present
+
+* Built reusable component libraries that accelerated feature delivery.
+* Partnered with designers to deliver accessible interfaces at scale.
+* Reduced UI defects through stronger test automation and QA collaboration.
+
+Skills:
+Technical: Bash, CSS, Linux, Next.js, Testing Library
+Methods: Accessibility, Component architecture, Documentation, Responsive design, Performance optimization, State management
+Management: Sprint planning, Design collaboration
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+Google Data Analytics Certificate
+Scrum Fundamentals Certified
+Professional Scrum Master I
+Meta Front-End Developer

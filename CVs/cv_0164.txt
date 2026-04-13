@@ -1,0 +1,38 @@
+Name: Elena Costa
+Gender: Female
+Date of Birth: 1996-04-01
+Address: 684 Park Avenue, Denver, CO 98916, USA
+Email: elena.costa96@inboxmail.net
+Phone: +351-371-874-1945
+Target Role: Backend Developer
+
+Professional Summary:
+Technology specialist with 5+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning. Comfortable contributing in environments with evolving priorities and shared ownership.
+
+Education:
+Master of Science — Computer Science — University of Lagos — 2019
+
+Experience:
+Backend Developer — Vector Tech — Denver, CO — 2021-06 to 2023-05
+
+* Expanded automated test coverage for payment and account workflows.
+* Reduced API response time by 26% through query and caching improvements.
+* Improved reliability of core backend services handling business-critical traffic.
+
+Backend Engineer — Quantum Networks — Denver, CO — 2024-10 to Present
+
+* Improved reliability of core backend services handling business-critical traffic.
+* Reduced API response time by 14% through query and caching improvements.
+* Expanded automated test coverage for payment and account workflows.
+
+Skills:
+Technical: API integration, Docker, Java, Python, Jira
+Methods: API design, System design, Microservices
+Management: Stakeholder updates, Task estimation, Technical communication
+
+Languages:
+English — C2
+German — B1
+
+Certifications:
+None listed

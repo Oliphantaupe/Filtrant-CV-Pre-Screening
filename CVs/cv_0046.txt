@@ -1,0 +1,32 @@
+Name: Luca Garcia
+Gender: Male
+Date of Birth: 2004-04-15
+Address: 716 Hillview Street, 99113 Lagos, Nigeria
+Email: luca.garcia04@email.com
+Phone: +48-513-910-9185
+Target Role: Software Engineer
+
+Professional Summary:
+Technology specialist with 1+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Bachelor of Science — Information Systems — University of Warsaw — 2025
+
+Experience:
+Software Engineer — North Tech — Lagos, Nigeria — 2025-08 to Present
+
+* Delivered software features that improved internal process efficiency by 16%.
+* Collaborated on architectural improvements for long-term scalability.
+* Maintained core application modules with strong uptime and defect control.
+
+Skills:
+Technical: Python, C#, Git, SQL, REST APIs, Docker
+Methods: System integration, Testing, Object-oriented design, Agile delivery, Debugging
+Management: Collaboration, Mentoring, Communication, Planning
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+None listed

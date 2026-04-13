@@ -1,0 +1,34 @@
+Name: Leila Liu
+Gender: Female
+Date of Birth: 2000-12-22
+Address: 669 Riverside Street, 68478 Dublin, Ireland
+Email: leila.liu00@email.com
+Phone: +234-498-250-3094
+Target Role: Product Analyst
+
+Professional Summary:
+Product Analyst with 1+ years of experience delivering reliable technical solutions and measurable business impact. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones.
+
+Education:
+Master of Science — Business Analytics — University of Lisbon — 2023
+
+Experience:
+Product Analyst — Cloud Analytics — Dublin, Ireland — 2025-08 to Present
+
+* Identified product funnel bottlenecks and improved conversion by 26%.
+* Defined self-serve metrics for feature adoption and retention analysis.
+* Connected product analytics findings to roadmap prioritization decisions.
+* Built experiment readouts used by product and design leadership.
+
+Skills:
+Technical: Excel, Python, Tableau
+Methods: Product metrics, Cohort analysis, Funnel analysis, User behavior analysis, Experimentation, Documentation
+Management: Communication, Planning, Stakeholder alignment
+
+Languages:
+English — C2
+German — B1
+
+Certifications:
+ITIL Foundation
+AWS Cloud Practitioner

@@ -1,0 +1,31 @@
+Name: Eva Bianchi
+Gender: Female
+Date of Birth: 1990-09-10
+Address: 906 Pinecrest Avenue, Austin, TX 64401, USA
+Email: eva.bianchi90@email.com
+Phone: +49-275-315-4881
+Target Role: Data Analyst
+
+Professional Summary:
+Data Analyst focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones.
+
+Education:
+Master of Science — Applied Mathematics — Politecnico di Milano — 2013
+
+Experience:
+Senior Data Analyst — Data Solutions — Austin, TX — 2014-09 to Present
+
+* Built weekly KPI reports adopted by finance and commercial teams.
+* Validated source data quality and reduced recurring discrepancies across reports.
+
+Skills:
+Technical: Python, Agile tools, Excel, Tableau
+Methods: Data visualization, Regression analysis, A/B testing
+Management: Requirement gathering, Stakeholder communication, Prioritization
+
+Languages:
+English — C1
+German — C2
+
+Certifications:
+Tableau Desktop Specialist

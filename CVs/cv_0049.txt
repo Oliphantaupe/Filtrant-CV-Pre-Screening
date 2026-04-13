@@ -1,0 +1,46 @@
+Name: Omar Petrov
+Gender: Male
+Date of Birth: 1995-08-09
+Address: 204 Linden Street, 59887 Warsaw, Poland
+Email: omar.petrov95@email.com
+Phone: +31-318-519-1056
+Target Role: Cybersecurity Analyst
+
+Professional Summary:
+Technology specialist with 8+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning. Comfortable contributing in environments with evolving priorities and shared ownership.
+
+Education:
+Master of Science — Network Engineering — University of Texas at Austin — 2018
+
+Experience:
+Cybersecurity Analyst — Nova Platform — Warsaw, Poland — 2018-05 to 2020-04
+
+* Supported incident investigations with structured evidence collection.
+* Hardened access controls and baseline monitoring practices.
+* Improved vulnerability remediation reporting across infrastructure teams.
+* Reduced mean time to detect by 30% through stronger alert triage.
+
+Security Analyst — Blue Insight — Warsaw, Poland — 2021-12 to 2023-04
+
+* Hardened access controls and baseline monitoring practices.
+* Supported incident investigations with structured evidence collection.
+
+Senior Cybersecurity Analyst — Nova Tech — Warsaw, Poland — 2024-02 to Present
+
+* Improved vulnerability remediation reporting across infrastructure teams.
+* Supported incident investigations with structured evidence collection.
+
+Skills:
+Technical: SIEM, IAM, Linux, Python, Splunk, Vulnerability scanning
+Methods: Security monitoring, Threat analysis, Risk assessment, Incident response, Log analysis
+Management: Cross-team coordination, Policy awareness, Documentation
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+Scrum Fundamentals Certified
+CompTIA Security+
+ITIL Foundation
+GIAC Security Essentials

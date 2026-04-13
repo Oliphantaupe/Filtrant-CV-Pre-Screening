@@ -1,0 +1,33 @@
+Name: Mina Liu
+Gender: Female
+Date of Birth: 1990-08-23
+Address: 15 Birch Street, 82614 Bengaluru, India
+Email: mina.liu90@email.com
+Phone: +49-516-331-7998
+Target Role: Software Engineer
+
+Professional Summary:
+Software Engineer with 10+ years of experience delivering reliable technical solutions and measurable business impact. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Master of Science — Software Engineering — University of Amsterdam — 2014
+
+Experience:
+Senior Software Engineer — Nova Tech — Bengaluru, India — 2016-12 to Present
+
+* Maintained core application modules with strong uptime and defect control.
+* Delivered software features that improved internal process efficiency by 23%.
+* Collaborated on architectural improvements for long-term scalability.
+
+Skills:
+Technical: ETL basics, Git, C#, Docker, SQL, REST APIs
+Methods: System integration, Debugging, Testing
+Management: Planning, Mentoring, Communication, Collaboration
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+Professional Scrum Master I
+Azure Developer Associate

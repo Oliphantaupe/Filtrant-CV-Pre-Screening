@@ -1,0 +1,46 @@
+Name: Samuel Liu
+Gender: Male
+Date of Birth: 1997-11-02
+Address: 679 Riverside Avenue, Denver, CO 30717, USA
+Email: samuel.liu97@inboxmail.net
+Phone: +351-720-271-7013
+Target Role: DevOps Engineer
+
+Professional Summary:
+DevOps Engineer with 7+ years of experience delivering reliable technical solutions and measurable business impact. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Used to learning new tools quickly when projects require broader technical coverage.
+
+Education:
+Bachelor of Science — Information Systems — University of Warsaw — 2019
+
+Experience:
+DevOps Engineer — Data Insight — Denver, CO — 2019-03 to 2021-08
+
+* Improved platform reliability with stronger observability and runbooks.
+* Standardized infrastructure provisioning across environments.
+* Reduced release lead time by 30% through CI/CD automation.
+* Supported engineering teams during incidents and postmortem actions.
+
+Cloud Engineer — Signal Platform — Denver, CO — 2022-08 to 2024-01
+
+* Reduced release lead time by 34% through CI/CD automation.
+* Standardized infrastructure provisioning across environments.
+* Improved platform reliability with stronger observability and runbooks.
+* Supported engineering teams during incidents and postmortem actions.
+
+Platform Engineer — Nova Networks — Denver, CO — 2025-12 to Present
+
+* Standardized infrastructure provisioning across environments.
+* Supported engineering teams during incidents and postmortem actions.
+* Reduced release lead time by 34% through CI/CD automation.
+
+Skills:
+Technical: AWS, Confluence, GitHub Actions, Kubernetes, Docker, Terraform, Linux
+Methods: CI/CD, Automation, Incident response, Infrastructure as code, Monitoring
+Management: Documentation, Communication, Technical mentoring, Collaboration
+
+Languages:
+English — C1
+Italian — B2
+
+Certifications:
+AWS Certified SysOps Administrator

@@ -1,0 +1,46 @@
+Name: Clara Okafor
+Gender: Female
+Date of Birth: 1989-09-19
+Address: 40 Hillview Street, 20090 Lyon, France
+Email: clara.okafor89@email.com
+Phone: +31-877-331-4286
+Target Role: Data Analyst
+
+Professional Summary:
+Data Analyst focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Master of Science — Data Analytics — Trinity College Dublin — 2014
+
+Experience:
+Junior Data Analyst — Atlas Systems — Lyon, France — 2016-06 to 2019-06
+
+* Built weekly KPI reports adopted by finance and commercial teams.
+* Designed analysis workflows that reduced data preparation time by 18%.
+* Improved reporting efficiency by 16% through dashboard automation.
+
+Data Analyst — Nova Solutions — Lyon, France — 2020-12 to 2023-05
+
+* Improved reporting efficiency by 14% through dashboard automation.
+* Designed analysis workflows that reduced data preparation time by 26%.
+* Validated source data quality and reduced recurring discrepancies across reports.
+
+Senior Data Analyst — Data Analytics — Lyon, France — 2024-06 to Present
+
+* Designed analysis workflows that reduced data preparation time by 18%.
+* Improved reporting efficiency by 20% through dashboard automation.
+
+Skills:
+Technical: R, Excel, REST APIs, SQL, API integration, Tableau
+Methods: Regression analysis, Data visualization, KPI tracking, A/B testing
+Management: Project coordination, Requirement gathering, Prioritization, Stakeholder communication
+
+Languages:
+English — C2
+German — B1
+
+Certifications:
+Scrum Fundamentals Certified
+Tableau Desktop Specialist
+Certified Analytics Professional
+Professional Scrum Master I

@@ -1,0 +1,49 @@
+Name: Daniel Schneider
+Gender: Male
+Date of Birth: 1990-11-08
+Address: 116 Riverside Avenue, Seattle, WA 70533, USA
+Email: daniel.schneider90@mailhub.com
+Phone: +353-749-754-3614
+Target Role: ML Engineer
+
+Professional Summary:
+Analytical professional targeting ML Engineer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones.
+
+Education:
+Master of Science — Software Engineering — University of Texas at Austin — 2012
+
+Experience:
+ML Engineer — Vector Platform — Seattle, WA — 2013-02 to 2017-08
+
+* Operationalized training and inference workflows for multiple production models.
+* Reduced model deployment time by 24% by standardizing CI/CD pipelines.
+* Improved observability for inference latency and feature freshness.
+* Partnered with data scientists to convert prototypes into resilient services.
+
+Machine Learning Engineer — Cloud Insight — Seattle, WA — 2018-10 to 2022-09
+
+* Operationalized training and inference workflows for multiple production models.
+* Improved observability for inference latency and feature freshness.
+* Partnered with data scientists to convert prototypes into resilient services.
+* Reduced model deployment time by 21% by standardizing CI/CD pipelines.
+
+Senior ML Engineer — Core Platform — Seattle, WA — 2023-02 to Present
+
+* Improved observability for inference latency and feature freshness.
+* Reduced model deployment time by 18% by standardizing CI/CD pipelines.
+* Partnered with data scientists to convert prototypes into resilient services.
+
+Skills:
+Technical: TensorFlow, Python, AWS, PyTorch, Docker
+Methods: Monitoring, Model deployment, MLOps, CI/CD, Feature stores
+Management: Collaboration, Technical mentoring
+
+Languages:
+English — C1
+Italian — B2
+
+Certifications:
+Scrum Fundamentals Certified
+AWS Certified Machine Learning
+CKA
+Google Data Analytics Certificate

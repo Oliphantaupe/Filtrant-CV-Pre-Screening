@@ -1,0 +1,30 @@
+Name: Lucia Rossi
+Gender: Female
+Date of Birth: 1992-07-14
+Address: 682 Park Avenue, Austin, TX 90453, USA
+Email: lucia.rossi92@inboxmail.net
+Phone: +1-334-179-4004
+Target Role: Backend Developer
+
+Professional Summary:
+Professional pursuing Backend Developer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones.
+
+Education:
+Master of Science — Software Engineering — Trinity College Dublin — 2018
+
+Experience:
+Senior Backend Developer — Blue Insight — Austin, TX — 2018-05 to Present
+
+* Improved reliability of core backend services handling business-critical traffic.
+* Expanded automated test coverage for payment and account workflows.
+
+Skills:
+Technical: PostgreSQL, Java, Go, Python, Redis, Docker
+Methods: Performance tuning, API design, System design, Microservices
+Management: Technical communication, Code review, Collaboration, Task estimation
+
+Languages:
+English — C2
+
+Certifications:
+AWS Certified Developer

@@ -1,0 +1,32 @@
+Name: Isla Okafor
+Gender: Female
+Date of Birth: 2002-12-19
+Address: 460 Maple Street, 43460 Lisbon, Portugal
+Email: isla.okafor02@inboxmail.net
+Phone: +234-922-198-6819
+Target Role: QA Engineer
+
+Professional Summary:
+QA Engineer with 2+ years of experience delivering reliable technical solutions and measurable business impact. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Bachelor of Science — Information Technology — University of Lagos — 2023
+
+Experience:
+QA Engineer — Vector Works — Lisbon, Portugal — 2024-06 to Present
+
+* Improved release readiness through clearer test reporting.
+* Partnered with developers to reproduce and isolate production issues.
+* Developed automation suites for critical API and UI flows.
+
+Skills:
+Technical: API testing, Python, Cypress, Postman, Documentation, Selenium, Jira
+Methods: Test automation, Test planning, Defect tracking, Regression testing
+Management: Cross-team coordination, Documentation, Prioritization
+
+Languages:
+English — C1
+German — C2
+
+Certifications:
+None listed

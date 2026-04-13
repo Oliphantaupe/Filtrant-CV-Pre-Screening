@@ -1,0 +1,33 @@
+Name: David Popescu
+Gender: Male
+Date of Birth: 1992-03-06
+Address: 785 Birch Avenue, Seattle, WA 81471, USA
+Email: david.popescu92@email.com
+Phone: +48-476-587-3840
+Target Role: Data Scientist
+
+Professional Summary:
+Professional pursuing Data Scientist opportunities with exposure to production environments, team delivery, and measurable operational improvements. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Science — Machine Learning — University of Lisbon — 2017
+
+Experience:
+Junior Data Scientist — Core Networks — Seattle, WA — 2019-09 to Present
+
+* Improved model accuracy by 32% on a customer behavior prediction use case.
+* Built production-ready models with monitoring for drift and data quality.
+* Translated ambiguous business questions into measurable ML experiments.
+
+Skills:
+Technical: Python, Spark, SQL, scikit-learn
+Methods: Feature engineering, Model validation, Experiment design, Forecasting
+Management: Mentoring, Project planning, Stakeholder alignment, Cross-functional communication
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+Google Professional Data Engineer
+AWS Certified Machine Learning

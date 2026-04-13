@@ -1,0 +1,46 @@
+Name: Nadia Dubois
+Gender: Female
+Date of Birth: 1986-03-07
+Address: 188 Riverside Street, 98431 Warsaw, Poland
+Email: nadia.dubois86@email.com
+Phone: +49-236-607-4052
+Target Role: Cybersecurity Analyst
+
+Professional Summary:
+Cybersecurity Analyst focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Has supported mentoring, planning, and coordination activities alongside individual technical work. Brings a practical approach to delivery, prioritization, and collaboration across teams.
+
+Education:
+Bachelor of Science — Network Engineering — University of Lisbon — 2013
+
+Experience:
+Cybersecurity Analyst — Vector Tech — Warsaw, Poland — 2014-03 to 2018-07
+
+* Reduced mean time to detect by 24% through stronger alert triage.
+* Supported incident investigations with structured evidence collection.
+* Improved vulnerability remediation reporting across infrastructure teams.
+
+Security Analyst — Atlas Labs — Warsaw, Poland — 2019-10 to 2022-08
+
+* Supported incident investigations with structured evidence collection.
+* Reduced mean time to detect by 32% through stronger alert triage.
+* Hardened access controls and baseline monitoring practices.
+* Improved vulnerability remediation reporting across infrastructure teams.
+
+Senior Cybersecurity Analyst — Nova Labs — Warsaw, Poland — 2023-04 to Present
+
+* Hardened access controls and baseline monitoring practices while coordinating work across engineers and analysts.
+* Supported incident investigations with structured evidence collection while coordinating work across engineers and analysts.
+* Reduced mean time to detect by 33% through stronger alert triage.
+* Improved vulnerability remediation reporting across infrastructure teams while coordinating work across engineers and analysts.
+
+Skills:
+Technical: IAM, Linux, Splunk, Vulnerability scanning
+Methods: Risk assessment, Threat analysis, Incident response, Security monitoring
+Management: Cross-team coordination, Documentation, Policy awareness
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+None listed

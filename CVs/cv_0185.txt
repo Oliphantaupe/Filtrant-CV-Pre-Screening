@@ -1,0 +1,32 @@
+Name: David Silva
+Gender: Male
+Date of Birth: 1984-09-11
+Address: 314 Park Street, 26508 Lagos, Nigeria
+Email: david.silva84@mailhub.com
+Phone: +31-642-863-4755
+Target Role: DevOps Engineer
+
+Professional Summary:
+DevOps Engineer with 10+ years of experience delivering reliable technical solutions and measurable business impact. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Bachelor of Science — Information Systems — Indian Institute of Technology Delhi — 2014
+
+Experience:
+Senior DevOps Engineer — Quantum Solutions — Lagos, Nigeria — 2016-08 to Present
+
+* Improved platform reliability with stronger observability and runbooks.
+* Reduced release lead time by 12% through CI/CD automation.
+
+Skills:
+Technical: Docker, GitHub Actions, Linux
+Methods: Monitoring, Infrastructure as code, Incident response, Automation, CI/CD
+Management: Collaboration, Documentation, Incident coordination, Technical mentoring
+
+Languages:
+English — C1
+French — C2
+
+Certifications:
+HashiCorp Terraform Associate
+AWS Certified SysOps Administrator

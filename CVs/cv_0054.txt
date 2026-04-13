@@ -1,0 +1,47 @@
+Name: Clara Rossi
+Gender: Female
+Date of Birth: 1986-11-17
+Address: 496 Cedar Avenue, Seattle, WA 56240, USA
+Email: clara.rossi86@inboxmail.net
+Phone: +49-551-298-6783
+Target Role: ML Engineer
+
+Professional Summary:
+Professional pursuing ML Engineer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Science — Artificial Intelligence — University of Warsaw — 2014
+
+Experience:
+ML Engineer — Atlas Tech — Seattle, WA — 2015-08 to 2018-05
+
+* Operationalized training and inference workflows for multiple production models.
+* Partnered with data scientists to convert prototypes into resilient services.
+* Improved observability for inference latency and feature freshness.
+* Reduced model deployment time by 27% by standardizing CI/CD pipelines.
+
+Machine Learning Engineer — Blue Networks — Seattle, WA — 2019-12 to 2022-07
+
+* Improved observability for inference latency and feature freshness.
+* Operationalized training and inference workflows for multiple production models.
+* Partnered with data scientists to convert prototypes into resilient services.
+* Reduced model deployment time by 33% by standardizing CI/CD pipelines.
+
+Senior ML Engineer — Quantum Networks — Seattle, WA — 2023-03 to Present
+
+* Reduced model deployment time by 28% by standardizing CI/CD pipelines.
+* Operationalized training and inference workflows for multiple production models.
+* Partnered with data scientists to convert prototypes into resilient services.
+* Improved observability for inference latency and feature freshness.
+
+Skills:
+Technical: AWS, TensorFlow, Kubernetes, PyTorch, Docker, Python
+Methods: Model deployment, Root cause analysis, Feature stores, MLOps, CI/CD
+Management: Roadmap communication, Sprint planning, Collaboration, Technical mentoring
+
+Languages:
+English — C2
+German — B1
+
+Certifications:
+AWS Certified Machine Learning

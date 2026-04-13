@@ -1,0 +1,46 @@
+Name: Ethan Liu
+Gender: Male
+Date of Birth: 1991-03-07
+Address: 189 Cedar Street, 85846 Milan, Italy
+Email: ethan.liu91@email.com
+Phone: +1-525-137-7365
+Target Role: BI Developer
+
+Professional Summary:
+BI Developer with 11+ years of experience delivering reliable technical solutions and measurable business impact. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Science — Computer Science — Trinity College Dublin — 2013
+
+Experience:
+BI Developer — Blue Insight — Milan, Italy — 2015-01 to 2018-05
+
+* Translated stakeholder requests into reusable metrics and semantic layers.
+* Partnered with analysts to validate business definitions across domains.
+* Improved data refresh reliability and reduced manual reporting effort by 26%.
+* Consolidated fragmented reporting into dashboards used by executives.
+
+Business Intelligence Developer — North Solutions — Milan, Italy — 2019-12 to 2022-03
+
+* Partnered with analysts to validate business definitions across domains.
+* Translated stakeholder requests into reusable metrics and semantic layers.
+* Improved data refresh reliability and reduced manual reporting effort by 22%.
+
+Senior BI Developer — Core Systems — Milan, Italy — 2023-11 to Present
+
+* Improved data refresh reliability and reduced manual reporting effort by 33%.
+* Consolidated fragmented reporting into dashboards used by executives.
+
+Skills:
+Technical: Python, SSIS, SQL, Tableau, DAX, Documentation
+Methods: Dimensional modeling, ETL workflows, KPI definition, Dashboard design
+Management: Documentation, Task coordination, Stakeholder communication
+
+Languages:
+English — C2
+
+Certifications:
+Google Data Analytics Certificate
+Tableau Desktop Specialist
+IBM Data Analyst Professional Certificate
+Professional Scrum Master I

@@ -1,0 +1,44 @@
+Name: Jonas Bianchi
+Gender: Male
+Date of Birth: 1987-06-12
+Address: 906 Hillview Street, 17728 Amsterdam, Netherlands
+Email: jonas.bianchi87@mailhub.com
+Phone: +33-503-315-8186
+Target Role: QA Engineer
+
+Professional Summary:
+Technology specialist with 8+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones.
+
+Education:
+Bachelor of Arts — Software Engineering — Politecnico di Milano — 2016
+
+Experience:
+QA Engineer — Atlas Dynamics — Amsterdam, Netherlands — 2018-05 to 2020-09
+
+* Reduced escaped defects by 18% by expanding regression coverage.
+* Improved release readiness through clearer test reporting.
+
+Test Engineer — Cloud Analytics — Amsterdam, Netherlands — 2021-12 to 2023-08
+
+* Improved release readiness through clearer test reporting.
+* Developed automation suites for critical API and UI flows.
+* Reduced escaped defects by 13% by expanding regression coverage.
+
+Senior QA Engineer — Cloud Platform — Amsterdam, Netherlands — 2024-09 to Present
+
+* Improved release readiness through clearer test reporting.
+* Partnered with developers to reproduce and isolate production issues.
+* Reduced escaped defects by 27% by expanding regression coverage.
+* Developed automation suites for critical API and UI flows.
+
+Skills:
+Technical: Selenium, Cypress, Postman, SQL, API testing
+Methods: Regression testing, Test automation, Quality assurance
+Management: Documentation, Risk communication, Prioritization, Cross-team coordination
+
+Languages:
+English — C2
+Spanish — B2
+
+Certifications:
+ISTQB Foundation Level

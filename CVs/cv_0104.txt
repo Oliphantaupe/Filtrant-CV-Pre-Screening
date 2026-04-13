@@ -1,0 +1,44 @@
+Name: Jonas Santos
+Gender: Male
+Date of Birth: 1991-08-23
+Address: 717 Admiralty Street, 25941 Warsaw, Poland
+Email: jonas.santos91@email.com
+Phone: +39-285-777-7960
+Target Role: Software Engineer
+
+Professional Summary:
+Technology specialist with 8+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones.
+
+Education:
+Bachelor of Science — Computer Science — University of Texas at Austin — 2016
+
+Experience:
+Software Engineer — Cloud Solutions — Warsaw, Poland — 2018-09 to 2020-11
+
+* Delivered software features that improved internal process efficiency by 16%.
+* Collaborated on architectural improvements for long-term scalability.
+* Contributed to CI/CD and release quality across multiple services.
+* Maintained core application modules with strong uptime and defect control.
+
+Software Developer — Cloud Systems — Warsaw, Poland — 2021-12 to 2023-02
+
+* Collaborated on architectural improvements for long-term scalability.
+* Delivered software features that improved internal process efficiency by 23%.
+
+Senior Software Engineer — Core Systems — Warsaw, Poland — 2024-06 to Present
+
+* Collaborated on architectural improvements for long-term scalability.
+* Delivered software features that improved internal process efficiency by 32%.
+
+Skills:
+Technical: SQL, Python, REST APIs, Git, Java
+Methods: System integration, Testing, Debugging, Agile delivery
+Management: Collaboration, Mentoring, Communication
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+AWS Cloud Practitioner
+Professional Scrum Developer

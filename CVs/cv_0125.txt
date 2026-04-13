@@ -1,0 +1,43 @@
+Name: Victor Hassan
+Gender: Male
+Date of Birth: 1983-12-05
+Address: 573 Birch Avenue, Seattle, WA 61027, USA
+Email: victor.hassan83@email.com
+Phone: +353-591-168-4621
+Target Role: ML Engineer
+
+Professional Summary:
+Professional pursuing ML Engineer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Has supported mentoring, planning, and coordination activities alongside individual technical work. Brings a practical approach to delivery, prioritization, and collaboration across teams.
+
+Education:
+Master of Science — Artificial Intelligence — University of Warsaw — 2012
+
+Experience:
+ML Engineer — Blue Dynamics — Seattle, WA — 2013-05 to 2017-04
+
+* Reduced model deployment time by 29% by standardizing CI/CD pipelines while coordinating work across engineers and analysts.
+* Improved observability for inference latency and feature freshness.
+
+Machine Learning Engineer — Cloud Tech — Seattle, WA — 2018-08 to 2022-11
+
+* Improved observability for inference latency and feature freshness.
+* Partnered with data scientists to convert prototypes into resilient services while coordinating work across engineers and analysts.
+* Reduced model deployment time by 19% by standardizing CI/CD pipelines.
+
+Senior ML Engineer — Atlas Analytics — Seattle, WA — 2023-04 to Present
+
+* Partnered with data scientists to convert prototypes into resilient services.
+* Reduced model deployment time by 27% by standardizing CI/CD pipelines.
+* Improved observability for inference latency and feature freshness while coordinating work across engineers and analysts.
+
+Skills:
+Technical: Docker, TensorFlow, PyTorch, Kubernetes, MLflow
+Methods: Model deployment, Problem solving, CI/CD, Monitoring, Feature stores
+Management: Roadmap communication, Technical mentoring
+
+Languages:
+English — C2
+German — B1
+
+Certifications:
+Google Professional Machine Learning Engineer

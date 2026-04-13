@@ -1,0 +1,38 @@
+Name: Julia Novak
+Gender: Female
+Date of Birth: 1991-07-14
+Address: 16 Park Street, 10244 Lyon, France
+Email: julia.novak91@inboxmail.net
+Phone: +91-603-278-8030
+Target Role: Data Engineer
+
+Professional Summary:
+Technology specialist with 6+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Has supported mentoring, planning, and coordination activities alongside individual technical work. Used to learning new tools quickly when projects require broader technical coverage.
+
+Education:
+Master of Science — Computer Science — University of Colorado Boulder — 2019
+
+Experience:
+Data Engineer — Nova Dynamics — Lyon, France — 2020-11 to 2023-03
+
+* Supported analytics and ML teams with curated data models.
+* Cut pipeline runtime by 25% through incremental processing improvements while coordinating work across engineers and analysts.
+* Implemented data quality checks that reduced downstream incidents.
+
+Analytics Engineer — Cloud Analytics — Lyon, France — 2024-01 to Present
+
+* Cut pipeline runtime by 31% through incremental processing improvements while coordinating work across engineers and analysts.
+* Supported analytics and ML teams with curated data models.
+* Implemented data quality checks that reduced downstream incidents while coordinating work across engineers and analysts.
+
+Skills:
+Technical: Python, Airflow, Kafka, dbt
+Methods: Pipeline orchestration, Batch processing, ETL design, Data modeling, Data quality management
+Management: Cross-team coordination, Documentation, Incident communication
+
+Languages:
+English — C2
+
+Certifications:
+AWS Certified Data Analytics
+Professional Scrum Master I

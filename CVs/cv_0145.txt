@@ -1,0 +1,36 @@
+Name: Omar Liu
+Gender: Male
+Date of Birth: 1987-02-10
+Address: 306 Admiralty Street, 14111 Warsaw, Poland
+Email: omar.liu87@mailhub.com
+Phone: +49-836-181-2231
+Target Role: Backend Developer
+
+Professional Summary:
+Professional pursuing Backend Developer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Master of Science — Software Engineering — University of Lagos — 2014
+
+Experience:
+Senior Backend Developer — Atlas Platform — Warsaw, Poland — 2016-10 to Present
+
+* Reduced API response time by 28% through query and caching improvements.
+* Designed service integrations used across multiple product teams.
+* Expanded automated test coverage for payment and account workflows.
+* Improved reliability of core backend services handling business-critical traffic.
+
+Skills:
+Technical: Redis, Python, PostgreSQL, Docker
+Methods: System design, Unit testing, Process improvement, Microservices
+Management: Technical communication, Collaboration, Code review, Task estimation
+
+Languages:
+English — C2
+German — B1
+
+Certifications:
+AWS Cloud Practitioner
+Oracle Java Certification
+Azure Developer Associate
+Google Data Analytics Certificate

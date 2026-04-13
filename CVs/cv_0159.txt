@@ -1,0 +1,46 @@
+Name: Hannah Fischer
+Gender: Female
+Date of Birth: 1990-07-21
+Address: 185 Riverside Street, 37395 Warsaw, Poland
+Email: hannah.fischer90@email.com
+Phone: +91-965-891-6289
+Target Role: Data Scientist
+
+Professional Summary:
+Technology specialist with 9+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Master of Science — Data Science — Politecnico di Milano — 2017
+
+Experience:
+Data Scientist — North Networks — Warsaw, Poland — 2017-06 to 2020-07
+
+* Built production-ready models with monitoring for drift and data quality.
+* Delivered experimentation frameworks used to prioritize product changes.
+* Improved model accuracy by 13% on a customer behavior prediction use case.
+* Translated ambiguous business questions into measurable ML experiments.
+
+Junior Data Scientist — Core Systems — Warsaw, Poland — 2021-12 to 2023-08
+
+* Delivered experimentation frameworks used to prioritize product changes.
+* Translated ambiguous business questions into measurable ML experiments.
+* Built production-ready models with monitoring for drift and data quality.
+
+Senior Data Scientist — Cloud Insight — Warsaw, Poland — 2024-07 to Present
+
+* Improved model accuracy by 19% on a customer behavior prediction use case.
+* Built production-ready models with monitoring for drift and data quality.
+* Delivered experimentation frameworks used to prioritize product changes.
+* Translated ambiguous business questions into measurable ML experiments.
+
+Skills:
+Technical: Python, Pandas, TensorFlow, PyTorch, Spark
+Methods: Experiment design, Model validation, Statistical inference, Forecasting
+Management: Project planning, Mentoring
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+Google Professional Data Engineer

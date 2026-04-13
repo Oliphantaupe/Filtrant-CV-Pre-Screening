@@ -1,0 +1,39 @@
+Name: Arjun Bianchi
+Gender: Male
+Date of Birth: 1992-03-23
+Address: 118 Riverside Street, 77501 Lyon, France
+Email: arjun.bianchi92@inboxmail.net
+Phone: +49-211-928-5007
+Target Role: Frontend Developer
+
+Professional Summary:
+Analytical professional targeting Frontend Developer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning. Brings a practical approach to delivery, prioritization, and collaboration across teams.
+
+Education:
+Master of Science — Software Engineering — Indian Institute of Technology Delhi — 2018
+
+Experience:
+Frontend Developer — Signal Dynamics — Lyon, France — 2020-03 to 2023-04
+
+* Reduced UI defects through stronger test automation and QA collaboration.
+* Improved page performance scores by 14% across key user journeys.
+
+Frontend Engineer — Atlas Insight — Lyon, France — 2024-05 to Present
+
+* Partnered with designers to deliver accessible interfaces at scale.
+* Built reusable component libraries that accelerated feature delivery.
+* Reduced UI defects through stronger test automation and QA collaboration.
+
+Skills:
+Technical: HTML, TypeScript, React
+Methods: Component architecture, Accessibility, Agile collaboration, Performance optimization
+Management: Sprint planning, Design collaboration, Code review
+
+Languages:
+English — C2
+Spanish — B2
+
+Certifications:
+ITIL Foundation
+Google Data Analytics Certificate
+Professional Scrum Master I

@@ -1,0 +1,32 @@
+Name: Sara Hassan
+Gender: Female
+Date of Birth: 1991-04-14
+Address: 399 Hillview Street, 44648 Bengaluru, India
+Email: sara.hassan91@email.com
+Phone: +351-515-702-3261
+Target Role: Data Scientist
+
+Professional Summary:
+Data Scientist focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Comfortable contributing in environments with evolving priorities and shared ownership.
+
+Education:
+Bachelor of Science — Computer Science — Politecnico di Milano — 2019
+
+Experience:
+Junior Data Scientist — Quantum Networks — Bengaluru, India — 2021-02 to Present
+
+* Translated ambiguous business questions into measurable ML experiments.
+* Built production-ready models with monitoring for drift and data quality.
+* Improved model accuracy by 24% on a customer behavior prediction use case.
+
+Skills:
+Technical: Python, SQL, PyTorch, Notion
+Methods: Statistical inference, Experiment design, Forecasting
+Management: Stakeholder alignment, Mentoring, Project planning, Cross-functional communication
+
+Languages:
+English — C2
+German — B1
+
+Certifications:
+Google Professional Data Engineer

@@ -1,0 +1,33 @@
+Name: Lucia Silva
+Gender: Female
+Date of Birth: 1993-10-25
+Address: 811 Park Street, 15708 Amsterdam, Netherlands
+Email: lucia.silva93@mailhub.com
+Phone: +91-420-212-2867
+Target Role: Data Scientist
+
+Professional Summary:
+Data Scientist focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Master of Science — Computer Science — University of Amsterdam — 2018
+
+Experience:
+Junior Data Scientist — Atlas Dynamics — Amsterdam, Netherlands — 2020-02 to Present
+
+* Improved model accuracy by 26% on a customer behavior prediction use case.
+* Delivered experimentation frameworks used to prioritize product changes.
+* Built production-ready models with monitoring for drift and data quality.
+
+Skills:
+Technical: Python, Spark, Excel, Pandas
+Methods: Statistical inference, Model validation, Feature engineering
+Management: Mentoring, Cross-functional communication
+
+Languages:
+English — C2
+Spanish — B2
+
+Certifications:
+Google Data Analytics Certificate
+AWS Certified Machine Learning

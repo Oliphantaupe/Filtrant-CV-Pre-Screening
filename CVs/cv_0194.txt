@@ -1,0 +1,34 @@
+Name: Samuel Novak
+Gender: Male
+Date of Birth: 1999-03-11
+Address: 776 Cedar Street, 94494 Warsaw, Poland
+Email: samuel.novak99@mailhub.com
+Phone: +48-916-922-5141
+Target Role: DevOps Engineer
+
+Professional Summary:
+Analytical professional targeting DevOps Engineer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning. Comfortable contributing in environments with evolving priorities and shared ownership.
+
+Education:
+Bachelor of Science — Software Engineering — University of Lagos — 2023
+
+Experience:
+DevOps Engineer — Blue Labs — Warsaw, Poland — 2024-03 to Present
+
+* Improved platform reliability with stronger observability and runbooks.
+* Standardized infrastructure provisioning across environments.
+* Reduced release lead time by 17% through CI/CD automation.
+
+Skills:
+Technical: GitHub Actions, Docker, Kubernetes, Python, Terraform, Linux
+Methods: Monitoring, Infrastructure as code, Incident response, CI/CD
+Management: Communication, Documentation, Technical mentoring, Incident coordination
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+Scrum Fundamentals Certified
+CKA
+AWS Certified SysOps Administrator

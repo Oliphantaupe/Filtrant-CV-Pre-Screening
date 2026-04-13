@@ -1,0 +1,32 @@
+Name: Nadia Aliyev
+Gender: Female
+Date of Birth: 1989-04-09
+Address: 188 Linden Street, 68816 Amsterdam, Netherlands
+Email: nadia.aliyev89@email.com
+Phone: +48-334-144-1444
+Target Role: Product Analyst
+
+Professional Summary:
+Product Analyst focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Master of Science — Computer Science — University of Texas at Austin — 2019
+
+Experience:
+Growth Analyst — North Platform — Amsterdam, Netherlands — 2019-07 to Present
+
+* Connected product analytics findings to roadmap prioritization decisions.
+* Built experiment readouts used by product and design leadership.
+
+Skills:
+Technical: Python, Mixpanel, Excel, Tableau, SQL
+Methods: Product metrics, User behavior analysis, Experimentation
+Management: Stakeholder alignment, Communication, Cross-functional collaboration, Planning
+
+Languages:
+English — C1
+French — C2
+
+Certifications:
+Google Data Analytics Certificate
+Certified Analytics Professional

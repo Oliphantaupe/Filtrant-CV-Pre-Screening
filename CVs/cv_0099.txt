@@ -1,0 +1,38 @@
+Name: Omar Okafor
+Gender: Male
+Date of Birth: 1992-10-20
+Address: 13 Park Street, 24652 Milan, Italy
+Email: omar.okafor92@inboxmail.net
+Phone: +234-392-479-7114
+Target Role: Data Engineer
+
+Professional Summary:
+Data Engineer focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Science — Computer Science — University of Colorado Boulder — 2019
+
+Experience:
+Data Engineer — Quantum Systems — Milan, Italy — 2019-12 to 2022-06
+
+* Implemented data quality checks that reduced downstream incidents.
+* Designed reliable ingestion jobs for operational and product datasets.
+
+Analytics Engineer — Vector Works — Milan, Italy — 2023-12 to Present
+
+* Cut pipeline runtime by 21% through incremental processing improvements.
+* Designed reliable ingestion jobs for operational and product datasets.
+* Implemented data quality checks that reduced downstream incidents.
+* Supported analytics and ML teams with curated data models.
+
+Skills:
+Technical: Kafka, Python, SQL, Airflow, Spark, AWS
+Methods: Batch processing, Data modeling, Root cause analysis, Data quality management
+Management: Incident communication, Documentation
+
+Languages:
+English — C2
+Spanish — B2
+
+Certifications:
+AWS Certified Data Analytics

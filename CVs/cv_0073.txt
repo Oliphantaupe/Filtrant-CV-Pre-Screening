@@ -1,0 +1,33 @@
+Name: Nadia Silva
+Gender: Female
+Date of Birth: 2000-09-09
+Address: 370 Riverside Street, 73517 Lyon, France
+Email: nadia.silva00@inboxmail.net
+Phone: +234-436-661-3162
+Target Role: Cybersecurity Analyst
+
+Professional Summary:
+Professional pursuing Cybersecurity Analyst opportunities with exposure to production environments, team delivery, and measurable operational improvements. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Master of Science — Computer Science — Indian Institute of Technology Delhi — 2021
+
+Experience:
+Cybersecurity Analyst — Blue Platform — Lyon, France — 2023-08 to Present
+
+* Supported incident investigations with structured evidence collection.
+* Reduced mean time to detect by 20% through stronger alert triage.
+
+Skills:
+Technical: Vulnerability scanning, Excel, SIEM, Splunk, Wireshark, Confluence, IAM
+Methods: Risk assessment, Root cause analysis, Threat analysis, Log analysis, Security monitoring
+Management: Policy awareness, Cross-team coordination
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+Professional Scrum Master I
+ITIL Foundation
+Certified Ethical Hacker

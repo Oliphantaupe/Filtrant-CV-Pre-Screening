@@ -1,0 +1,45 @@
+Name: Lucia Silva
+Gender: Female
+Date of Birth: 1992-07-26
+Address: 398 Park Street, 42425 Lyon, France
+Email: lucia.silva92@inboxmail.net
+Phone: +1-675-488-5287
+Target Role: Product Analyst
+
+Professional Summary:
+Product Analyst with 9+ years of experience delivering reliable technical solutions and measurable business impact. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Has supported mentoring, planning, and coordination activities alongside individual technical work. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Master of Science — Economics — University of Lagos — 2016
+
+Experience:
+Product Analyst — Atlas Networks — Lyon, France — 2017-11 to 2020-01
+
+* Built experiment readouts used by product and design leadership.
+* Defined self-serve metrics for feature adoption and retention analysis.
+* Connected product analytics findings to roadmap prioritization decisions.
+* Identified product funnel bottlenecks and improved conversion by 29%.
+
+Growth Analyst — Signal Solutions — Lyon, France — 2021-03 to 2023-03
+
+* Identified product funnel bottlenecks and improved conversion by 16%.
+* Connected product analytics findings to roadmap prioritization decisions.
+
+Senior Product Analyst — Cloud Works — Lyon, France — 2024-08 to Present
+
+* Defined self-serve metrics for feature adoption and retention analysis.
+* Built experiment readouts used by product and design leadership.
+* Connected product analytics findings to roadmap prioritization decisions.
+
+Skills:
+Technical: Excel, SQL, Looker, Mixpanel
+Methods: Product metrics, Experimentation, Cohort analysis, Documentation, Funnel analysis, User behavior analysis
+Management: Planning, Communication, Teamwork
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+Scrum Fundamentals Certified
+Professional Scrum Master I

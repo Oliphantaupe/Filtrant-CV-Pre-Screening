@@ -1,0 +1,39 @@
+Name: Gabriel Andersen
+Gender: Male
+Date of Birth: 1996-02-14
+Address: 671 Cedar Street, 50287 Lisbon, Portugal
+Email: gabriel.andersen96@inboxmail.net
+Phone: +33-843-330-9464
+Target Role: Cybersecurity Analyst
+
+Professional Summary:
+Analytical professional targeting Cybersecurity Analyst opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Master of Science — Network Engineering — University of Texas at Austin — 2018
+
+Experience:
+Cybersecurity Analyst — Blue Tech — Lisbon, Portugal — 2019-10 to 2022-02
+
+* Reduced mean time to detect by 32% through stronger alert triage.
+* Improved vulnerability remediation reporting across infrastructure teams.
+
+Security Analyst — North Dynamics — Lisbon, Portugal — 2023-12 to Present
+
+* Improved vulnerability remediation reporting across infrastructure teams.
+* Reduced mean time to detect by 26% through stronger alert triage.
+* Supported incident investigations with structured evidence collection.
+* Hardened access controls and baseline monitoring practices.
+
+Skills:
+Technical: API integration, SIEM, Splunk, Wireshark, Vulnerability scanning, Linux
+Methods: Log analysis, Process improvement, Threat analysis, Incident response, Risk assessment
+Management: Documentation, Incident communication
+
+Languages:
+English — C1
+French — C2
+
+Certifications:
+Google Data Analytics Certificate
+Professional Scrum Master I

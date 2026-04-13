@@ -1,0 +1,38 @@
+Name: Samuel Bianchi
+Gender: Male
+Date of Birth: 1993-12-26
+Address: 916 Maple Avenue, Austin, TX 17589, USA
+Email: samuel.bianchi93@mailhub.com
+Phone: +234-722-772-5169
+Target Role: Data Engineer
+
+Professional Summary:
+Analytical professional targeting Data Engineer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Science — Data Engineering — University of Lagos — 2018
+
+Experience:
+Data Engineer — North Platform — Austin, TX — 2020-11 to 2023-02
+
+* Implemented data quality checks that reduced downstream incidents.
+* Supported analytics and ML teams with curated data models.
+* Cut pipeline runtime by 20% through incremental processing improvements.
+
+Analytics Engineer — Cloud Solutions — Austin, TX — 2024-11 to Present
+
+* Designed reliable ingestion jobs for operational and product datasets.
+* Supported analytics and ML teams with curated data models.
+* Cut pipeline runtime by 16% through incremental processing improvements.
+
+Skills:
+Technical: Python, Kafka, Airflow, AWS, dbt, SQL
+Methods: ETL design, Data modeling, Data quality management, Pipeline orchestration, Batch processing
+Management: Planning, Cross-team coordination, Documentation, Incident communication
+
+Languages:
+English — C2
+Spanish — B2
+
+Certifications:
+Google Professional Data Engineer

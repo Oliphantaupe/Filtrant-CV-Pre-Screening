@@ -1,0 +1,33 @@
+Name: Gabriel Silva
+Gender: Male
+Date of Birth: 1998-01-11
+Address: 156 Birch Street, 96991 Amsterdam, Netherlands
+Email: gabriel.silva98@mailhub.com
+Phone: +234-637-434-7175
+Target Role: Frontend Developer
+
+Professional Summary:
+Analytical professional targeting Frontend Developer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Science — Software Engineering — University of Colorado Boulder — 2022
+
+Experience:
+Frontend Developer — Vector Platform — Amsterdam, Netherlands — 2024-03 to Present
+
+* Built reusable component libraries that accelerated feature delivery.
+* Improved page performance scores by 21% across key user journeys.
+* Partnered with designers to deliver accessible interfaces at scale.
+* Reduced UI defects through stronger test automation and QA collaboration.
+
+Skills:
+Technical: Testing Library, React, TypeScript
+Methods: Performance optimization, Accessibility, Component architecture, State management
+Management: Planning, Requirement clarification, Sprint planning
+
+Languages:
+English — C1
+French — C2
+
+Certifications:
+None listed

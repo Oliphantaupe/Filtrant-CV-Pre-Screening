@@ -1,0 +1,31 @@
+Name: Kenji Garcia
+Gender: Male
+Date of Birth: 2000-02-25
+Address: 518 Pinecrest Street, 67880 Milan, Italy
+Email: kenji.garcia00@mailhub.com
+Phone: +351-608-703-4882
+Target Role: Product Analyst
+
+Professional Summary:
+Analytical professional targeting Product Analyst opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning. Used to learning new tools quickly when projects require broader technical coverage.
+
+Education:
+Bachelor of Science — Computer Science — University of Lagos — 2022
+
+Experience:
+Product Analyst — North Works — Milan, Italy — 2024-08 to Present
+
+* Defined self-serve metrics for feature adoption and retention analysis.
+* Connected product analytics findings to roadmap prioritization decisions.
+
+Skills:
+Technical: Mixpanel, SQL, Tableau
+Methods: Process improvement, Funnel analysis, User behavior analysis, Experimentation
+Management: Stakeholder alignment, Communication, Planning, Cross-functional collaboration, Teamwork
+
+Languages:
+English — C2
+
+Certifications:
+Google Data Analytics Certificate
+Scrum Fundamentals Certified

@@ -1,0 +1,33 @@
+Name: Hannah Rossi
+Gender: Female
+Date of Birth: 2001-06-07
+Address: 631 Oakridge Street, 81137 Milan, Italy
+Email: hannah.rossi01@mailhub.com
+Phone: +353-241-178-2851
+Target Role: Product Analyst
+
+Professional Summary:
+Professional pursuing Product Analyst opportunities with exposure to production environments, team delivery, and measurable operational improvements. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones.
+
+Education:
+Bachelor of Arts — Computer Science — Politecnico di Milano — 2024
+
+Experience:
+Product Analyst — North Insight — Milan, Italy — 2024-04 to Present
+
+* Identified product funnel bottlenecks and improved conversion by 24%.
+* Defined self-serve metrics for feature adoption and retention analysis.
+* Connected product analytics findings to roadmap prioritization decisions.
+* Built experiment readouts used by product and design leadership.
+
+Skills:
+Technical: Cloud fundamentals, Looker, SQL, Python
+Methods: User behavior analysis, Experimentation, Cohort analysis, Funnel analysis
+Management: Planning, Stakeholder alignment
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+None listed

@@ -1,0 +1,32 @@
+Name: Hannah Dubois
+Gender: Female
+Date of Birth: 1999-04-14
+Address: 620 Cedar Street, 70554 Warsaw, Poland
+Email: hannah.dubois99@inboxmail.net
+Phone: +49-474-896-4623
+Target Role: QA Engineer
+
+Professional Summary:
+Professional pursuing QA Engineer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Arts — Computer Science — University of Bonn — 2021
+
+Experience:
+QA Engineer — Quantum Dynamics — Warsaw, Poland — 2023-02 to Present
+
+* Reduced escaped defects by 18% by expanding regression coverage.
+* Improved release readiness through clearer test reporting.
+* Developed automation suites for critical API and UI flows.
+
+Skills:
+Technical: Python, Jira, Postman, API testing, REST APIs
+Methods: Test planning, Test automation, Regression testing, Defect tracking, Quality assurance
+Management: Prioritization, Documentation
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+ISTQB Foundation Level

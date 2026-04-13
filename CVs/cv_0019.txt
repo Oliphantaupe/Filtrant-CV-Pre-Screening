@@ -1,0 +1,31 @@
+Name: Daniel Novak
+Gender: Male
+Date of Birth: 1996-04-22
+Address: 154 Maple Street, 53194 Lagos, Nigeria
+Email: daniel.novak96@inboxmail.net
+Phone: +31-732-655-9997
+Target Role: ML Engineer
+
+Professional Summary:
+ML Engineer with 3+ years of experience delivering reliable technical solutions and measurable business impact. Capable of supporting team goals and handling recurring technical responsibilities.
+
+Education:
+Master of Science — Machine Learning — University of Texas at Austin — 2021
+
+Experience:
+ML Engineer — Quantum Tech — Lagos, Nigeria — 2023-04 to Present
+
+* Improved observability for inference latency and feature freshness.
+* Reduced model deployment time by 28% by standardizing CI/CD pipelines.
+
+Skills:
+Technical: Python, Docker, Kubernetes, Bash, MLflow, TensorFlow
+Methods: Feature stores, MLOps, Model deployment
+Management: Technical mentoring, Roadmap communication, Collaboration
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+CKA

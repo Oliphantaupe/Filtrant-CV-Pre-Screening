@@ -1,0 +1,45 @@
+Name: David Patel
+Gender: Male
+Date of Birth: 1982-03-17
+Address: 934 Cedar Street, 85623 Lagos, Nigeria
+Email: david.patel82@mailhub.com
+Phone: +351-683-800-6216
+Target Role: Data Analyst
+
+Professional Summary:
+Professional pursuing Data Analyst opportunities with exposure to production environments, team delivery, and measurable operational improvements. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Has supported mentoring, planning, and coordination activities alongside individual technical work.
+
+Education:
+Master of Science — Data Analytics — Trinity College Dublin — 2012
+
+Experience:
+Junior Data Analyst — Nova Labs — Lagos, Nigeria — 2014-05 to 2018-12
+
+* Designed analysis workflows that reduced data preparation time by 22%.
+* Validated source data quality and reduced recurring discrepancies across reports.
+
+Data Analyst — Signal Systems — Lagos, Nigeria — 2019-08 to 2022-04
+
+* Designed analysis workflows that reduced data preparation time by 24% while coordinating work across engineers and analysts.
+* Built weekly KPI reports adopted by finance and commercial teams while coordinating work across engineers and analysts.
+* Improved reporting efficiency by 22% through dashboard automation while coordinating work across engineers and analysts.
+
+Senior Data Analyst — Core Networks — Lagos, Nigeria — 2023-08 to Present
+
+* Validated source data quality and reduced recurring discrepancies across reports.
+* Improved reporting efficiency by 24% through dashboard automation.
+* Built weekly KPI reports adopted by finance and commercial teams.
+
+Skills:
+Technical: Looker, Excel, R, SQL, Python
+Methods: A/B testing, KPI tracking, Data visualization
+Management: Project coordination, Requirement gathering, Prioritization
+
+Languages:
+English — C1
+Italian — B2
+
+Certifications:
+Tableau Desktop Specialist
+Professional Scrum Master I
+Certified Analytics Professional

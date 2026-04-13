@@ -1,0 +1,45 @@
+Name: Marcus Dubois
+Gender: Male
+Date of Birth: 1986-03-03
+Address: 383 Oakridge Street, 18838 Warsaw, Poland
+Email: marcus.dubois86@email.com
+Phone: +39-664-798-2346
+Target Role: ML Engineer
+
+Professional Summary:
+Technology specialist with 13+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning. Brings a practical approach to delivery, prioritization, and collaboration across teams.
+
+Education:
+Master of Science — Computer Science — Indian Institute of Technology Delhi — 2012
+
+Experience:
+ML Engineer — Atlas Labs — Warsaw, Poland — 2013-03 to 2017-03
+
+* Partnered with data scientists to convert prototypes into resilient services.
+* Improved observability for inference latency and feature freshness.
+* Reduced model deployment time by 28% by standardizing CI/CD pipelines.
+
+Machine Learning Engineer — Nova Dynamics — Warsaw, Poland — 2018-08 to 2022-05
+
+* Improved observability for inference latency and feature freshness.
+* Reduced model deployment time by 18% by standardizing CI/CD pipelines.
+* Partnered with data scientists to convert prototypes into resilient services.
+
+Senior ML Engineer — Signal Platform — Warsaw, Poland — 2023-01 to Present
+
+* Operationalized training and inference workflows for multiple production models.
+* Improved observability for inference latency and feature freshness.
+* Reduced model deployment time by 25% by standardizing CI/CD pipelines.
+
+Skills:
+Technical: MLflow, TensorFlow, Docker, Kubernetes
+Methods: Feature stores, MLOps, Model deployment, CI/CD
+Management: Sprint planning, Technical mentoring, Collaboration
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+AWS Certified Machine Learning
+Professional Scrum Master I

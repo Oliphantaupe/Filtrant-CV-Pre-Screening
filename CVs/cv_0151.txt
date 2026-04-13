@@ -1,0 +1,32 @@
+Name: Noah Silva
+Gender: Male
+Date of Birth: 2001-10-28
+Address: 279 Admiralty Street, 93906 Amsterdam, Netherlands
+Email: noah.silva01@mailhub.com
+Phone: +1-482-815-4391
+Target Role: Frontend Developer
+
+Professional Summary:
+Professional pursuing Frontend Developer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones.
+
+Education:
+Bachelor of Arts — Software Engineering — University of Amsterdam — 2025
+
+Experience:
+Frontend Developer — Cloud Insight — Amsterdam, Netherlands — 2025-09 to Present
+
+* Built reusable component libraries that accelerated feature delivery.
+* Partnered with designers to deliver accessible interfaces at scale.
+* Reduced UI defects through stronger test automation and QA collaboration.
+
+Skills:
+Technical: CSS, TypeScript, Next.js, Testing Library, React, HTML
+Methods: Component architecture, Accessibility, State management, Responsive design
+Management: Requirement clarification, Sprint planning, Design collaboration, Code review
+
+Languages:
+English — C2
+Spanish — B2
+
+Certifications:
+None listed

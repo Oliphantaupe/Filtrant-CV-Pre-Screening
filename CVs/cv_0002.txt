@@ -1,0 +1,47 @@
+Name: Olivia Schneider
+Gender: Female
+Date of Birth: 1986-12-20
+Address: 877 Pinecrest Street, 41659 Warsaw, Poland
+Email: olivia.schneider86@mailhub.com
+Phone: +234-331-120-7296
+Target Role: Frontend Developer
+
+Professional Summary:
+Analytical professional targeting Frontend Developer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Known for clear communication, structured problem solving, and strong execution in fast-moving environments.
+
+Education:
+Master of Science — Information Technology — Indian Institute of Technology Delhi — 2016
+
+Experience:
+Frontend Developer — Data Tech — Warsaw, Poland — 2017-09 to 2020-07
+
+* Improved page performance scores by 13% across key user journeys.
+* Built reusable component libraries that accelerated feature delivery.
+
+Frontend Engineer — Core Solutions — Warsaw, Poland — 2021-11 to 2023-11
+
+* Improved page performance scores by 31% across key user journeys.
+* Partnered with designers to deliver accessible interfaces at scale.
+* Built reusable component libraries that accelerated feature delivery.
+* Reduced UI defects through stronger test automation and QA collaboration.
+
+Senior Frontend Developer — Signal Systems — Warsaw, Poland — 2024-08 to Present
+
+* Improved page performance scores by 15% across key user journeys.
+* Built reusable component libraries that accelerated feature delivery.
+* Reduced UI defects through stronger test automation and QA collaboration.
+
+Skills:
+Technical: Testing Library, Next.js, React, JavaScript, HTML, CSS
+Methods: Accessibility, Performance optimization, State management
+Management: Code review, Task coordination, Design collaboration, Requirement clarification, Sprint planning
+
+Languages:
+English — C1
+French — C2
+
+Certifications:
+Professional Scrum Master I
+AWS Cloud Practitioner
+ITIL Foundation
+Scrum Fundamentals Certified

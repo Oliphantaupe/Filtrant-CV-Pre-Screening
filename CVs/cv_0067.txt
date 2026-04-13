@@ -1,0 +1,42 @@
+Name: Luca Silva
+Gender: Male
+Date of Birth: 1987-12-06
+Address: 387 Hillview Avenue, Austin, TX 32791, USA
+Email: luca.silva87@inboxmail.net
+Phone: +353-467-332-9250
+Target Role: Backend Developer
+
+Professional Summary:
+Professional pursuing Backend Developer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning. Brings a practical approach to delivery, prioritization, and collaboration across teams.
+
+Education:
+Master of Science — Computer Science — University of Bonn — 2015
+
+Experience:
+Backend Developer — Signal Dynamics — Austin, TX — 2015-10 to 2018-12
+
+* Expanded automated test coverage for payment and account workflows.
+* Reduced API response time by 24% through query and caching improvements.
+
+Backend Engineer — North Networks — Austin, TX — 2019-05 to 2022-10
+
+* Designed service integrations used across multiple product teams.
+* Improved reliability of core backend services handling business-critical traffic.
+* Reduced API response time by 19% through query and caching improvements.
+
+Senior Backend Developer — Signal Systems — Austin, TX — 2023-08 to Present
+
+* Expanded automated test coverage for payment and account workflows.
+* Reduced API response time by 17% through query and caching improvements.
+
+Skills:
+Technical: Python, PostgreSQL, Java
+Methods: Root cause analysis, Performance tuning, Microservices, System design, Unit testing
+Management: Code review, Task estimation, Collaboration, Technical communication
+
+Languages:
+English — C2
+German — B1
+
+Certifications:
+Oracle Java Certification

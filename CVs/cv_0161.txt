@@ -1,0 +1,45 @@
+Name: Omar Schneider
+Gender: Male
+Date of Birth: 1986-01-21
+Address: 228 Oakridge Street, 58706 Bengaluru, India
+Email: omar.schneider86@mailhub.com
+Phone: +31-551-136-8897
+Target Role: DevOps Engineer
+
+Professional Summary:
+Analytical professional targeting DevOps Engineer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning. Brings a practical approach to delivery, prioritization, and collaboration across teams.
+
+Education:
+Bachelor of Science — Information Systems — Trinity College Dublin — 2012
+
+Experience:
+DevOps Engineer — Nova Labs — Bengaluru, India — 2013-06 to 2017-04
+
+* Standardized infrastructure provisioning across environments.
+* Improved platform reliability with stronger observability and runbooks.
+
+Platform Engineer — Nova Solutions — Bengaluru, India — 2018-10 to 2022-08
+
+* Supported engineering teams during incidents and postmortem actions.
+* Improved platform reliability with stronger observability and runbooks.
+* Reduced release lead time by 18% through CI/CD automation.
+* Standardized infrastructure provisioning across environments.
+
+Senior DevOps Engineer — Vector Dynamics — Bengaluru, India — 2023-12 to Present
+
+* Supported engineering teams during incidents and postmortem actions.
+* Improved platform reliability with stronger observability and runbooks.
+* Reduced release lead time by 22% through CI/CD automation.
+* Standardized infrastructure provisioning across environments.
+
+Skills:
+Technical: Docker, Python, Kubernetes
+Methods: CI/CD, Infrastructure as code, Incident response, Monitoring, Automation
+Management: Technical mentoring, Collaboration, Task coordination, Incident coordination, Documentation
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+None listed

@@ -1,0 +1,48 @@
+Name: Lucia Martinez
+Gender: Female
+Date of Birth: 1994-07-11
+Address: 151 Linden Street, 81706 Amsterdam, Netherlands
+Email: lucia.martinez94@email.com
+Phone: +234-771-570-9965
+Target Role: Cybersecurity Analyst
+
+Professional Summary:
+Professional pursuing Cybersecurity Analyst opportunities with exposure to production environments, team delivery, and measurable operational improvements. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Brings a practical approach to delivery, prioritization, and collaboration across teams.
+
+Education:
+Bachelor of Science — Information Security — Trinity College Dublin — 2016
+
+Experience:
+Cybersecurity Analyst — Data Insight — Amsterdam, Netherlands — 2017-11 to 2020-06
+
+* Reduced mean time to detect by 13% through stronger alert triage.
+* Improved vulnerability remediation reporting across infrastructure teams.
+* Supported incident investigations with structured evidence collection.
+
+Security Analyst — Blue Networks — Amsterdam, Netherlands — 2021-09 to 2023-04
+
+* Improved vulnerability remediation reporting across infrastructure teams.
+* Reduced mean time to detect by 21% through stronger alert triage.
+* Hardened access controls and baseline monitoring practices.
+* Supported incident investigations with structured evidence collection.
+
+Senior Cybersecurity Analyst — Atlas Networks — Amsterdam, Netherlands — 2024-08 to Present
+
+* Improved vulnerability remediation reporting across infrastructure teams.
+* Hardened access controls and baseline monitoring practices.
+* Reduced mean time to detect by 25% through stronger alert triage.
+* Supported incident investigations with structured evidence collection.
+
+Skills:
+Technical: Linux, IAM, Vulnerability scanning, SIEM
+Methods: Threat analysis, Incident response, Security monitoring, Log analysis
+Management: Incident communication, Documentation, Communication, Cross-team coordination, Policy awareness
+
+Languages:
+English — C1
+German — C2
+
+Certifications:
+Professional Scrum Master I
+CompTIA Security+
+Certified Ethical Hacker

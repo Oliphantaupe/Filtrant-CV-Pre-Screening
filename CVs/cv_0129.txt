@@ -1,0 +1,43 @@
+Name: Nora Popescu
+Gender: Female
+Date of Birth: 1991-08-12
+Address: 215 Admiralty Street, 28987 Amsterdam, Netherlands
+Email: nora.popescu91@mailhub.com
+Phone: +33-723-176-3152
+Target Role: Data Scientist
+
+Professional Summary:
+Data Scientist with 9+ years of experience delivering reliable technical solutions and measurable business impact. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Has supported mentoring, planning, and coordination activities alongside individual technical work. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Master of Science — Data Science — University of Colorado Boulder — 2015
+
+Experience:
+Data Scientist — Cloud Tech — Amsterdam, Netherlands — 2017-12 to 2020-05
+
+* Delivered experimentation frameworks used to prioritize product changes while coordinating work across engineers and analysts.
+* Translated ambiguous business questions into measurable ML experiments.
+* Improved model accuracy by 28% on a customer behavior prediction use case.
+
+Junior Data Scientist — Quantum Insight — Amsterdam, Netherlands — 2021-12 to 2023-12
+
+* Translated ambiguous business questions into measurable ML experiments.
+* Built production-ready models with monitoring for drift and data quality while coordinating work across engineers and analysts.
+* Delivered experimentation frameworks used to prioritize product changes.
+
+Senior Data Scientist — Atlas Works — Amsterdam, Netherlands — 2024-04 to Present
+
+* Improved model accuracy by 14% on a customer behavior prediction use case.
+* Built production-ready models with monitoring for drift and data quality while coordinating work across engineers and analysts.
+
+Skills:
+Technical: SQL, Pandas, Spark, TensorFlow, scikit-learn
+Methods: Forecasting, Statistical inference, Root cause analysis, Experiment design, Model validation
+Management: Stakeholder alignment, Cross-functional communication, Mentoring, Project planning
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+AWS Certified Machine Learning

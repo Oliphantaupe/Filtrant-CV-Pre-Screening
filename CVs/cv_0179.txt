@@ -1,0 +1,32 @@
+Name: Maya Santos
+Gender: Female
+Date of Birth: 2004-09-20
+Address: 141 Linden Street, 49102 Warsaw, Poland
+Email: maya.santos04@email.com
+Phone: +33-441-304-8662
+Target Role: Data Analyst
+
+Professional Summary:
+Data Analyst focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning. Used to learning new tools quickly when projects require broader technical coverage.
+
+Education:
+Master of Science — Economics — Politecnico di Milano — 2025
+
+Experience:
+Junior Data Analyst — Signal Platform — Warsaw, Poland — 2025-05 to Present
+
+* Built weekly KPI reports adopted by finance and commercial teams.
+* Designed analysis workflows that reduced data preparation time by 26%.
+* Improved reporting efficiency by 13% through dashboard automation.
+* Validated source data quality and reduced recurring discrepancies across reports.
+
+Skills:
+Technical: R, Tableau, Python
+Methods: Dashboard design, Problem solving, Data visualization, Regression analysis
+Management: Prioritization, Stakeholder communication, Project coordination
+
+Languages:
+English — C2
+
+Certifications:
+None listed

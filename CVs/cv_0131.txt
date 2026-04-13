@@ -1,0 +1,44 @@
+Name: Camila Novak
+Gender: Female
+Date of Birth: 1990-10-11
+Address: 130 Oakridge Street, 67915 Bengaluru, India
+Email: camila.novak90@email.com
+Phone: +353-231-886-6586
+Target Role: QA Engineer
+
+Professional Summary:
+Professional pursuing QA Engineer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Science — Computer Science — University of Warsaw — 2018
+
+Experience:
+QA Engineer — Data Platform — Bengaluru, India — 2018-07 to 2020-03
+
+* Improved release readiness through clearer test reporting.
+* Reduced escaped defects by 29% by expanding regression coverage.
+
+Test Engineer — North Insight — Bengaluru, India — 2021-12 to 2023-06
+
+* Reduced escaped defects by 21% by expanding regression coverage.
+* Partnered with developers to reproduce and isolate production issues.
+* Improved release readiness through clearer test reporting.
+
+Senior QA Engineer — North Works — Bengaluru, India — 2024-07 to Present
+
+* Partnered with developers to reproduce and isolate production issues.
+* Reduced escaped defects by 34% by expanding regression coverage.
+
+Skills:
+Technical: Jira, Unit testing, Python, Postman, API testing, SQL, Cypress
+Methods: Quality assurance, Problem solving, Test automation, Defect tracking, Regression testing, Test planning
+Management: Risk communication, Prioritization, Documentation
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+Certified Agile Tester
+AWS Cloud Practitioner
+ISTQB Foundation Level

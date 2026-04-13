@@ -1,0 +1,32 @@
+Name: Jonas Andersen
+Gender: Male
+Date of Birth: 1999-03-22
+Address: 991 Park Street, 82840 Lagos, Nigeria
+Email: jonas.andersen99@mailhub.com
+Phone: +48-768-108-9089
+Target Role: Frontend Developer
+
+Professional Summary:
+Analytical professional targeting Frontend Developer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Arts — Software Engineering — University of Colorado Boulder — 2022
+
+Experience:
+Frontend Developer — Cloud Works — Lagos, Nigeria — 2024-12 to Present
+
+* Improved page performance scores by 18% across key user journeys.
+* Reduced UI defects through stronger test automation and QA collaboration.
+
+Skills:
+Technical: TypeScript, Next.js, JavaScript, Testing Library, HTML, CSS
+Methods: State management, Responsive design, Accessibility, Component architecture, Performance optimization
+Management: Requirement clarification, Code review, Sprint planning, Design collaboration
+
+Languages:
+English — C2
+German — B1
+
+Certifications:
+AWS Cloud Practitioner
+ITIL Foundation

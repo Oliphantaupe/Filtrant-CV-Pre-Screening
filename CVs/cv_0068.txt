@@ -1,0 +1,32 @@
+Name: Samuel Costa
+Gender: Male
+Date of Birth: 1987-02-22
+Address: 37 Admiralty Street, 70798 Cologne, Germany
+Email: samuel.costa87@inboxmail.net
+Phone: +48-361-574-1355
+Target Role: Backend Developer
+
+Professional Summary:
+Professional pursuing Backend Developer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Bachelor of Science — Computer Science — Politecnico di Milano — 2015
+
+Experience:
+Senior Backend Developer — Cloud Dynamics — Cologne, Germany — 2016-11 to Present
+
+* Designed service integrations used across multiple product teams.
+* Improved reliability of core backend services handling business-critical traffic.
+
+Skills:
+Technical: Go, PostgreSQL, REST APIs, Docker
+Methods: Unit testing, System design, Performance tuning, API design
+Management: Code review, Task estimation, Collaboration
+
+Languages:
+English — C2
+Spanish — B2
+
+Certifications:
+ITIL Foundation
+Professional Scrum Master I

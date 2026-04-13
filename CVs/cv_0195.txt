@@ -1,0 +1,45 @@
+Name: Sophie Aliyev
+Gender: Female
+Date of Birth: 1996-09-20
+Address: 439 Oakridge Avenue, Austin, TX 26862, USA
+Email: sophie.aliyev96@inboxmail.net
+Phone: +39-254-202-3661
+Target Role: Data Analyst
+
+Professional Summary:
+Technology specialist with 8+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Known for clear communication, structured problem solving, and strong execution in fast-moving environments.
+
+Education:
+Master of Science — Data Analytics — University of Colorado Boulder — 2018
+
+Experience:
+Junior Data Analyst — Vector Platform — Austin, TX — 2018-12 to 2020-05
+
+* Improved reporting efficiency by 33% through dashboard automation.
+* Validated source data quality and reduced recurring discrepancies across reports.
+
+Data Analyst — Data Platform — Austin, TX — 2021-12 to 2023-06
+
+* Improved reporting efficiency by 31% through dashboard automation while coordinating work across engineers and analysts.
+* Designed analysis workflows that reduced data preparation time by 18% while coordinating work across engineers and analysts.
+* Built weekly KPI reports adopted by finance and commercial teams while coordinating work across engineers and analysts.
+* Validated source data quality and reduced recurring discrepancies across reports.
+
+Senior Data Analyst — Core Platform — Austin, TX — 2024-03 to Present
+
+* Built weekly KPI reports adopted by finance and commercial teams.
+* Designed analysis workflows that reduced data preparation time by 22% while coordinating work across engineers and analysts.
+* Improved reporting efficiency by 28% through dashboard automation while coordinating work across engineers and analysts.
+
+Skills:
+Technical: Excel, Power BI, R, Looker
+Methods: Regression analysis, Problem solving, KPI tracking, A/B testing, Dashboard design, Data visualization
+Management: Project coordination, Stakeholder communication
+
+Languages:
+English — C1
+German — C2
+
+Certifications:
+Tableau Desktop Specialist
+Microsoft Power BI Data Analyst

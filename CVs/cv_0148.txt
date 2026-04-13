@@ -1,0 +1,33 @@
+Name: Samuel Popescu
+Gender: Male
+Date of Birth: 1991-02-07
+Address: 600 Oakridge Avenue, Denver, CO 71680, USA
+Email: samuel.popescu91@email.com
+Phone: +91-359-246-3661
+Target Role: Backend Developer
+
+Professional Summary:
+Analytical professional targeting Backend Developer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Has supported mentoring, planning, and coordination activities alongside individual technical work.
+
+Education:
+Master of Science — Software Engineering — University of Lagos — 2013
+
+Experience:
+Senior Backend Developer — Signal Networks — Denver, CO — 2015-01 to Present
+
+* Expanded automated test coverage for payment and account workflows.
+* Reduced API response time by 29% through query and caching improvements.
+* Designed service integrations used across multiple product teams.
+* Improved reliability of core backend services handling business-critical traffic.
+
+Skills:
+Technical: Go, Python, REST APIs, PostgreSQL, Redis, Docker, Jira
+Methods: Problem solving, Unit testing, System design, API design, Performance tuning
+Management: Task estimation, Technical communication, Code review
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+Oracle Java Certification

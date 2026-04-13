@@ -1,0 +1,42 @@
+Name: Leila Andersen
+Gender: Female
+Date of Birth: 1991-12-19
+Address: 287 Oakridge Street, 70461 Lyon, France
+Email: leila.andersen91@email.com
+Phone: +91-991-481-3814
+Target Role: Software Engineer
+
+Professional Summary:
+Technology specialist with 9+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Science — Software Engineering — University of Lisbon — 2016
+
+Experience:
+Software Engineer — Atlas Labs — Lyon, France — 2017-05 to 2020-07
+
+* Collaborated on architectural improvements for long-term scalability.
+* Maintained core application modules with strong uptime and defect control.
+* Contributed to CI/CD and release quality across multiple services.
+
+Software Developer — Signal Works — Lyon, France — 2021-12 to 2023-05
+
+* Delivered software features that improved internal process efficiency by 19%.
+* Contributed to CI/CD and release quality across multiple services.
+
+Senior Software Engineer — Cloud Networks — Lyon, France — 2024-09 to Present
+
+* Collaborated on architectural improvements for long-term scalability.
+* Delivered software features that improved internal process efficiency by 17%.
+
+Skills:
+Technical: REST APIs, Docker, SQL, Python, Git
+Methods: Debugging, Object-oriented design, Agile delivery
+Management: Collaboration, Communication, Planning, Mentoring
+
+Languages:
+English — C1
+German — C2
+
+Certifications:
+None listed

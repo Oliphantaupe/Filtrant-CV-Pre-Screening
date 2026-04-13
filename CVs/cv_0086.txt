@@ -1,0 +1,33 @@
+Name: David Andersen
+Gender: Male
+Date of Birth: 2000-07-26
+Address: 929 Cedar Street, 68637 Bengaluru, India
+Email: david.andersen00@inboxmail.net
+Phone: +48-599-622-5418
+Target Role: BI Developer
+
+Professional Summary:
+Technology specialist with 2+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Master of Science — Statistics — University of Lisbon — 2022
+
+Experience:
+BI Developer — North Works — Bengaluru, India — 2024-06 to Present
+
+* Translated stakeholder requests into reusable metrics and semantic layers.
+* Consolidated fragmented reporting into dashboards used by executives.
+* Improved data refresh reliability and reduced manual reporting effort by 23%.
+
+Skills:
+Technical: Git, Power BI, SSIS, Linux, DAX
+Methods: KPI definition, Dimensional modeling, ETL workflows
+Management: Planning, Requirement gathering
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+IBM Data Analyst Professional Certificate
+Tableau Desktop Specialist

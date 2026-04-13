@@ -1,0 +1,32 @@
+Name: Hannah Patel
+Gender: Female
+Date of Birth: 1997-07-15
+Address: 859 Oakridge Street, 92194 Cologne, Germany
+Email: hannah.patel97@inboxmail.net
+Phone: +49-711-848-8634
+Target Role: Frontend Developer
+
+Professional Summary:
+Technology specialist with 6+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones.
+
+Education:
+Bachelor of Science — Information Technology — University of Lisbon — 2019
+
+Experience:
+Frontend Engineer — Quantum Systems — Cologne, Germany — 2020-11 to Present
+
+* Partnered with designers to deliver accessible interfaces at scale.
+* Built reusable component libraries that accelerated feature delivery.
+* Improved page performance scores by 26% across key user journeys.
+
+Skills:
+Technical: Testing Library, Notion, Next.js, JavaScript, Git, CSS
+Methods: Component architecture, Responsive design, State management
+Management: Design collaboration, Code review, Sprint planning
+
+Languages:
+English — C1
+French — C2
+
+Certifications:
+Meta Front-End Developer

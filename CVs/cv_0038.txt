@@ -1,0 +1,41 @@
+Name: Sophie Novak
+Gender: Female
+Date of Birth: 1996-03-19
+Address: 885 Birch Street, 49386 Milan, Italy
+Email: sophie.novak96@mailhub.com
+Phone: +234-956-388-4220
+Target Role: DevOps Engineer
+
+Professional Summary:
+DevOps Engineer focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Used to learning new tools quickly when projects require broader technical coverage.
+
+Education:
+Master of Science — Network Engineering — University of Texas at Austin — 2019
+
+Experience:
+DevOps Engineer — Cloud Labs — Milan, Italy — 2019-01 to 2022-11
+
+* Reduced release lead time by 23% through CI/CD automation.
+* Supported engineering teams during incidents and postmortem actions.
+* Improved platform reliability with stronger observability and runbooks.
+
+Platform Engineer — Signal Labs — Milan, Italy — 2023-07 to Present
+
+* Standardized infrastructure provisioning across environments.
+* Improved platform reliability with stronger observability and runbooks.
+* Reduced release lead time by 33% through CI/CD automation.
+* Supported engineering teams during incidents and postmortem actions.
+
+Skills:
+Technical: API integration, Python, Monitoring, AWS, Linux
+Methods: Infrastructure as code, Monitoring, CI/CD, Incident response, Automation, Documentation
+Management: Collaboration, Incident coordination, Documentation, Technical mentoring
+
+Languages:
+English — C2
+
+Certifications:
+Professional Scrum Master I
+CKA
+Scrum Fundamentals Certified
+HashiCorp Terraform Associate

@@ -1,0 +1,32 @@
+Name: Ethan Kim
+Gender: Male
+Date of Birth: 2002-09-05
+Address: 695 Oakridge Street, 48886 Warsaw, Poland
+Email: ethan.kim02@mailhub.com
+Phone: +1-667-791-5139
+Target Role: Frontend Developer
+
+Professional Summary:
+Frontend Developer focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Science — Information Technology — University of Texas at Austin — 2025
+
+Experience:
+Frontend Developer — North Networks — Warsaw, Poland — 2025-09 to Present
+
+* Built reusable component libraries that accelerated feature delivery.
+* Partnered with designers to deliver accessible interfaces at scale.
+* Reduced UI defects through stronger test automation and QA collaboration.
+* Improved page performance scores by 12% across key user journeys.
+
+Skills:
+Technical: REST APIs, TypeScript, Next.js, HTML, CSS
+Methods: Component architecture, State management, Responsive design, Performance optimization, Accessibility
+Management: Requirement clarification, Code review, Design collaboration, Sprint planning, Task coordination
+
+Languages:
+English — C2
+
+Certifications:
+None listed

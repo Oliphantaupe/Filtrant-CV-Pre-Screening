@@ -1,0 +1,48 @@
+Name: Leila Hassan
+Gender: Female
+Date of Birth: 1989-05-15
+Address: 235 Pinecrest Street, 31420 Milan, Italy
+Email: leila.hassan89@mailhub.com
+Phone: +1-958-140-6594
+Target Role: QA Engineer
+
+Professional Summary:
+Technology specialist with 8+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Has supported mentoring, planning, and coordination activities alongside individual technical work.
+
+Education:
+Bachelor of Science — Computer Science — University of Warsaw — 2018
+
+Experience:
+QA Engineer — Signal Solutions — Milan, Italy — 2018-02 to 2020-03
+
+* Developed automation suites for critical API and UI flows.
+* Partnered with developers to reproduce and isolate production issues.
+* Improved release readiness through clearer test reporting.
+
+Test Engineer — Nova Works — Milan, Italy — 2021-09 to 2023-08
+
+* Developed automation suites for critical API and UI flows.
+* Partnered with developers to reproduce and isolate production issues.
+* Reduced escaped defects by 31% by expanding regression coverage.
+
+Senior QA Engineer — Vector Labs — Milan, Italy — 2024-07 to Present
+
+* Reduced escaped defects by 27% by expanding regression coverage.
+* Developed automation suites for critical API and UI flows.
+* Partnered with developers to reproduce and isolate production issues.
+* Improved release readiness through clearer test reporting.
+
+Skills:
+Technical: ETL basics, Agile tools, SQL, Cypress, API testing, Jira, Python, Postman
+Methods: Test planning, Quality assurance, Defect tracking, Regression testing
+Management: Documentation, Risk communication, Prioritization
+
+Languages:
+English — C2
+German — B1
+
+Certifications:
+Scrum Fundamentals Certified
+Certified Agile Tester
+ISTQB Foundation Level
+ITIL Foundation

@@ -1,0 +1,34 @@
+Name: Yusuf Santos
+Gender: Male
+Date of Birth: 1996-02-25
+Address: 361 Riverside Street, 69688 Amsterdam, Netherlands
+Email: yusuf.santos96@mailhub.com
+Phone: +48-428-281-1397
+Target Role: ML Engineer
+
+Professional Summary:
+Analytical professional targeting ML Engineer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Master of Science — Artificial Intelligence — University of Texas at Austin — 2022
+
+Experience:
+ML Engineer — Quantum Solutions — Amsterdam, Netherlands — 2023-12 to Present
+
+* Reduced model deployment time by 16% by standardizing CI/CD pipelines.
+* Improved observability for inference latency and feature freshness.
+
+Skills:
+Technical: Docker, Notion, MLflow, AWS, PyTorch, Kubernetes, Python
+Methods: Model deployment, Feature stores, Monitoring, CI/CD, MLOps
+Management: Technical mentoring, Roadmap communication, Collaboration, Sprint planning, Planning
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+CKA
+Google Data Analytics Certificate
+AWS Cloud Practitioner
+Google Professional Machine Learning Engineer

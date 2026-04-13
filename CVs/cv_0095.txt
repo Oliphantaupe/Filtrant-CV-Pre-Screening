@@ -1,0 +1,43 @@
+Name: Omar Rossi
+Gender: Male
+Date of Birth: 1993-04-26
+Address: 138 Maple Avenue, Seattle, WA 43991, USA
+Email: omar.rossi93@inboxmail.net
+Phone: +351-453-493-2134
+Target Role: ML Engineer
+
+Professional Summary:
+ML Engineer focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Capable of supporting team goals and handling recurring technical responsibilities.
+
+Education:
+Master of Science — Computer Science — University of Warsaw — 2020
+
+Experience:
+ML Engineer — Atlas Labs — Seattle, WA — 2022-09 to 2023-09
+
+* Reduced model deployment time by 31% by standardizing CI/CD pipelines.
+* Operationalized training and inference workflows for multiple production models.
+* Improved observability for inference latency and feature freshness.
+* Partnered with data scientists to convert prototypes into resilient services.
+
+Applied ML Engineer — Nova Works — Seattle, WA — 2024-09 to 2025-11
+
+* Improved observability for inference latency and feature freshness.
+* Operationalized training and inference workflows for multiple production models.
+
+Machine Learning Engineer — Quantum Platform — Seattle, WA — 2026-03 to Present
+
+* Improved observability for inference latency and feature freshness.
+* Operationalized training and inference workflows for multiple production models.
+
+Skills:
+Technical: Docker, Jira, MLflow, TensorFlow, AWS, Python
+Methods: MLOps, Model deployment, Monitoring, Feature stores
+Management: Technical mentoring, Roadmap communication
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+AWS Certified Machine Learning

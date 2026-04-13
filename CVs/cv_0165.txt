@@ -1,0 +1,31 @@
+Name: Maya Dubois
+Gender: Female
+Date of Birth: 2000-08-15
+Address: 751 Birch Street, 69464 Warsaw, Poland
+Email: maya.dubois00@email.com
+Phone: +33-431-723-1551
+Target Role: Data Engineer
+
+Professional Summary:
+Professional pursuing Data Engineer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning. Brings a practical approach to delivery, prioritization, and collaboration across teams.
+
+Education:
+Master of Science — Data Engineering — University of Lagos — 2024
+
+Experience:
+Data Engineer — Blue Solutions — Warsaw, Poland — 2024-03 to Present
+
+* Implemented data quality checks that reduced downstream incidents.
+* Supported analytics and ML teams with curated data models.
+* Designed reliable ingestion jobs for operational and product datasets.
+
+Skills:
+Technical: SQL, Documentation, Python, Agile tools, AWS
+Methods: Agile collaboration, ETL design, Data modeling, Batch processing, Pipeline orchestration
+Management: Planning, Incident communication, Teamwork
+
+Languages:
+English — C2
+
+Certifications:
+Databricks Data Engineer Associate

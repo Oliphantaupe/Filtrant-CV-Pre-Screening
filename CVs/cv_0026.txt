@@ -1,0 +1,43 @@
+Name: Elena Dubois
+Gender: Female
+Date of Birth: 1993-08-08
+Address: 650 Oakridge Street, 91591 Milan, Italy
+Email: elena.dubois93@inboxmail.net
+Phone: +49-972-784-2055
+Target Role: Product Analyst
+
+Professional Summary:
+Professional pursuing Product Analyst opportunities with exposure to production environments, team delivery, and measurable operational improvements. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning.
+
+Education:
+Bachelor of Science — Computer Science — University of Colorado Boulder — 2021
+
+Experience:
+Product Analyst — Nova Systems — Milan, Italy — 2021-12 to 2022-11
+
+* Defined self-serve metrics for feature adoption and retention analysis.
+* Identified product funnel bottlenecks and improved conversion by 32%.
+* Built experiment readouts used by product and design leadership.
+* Connected product analytics findings to roadmap prioritization decisions.
+
+Product Data Analyst — Atlas Analytics — Milan, Italy — 2023-09 to 2024-03
+
+* Identified product funnel bottlenecks and improved conversion by 19%.
+* Built experiment readouts used by product and design leadership.
+* Defined self-serve metrics for feature adoption and retention analysis.
+
+Growth Analyst — Vector Systems — Milan, Italy — 2025-10 to Present
+
+* Defined self-serve metrics for feature adoption and retention analysis.
+* Connected product analytics findings to roadmap prioritization decisions.
+
+Skills:
+Technical: Looker, SQL, Tableau, Mixpanel, Excel
+Methods: User behavior analysis, Experimentation, Product metrics, Funnel analysis, Cohort analysis
+Management: Communication, Cross-functional collaboration
+
+Languages:
+English — C2
+
+Certifications:
+Amplitude Foundations

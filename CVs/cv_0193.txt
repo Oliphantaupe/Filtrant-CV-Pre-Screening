@@ -1,0 +1,44 @@
+Name: Arjun Santos
+Gender: Male
+Date of Birth: 1990-01-02
+Address: 109 Maple Street, 46371 Dublin, Ireland
+Email: arjun.santos90@email.com
+Phone: +351-788-831-5384
+Target Role: Data Scientist
+
+Professional Summary:
+Technology specialist with 9+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Has supported mentoring, planning, and coordination activities alongside individual technical work. Comfortable contributing in environments with evolving priorities and shared ownership.
+
+Education:
+Bachelor of Science — Computer Science — Indian Institute of Technology Delhi — 2017
+
+Experience:
+Data Scientist — Cloud Labs — Dublin, Ireland — 2017-11 to 2020-02
+
+* Delivered experimentation frameworks used to prioritize product changes.
+* Translated ambiguous business questions into measurable ML experiments.
+
+Junior Data Scientist — Nova Works — Dublin, Ireland — 2021-05 to 2023-07
+
+* Improved model accuracy by 31% on a customer behavior prediction use case.
+* Delivered experimentation frameworks used to prioritize product changes.
+* Translated ambiguous business questions into measurable ML experiments.
+* Built production-ready models with monitoring for drift and data quality while coordinating work across engineers and analysts.
+
+Senior Data Scientist — Blue Analytics — Dublin, Ireland — 2024-04 to Present
+
+* Improved model accuracy by 27% on a customer behavior prediction use case.
+* Built production-ready models with monitoring for drift and data quality.
+* Delivered experimentation frameworks used to prioritize product changes while coordinating work across engineers and analysts.
+
+Skills:
+Technical: Pandas, Spark, Python, TensorFlow, SQL, PyTorch
+Methods: Statistical inference, Forecasting, Experiment design, Model validation, Feature engineering
+Management: Stakeholder alignment, Project planning, Cross-functional communication, Mentoring
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+TensorFlow Developer Certificate

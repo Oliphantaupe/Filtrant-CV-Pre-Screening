@@ -1,0 +1,33 @@
+Name: Elena Schneider
+Gender: Female
+Date of Birth: 1996-05-09
+Address: 286 Hillview Avenue, Seattle, WA 52650, USA
+Email: elena.schneider96@mailhub.com
+Phone: +351-521-142-7894
+Target Role: Data Engineer
+
+Professional Summary:
+Professional pursuing Data Engineer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Capable of supporting team goals and handling recurring technical responsibilities.
+
+Education:
+Master of Science — Data Engineering — Indian Institute of Technology Delhi — 2021
+
+Experience:
+Data Engineer — Signal Labs — Seattle, WA — 2023-06 to Present
+
+* Cut pipeline runtime by 26% through incremental processing improvements.
+* Designed reliable ingestion jobs for operational and product datasets.
+* Supported analytics and ML teams with curated data models.
+* Implemented data quality checks that reduced downstream incidents.
+
+Skills:
+Technical: SQL, Airflow, Agile tools, dbt
+Methods: Data quality management, Agile collaboration, Pipeline orchestration, Data modeling
+Management: Documentation, Planning, Cross-team coordination
+
+Languages:
+English — C1
+Italian — B2
+
+Certifications:
+None listed

@@ -1,0 +1,31 @@
+Name: Gabriel Popescu
+Gender: Male
+Date of Birth: 1986-06-22
+Address: 820 Admiralty Street, 25138 Warsaw, Poland
+Email: gabriel.popescu86@email.com
+Phone: +234-894-161-1466
+Target Role: Frontend Developer
+
+Professional Summary:
+Analytical professional targeting Frontend Developer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Bachelor of Science — Information Technology — University of Bonn — 2014
+
+Experience:
+Senior Frontend Developer — Cloud Insight — Warsaw, Poland — 2015-01 to Present
+
+* Built reusable component libraries that accelerated feature delivery.
+* Reduced UI defects through stronger test automation and QA collaboration.
+
+Skills:
+Technical: HTML, Git, Next.js, React, Testing Library
+Methods: State management, Responsive design, Performance optimization, Component architecture
+Management: Code review, Requirement clarification, Design collaboration, Sprint planning
+
+Languages:
+English — C2
+French — B2
+
+Certifications:
+Professional Scrum Master I

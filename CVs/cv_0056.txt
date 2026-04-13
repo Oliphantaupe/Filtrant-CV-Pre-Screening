@@ -1,0 +1,44 @@
+Name: Zoe Martinez
+Gender: Female
+Date of Birth: 1993-02-07
+Address: 687 Maple Street, 97954 Cologne, Germany
+Email: zoe.martinez93@mailhub.com
+Phone: +353-789-971-9612
+Target Role: Product Analyst
+
+Professional Summary:
+Analytical professional targeting Product Analyst opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones.
+
+Education:
+Bachelor of Science — Computer Science — Trinity College Dublin — 2016
+
+Experience:
+Product Analyst — Quantum Solutions — Cologne, Germany — 2017-01 to 2020-01
+
+* Identified product funnel bottlenecks and improved conversion by 21%.
+* Connected product analytics findings to roadmap prioritization decisions.
+
+Growth Analyst — Atlas Dynamics — Cologne, Germany — 2021-12 to 2023-03
+
+* Built experiment readouts used by product and design leadership.
+* Connected product analytics findings to roadmap prioritization decisions.
+* Identified product funnel bottlenecks and improved conversion by 22%.
+
+Senior Product Analyst — Quantum Labs — Cologne, Germany — 2024-06 to Present
+
+* Defined self-serve metrics for feature adoption and retention analysis.
+* Connected product analytics findings to roadmap prioritization decisions.
+* Built experiment readouts used by product and design leadership.
+* Identified product funnel bottlenecks and improved conversion by 17%.
+
+Skills:
+Technical: Tableau, Looker, Python, Excel, Mixpanel
+Methods: Funnel analysis, Product metrics, Cohort analysis
+Management: Stakeholder alignment, Cross-functional collaboration, Planning, Communication
+
+Languages:
+English — C1
+German — C2
+
+Certifications:
+Google Data Analytics Certificate

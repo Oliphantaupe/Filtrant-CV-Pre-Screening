@@ -1,0 +1,45 @@
+Name: Maya Patel
+Gender: Female
+Date of Birth: 1992-02-05
+Address: 110 Oakridge Street, 66408 Milan, Italy
+Email: maya.patel92@email.com
+Phone: +91-982-165-4117
+Target Role: Data Analyst
+
+Professional Summary:
+Technology specialist with 10+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning. Brings a practical approach to delivery, prioritization, and collaboration across teams.
+
+Education:
+Bachelor of Science — Data Analytics — University of Amsterdam — 2014
+
+Experience:
+Junior Data Analyst — North Insight — Milan, Italy — 2016-08 to 2019-04
+
+* Designed analysis workflows that reduced data preparation time by 29%.
+* Built weekly KPI reports adopted by finance and commercial teams.
+* Improved reporting efficiency by 21% through dashboard automation.
+
+Data Analyst — Signal Analytics — Milan, Italy — 2020-08 to 2023-11
+
+* Designed analysis workflows that reduced data preparation time by 13%.
+* Improved reporting efficiency by 24% through dashboard automation.
+* Validated source data quality and reduced recurring discrepancies across reports.
+
+Senior Data Analyst — Quantum Labs — Milan, Italy — 2024-02 to Present
+
+* Validated source data quality and reduced recurring discrepancies across reports.
+* Designed analysis workflows that reduced data preparation time by 15%.
+* Built weekly KPI reports adopted by finance and commercial teams.
+* Improved reporting efficiency by 14% through dashboard automation.
+
+Skills:
+Technical: Excel, R, Python, SQL, Power BI
+Methods: Regression analysis, Dashboard design, KPI tracking, Data visualization
+Management: Stakeholder communication, Requirement gathering
+
+Languages:
+English — C1
+Italian — B2
+
+Certifications:
+None listed

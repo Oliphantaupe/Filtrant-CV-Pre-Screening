@@ -1,0 +1,46 @@
+Name: Leila Fischer
+Gender: Female
+Date of Birth: 1988-07-04
+Address: 45 Admiralty Street, 72500 Dublin, Ireland
+Email: leila.fischer88@email.com
+Phone: +33-357-193-9335
+Target Role: Software Engineer
+
+Professional Summary:
+Professional pursuing Software Engineer opportunities with exposure to production environments, team delivery, and measurable operational improvements. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Used to learning new tools quickly when projects require broader technical coverage.
+
+Education:
+Master of Science — Information Systems — University of Texas at Austin — 2012
+
+Experience:
+Software Engineer — North Analytics — Dublin, Ireland — 2014-07 to 2018-12
+
+* Delivered software features that improved internal process efficiency by 34%.
+* Collaborated on architectural improvements for long-term scalability.
+
+Software Developer — Vector Analytics — Dublin, Ireland — 2019-08 to 2022-10
+
+* Delivered software features that improved internal process efficiency by 32%.
+* Contributed to CI/CD and release quality across multiple services.
+
+Senior Software Engineer — Data Solutions — Dublin, Ireland — 2023-06 to Present
+
+* Delivered software features that improved internal process efficiency by 18%.
+* Contributed to CI/CD and release quality across multiple services.
+* Collaborated on architectural improvements for long-term scalability.
+* Maintained core application modules with strong uptime and defect control.
+
+Skills:
+Technical: C#, Java, Python, SQL, Docker
+Methods: Testing, Object-oriented design, System integration, Agile collaboration
+Management: Communication, Planning, Task coordination
+
+Languages:
+English — C2
+German — B1
+
+Certifications:
+Google Data Analytics Certificate
+Professional Scrum Developer
+AWS Certified Developer
+ITIL Foundation

@@ -1,0 +1,37 @@
+Name: Maya Popescu
+Gender: Female
+Date of Birth: 1991-06-23
+Address: 616 Birch Avenue, Austin, TX 70987, USA
+Email: maya.popescu91@inboxmail.net
+Phone: +33-463-911-5170
+Target Role: ML Engineer
+
+Professional Summary:
+Technology specialist with 7+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Has supported mentoring, planning, and coordination activities alongside individual technical work. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Master of Science — Computer Science — Politecnico di Milano — 2017
+
+Experience:
+ML Engineer — Cloud Analytics — Austin, TX — 2019-12 to 2022-01
+
+* Partnered with data scientists to convert prototypes into resilient services while coordinating work across engineers and analysts.
+* Improved observability for inference latency and feature freshness.
+* Operationalized training and inference workflows for multiple production models.
+
+Machine Learning Engineer — Core Solutions — Austin, TX — 2023-03 to Present
+
+* Partnered with data scientists to convert prototypes into resilient services.
+* Operationalized training and inference workflows for multiple production models while coordinating work across engineers and analysts.
+
+Skills:
+Technical: REST APIs, AWS, Agile tools, PyTorch, Kubernetes, TensorFlow
+Methods: Agile collaboration, Model deployment, MLOps, Monitoring
+Management: Collaboration, Sprint planning, Roadmap communication, Technical mentoring, Task coordination
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+CKA

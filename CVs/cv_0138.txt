@@ -1,0 +1,33 @@
+Name: Aisha Martinez
+Gender: Female
+Date of Birth: 1994-11-15
+Address: 431 Park Street, 23734 Lagos, Nigeria
+Email: aisha.martinez94@inboxmail.net
+Phone: +49-315-848-8808
+Target Role: Frontend Developer
+
+Professional Summary:
+Frontend Developer focused on pragmatic execution, dependable delivery, and collaboration across technical and business stakeholders. Known for clear communication, structured problem solving, and strong execution in fast-moving environments. Focused on individual contribution with growing exposure to collaborative planning. Interested in roles that combine execution, communication, and measurable business outcomes.
+
+Education:
+Master of Science — Software Engineering — Indian Institute of Technology Delhi — 2017
+
+Experience:
+Senior Frontend Developer — Blue Works — Lagos, Nigeria — 2017-09 to Present
+
+* Reduced UI defects through stronger test automation and QA collaboration.
+* Partnered with designers to deliver accessible interfaces at scale.
+* Built reusable component libraries that accelerated feature delivery.
+
+Skills:
+Technical: Testing Library, Next.js, React, JavaScript, TypeScript
+Methods: Component architecture, Accessibility, Performance optimization, Responsive design, State management
+Management: Code review, Design collaboration, Requirement clarification, Sprint planning
+
+Languages:
+English — C1
+Italian — B2
+
+Certifications:
+Meta Front-End Developer
+Professional Scrum Master I

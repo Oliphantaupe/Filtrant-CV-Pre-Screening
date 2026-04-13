@@ -1,0 +1,32 @@
+Name: Luca Aliyev
+Gender: Male
+Date of Birth: 2001-12-06
+Address: 811 Pinecrest Street, 13743 Lisbon, Portugal
+Email: luca.aliyev01@email.com
+Phone: +91-353-988-6688
+Target Role: QA Engineer
+
+Professional Summary:
+Analytical professional targeting QA Engineer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning. Comfortable contributing in environments with evolving priorities and shared ownership.
+
+Education:
+Bachelor of Arts — Computer Science — University of Bonn — 2022
+
+Experience:
+QA Engineer — Nova Tech — Lisbon, Portugal — 2023-08 to Present
+
+* Partnered with developers to reproduce and isolate production issues.
+* Reduced escaped defects by 21% by expanding regression coverage.
+* Improved release readiness through clearer test reporting.
+
+Skills:
+Technical: Selenium, Jira, Postman, API testing
+Methods: Defect tracking, Test automation, Test planning
+Management: Cross-team coordination, Task coordination, Documentation
+
+Languages:
+English — C2
+Spanish — B2
+
+Certifications:
+None listed

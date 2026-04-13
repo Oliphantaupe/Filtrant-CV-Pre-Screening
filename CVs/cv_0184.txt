@@ -1,0 +1,44 @@
+Name: Gabriel Martinez
+Gender: Male
+Date of Birth: 1987-03-21
+Address: 96 Maple Street, 62329 Lagos, Nigeria
+Email: gabriel.martinez87@mailhub.com
+Phone: +31-449-477-2377
+Target Role: Product Analyst
+
+Professional Summary:
+Technology specialist with 10+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones.
+
+Education:
+Bachelor of Arts — Economics — Trinity College Dublin — 2016
+
+Experience:
+Product Analyst — Core Labs — Lagos, Nigeria — 2016-05 to 2019-10
+
+* Connected product analytics findings to roadmap prioritization decisions.
+* Built experiment readouts used by product and design leadership.
+
+Growth Analyst — Atlas Tech — Lagos, Nigeria — 2020-12 to 2023-12
+
+* Connected product analytics findings to roadmap prioritization decisions.
+* Identified product funnel bottlenecks and improved conversion by 28%.
+* Defined self-serve metrics for feature adoption and retention analysis.
+* Built experiment readouts used by product and design leadership.
+
+Senior Product Analyst — Atlas Tech — Lagos, Nigeria — 2024-11 to Present
+
+* Identified product funnel bottlenecks and improved conversion by 19%.
+* Connected product analytics findings to roadmap prioritization decisions.
+* Built experiment readouts used by product and design leadership.
+
+Skills:
+Technical: Git, SQL, Amplitude, Looker
+Methods: Funnel analysis, User behavior analysis, Product metrics, Cohort analysis, Experimentation
+Management: Communication, Planning, Cross-functional collaboration, Stakeholder alignment
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+Google Data Analytics Certificate

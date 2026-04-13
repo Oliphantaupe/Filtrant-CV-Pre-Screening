@@ -1,0 +1,37 @@
+Name: Jonas Rossi
+Gender: Male
+Date of Birth: 1992-12-09
+Address: 251 Maple Street, 97232 Lisbon, Portugal
+Email: jonas.rossi92@inboxmail.net
+Phone: +49-400-456-4746
+Target Role: ML Engineer
+
+Professional Summary:
+Analytical professional targeting ML Engineer opportunities, with hands-on experience across delivery, collaboration, and continuous improvement. Capable of supporting team goals and handling recurring technical responsibilities. Focused on individual contribution with growing exposure to collaborative planning. Comfortable contributing in environments with evolving priorities and shared ownership.
+
+Education:
+Bachelor of Science — Computer Science — University of Lisbon — 2019
+
+Experience:
+ML Engineer — Nova Works — Lisbon, Portugal — 2019-08 to 2022-08
+
+* Reduced model deployment time by 16% by standardizing CI/CD pipelines.
+* Operationalized training and inference workflows for multiple production models.
+* Partnered with data scientists to convert prototypes into resilient services.
+
+Machine Learning Engineer — Nova Solutions — Lisbon, Portugal — 2023-12 to Present
+
+* Partnered with data scientists to convert prototypes into resilient services.
+* Operationalized training and inference workflows for multiple production models.
+* Reduced model deployment time by 32% by standardizing CI/CD pipelines.
+
+Skills:
+Technical: PyTorch, Kubernetes, Python, MLflow, Docker, TensorFlow
+Methods: Model deployment, CI/CD, Feature stores, MLOps, Monitoring
+Management: Technical mentoring, Roadmap communication, Collaboration, Sprint planning
+
+Languages:
+English — C2
+
+Certifications:
+AWS Certified Machine Learning

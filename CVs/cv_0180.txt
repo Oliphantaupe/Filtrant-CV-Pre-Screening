@@ -1,0 +1,44 @@
+Name: Victor Petrov
+Gender: Male
+Date of Birth: 1994-05-12
+Address: 115 Admiralty Street, 57835 Bengaluru, India
+Email: victor.petrov94@mailhub.com
+Phone: +48-668-578-4642
+Target Role: Backend Developer
+
+Professional Summary:
+Technology specialist with 10+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Comfortable working with stakeholders, documenting decisions, and contributing to delivery milestones. Focused on individual contribution with growing exposure to collaborative planning. Comfortable contributing in environments with evolving priorities and shared ownership.
+
+Education:
+Master of Science — Software Engineering — University of Lisbon — 2015
+
+Experience:
+Backend Developer — Vector Systems — Bengaluru, India — 2016-01 to 2019-03
+
+* Improved reliability of core backend services handling business-critical traffic.
+* Designed service integrations used across multiple product teams.
+
+Backend Engineer — Atlas Systems — Bengaluru, India — 2020-12 to 2023-10
+
+* Designed service integrations used across multiple product teams.
+* Expanded automated test coverage for payment and account workflows.
+
+Senior Backend Developer — Blue Analytics — Bengaluru, India — 2024-10 to Present
+
+* Expanded automated test coverage for payment and account workflows.
+* Improved reliability of core backend services handling business-critical traffic.
+* Designed service integrations used across multiple product teams.
+* Reduced API response time by 29% through query and caching improvements.
+
+Skills:
+Technical: Python, Docker, Redis, PostgreSQL
+Methods: Performance tuning, Unit testing, System design, Microservices, API design, Root cause analysis
+Management: Task estimation, Code review, Collaboration, Stakeholder updates, Technical communication
+
+Languages:
+English — C1
+Portuguese — C1
+
+Certifications:
+AWS Certified Developer
+Azure Developer Associate

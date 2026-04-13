@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    anthropic_api_key: str
+    openrouter_api_key: str
     database_url: str
     env: str = "development"
     log_level: str = "INFO"

@@ -1,0 +1,42 @@
+Name: Elena Liu
+Gender: Female
+Date of Birth: 1998-12-05
+Address: 298 Pinecrest Street, 69875 Cologne, Germany
+Email: elena.liu98@mailhub.com
+Phone: +39-207-496-3178
+Target Role: Data Scientist
+
+Professional Summary:
+Technology specialist with 4+ years of experience building practical solutions, improving processes, and supporting cross-functional teams. Capable of supporting team goals and handling recurring technical responsibilities.
+
+Education:
+Master of Science — Machine Learning — University of Colorado Boulder — 2022
+
+Experience:
+Data Scientist — North Labs — Cologne, Germany — 2022-02 to 2023-06
+
+* Delivered experimentation frameworks used to prioritize product changes.
+* Built production-ready models with monitoring for drift and data quality.
+
+Applied Scientist — Blue Solutions — Cologne, Germany — 2024-07 to 2025-10
+
+* Translated ambiguous business questions into measurable ML experiments.
+* Improved model accuracy by 18% on a customer behavior prediction use case.
+* Built production-ready models with monitoring for drift and data quality.
+
+Junior Data Scientist — North Labs — Cologne, Germany — 2026-10 to Present
+
+* Delivered experimentation frameworks used to prioritize product changes.
+* Improved model accuracy by 29% on a customer behavior prediction use case.
+
+Skills:
+Technical: scikit-learn, TensorFlow, Spark
+Methods: Feature engineering, Forecasting, Experiment design, Statistical inference
+Management: Project planning, Mentoring, Cross-functional communication
+
+Languages:
+English — C1
+French — C2
+
+Certifications:
+TensorFlow Developer Certificate
