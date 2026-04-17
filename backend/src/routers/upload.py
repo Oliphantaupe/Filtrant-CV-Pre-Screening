@@ -51,7 +51,7 @@ async def _process_cv_bytes(file_bytes: bytes, filename: str) -> dict:
             candidate_id[:8], filename, cv.parse_quality, len(cv.missing_fields),
         )
     except Exception as e:
-        logger.error("Claude parse failed for %s: %s", filename, e)
+        logger.error("LLM parse failed for %s: %s", filename, e)
         _log_event(candidate_id, "parse_failed", str(e), filename, fmt, file_hash)
         raise HTTPException(status_code=502, detail=f"CV parsing failed: {e}")
 

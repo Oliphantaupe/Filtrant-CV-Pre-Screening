@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -86,5 +87,5 @@ def health():
         "status": "ok" if db_ok else "degraded",
         "db": db_ok,
         "env": settings.env,
-        "model_file": __import__("os").path.exists(settings.ml_model_path),
+        "model_file": os.path.exists(settings.ml_model_path),
     }
