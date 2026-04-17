@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 
 
@@ -16,6 +16,11 @@ class Education(BaseModel):
     year: Optional[int] = None
     level_score: int = Field(default=1, ge=1, le=5)
     # 1=high school, 2=associate, 3=bachelor, 4=master, 5=phd
+
+    @field_validator("level_score", mode="before")
+    @classmethod
+    def coerce_level_score(cls, v):
+        return v if v is not None else 1
 
 
 class Experience(BaseModel):
@@ -37,6 +42,11 @@ class Language(BaseModel):
     level: Optional[str] = None   # CEFR: A1..C2
     level_score: int = Field(default=1, ge=1, le=6)
     # 1=A1, 2=A2, 3=B1, 4=B2, 5=C1, 6=C2
+
+    @field_validator("level_score", mode="before")
+    @classmethod
+    def coerce_level_score(cls, v):
+        return v if v is not None else 1
 
 
 class Certification(BaseModel):
