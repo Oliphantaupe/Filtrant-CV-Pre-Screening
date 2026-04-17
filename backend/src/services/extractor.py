@@ -1,6 +1,6 @@
 """
 Text extraction from PDF, DOCX, and image files.
-Returns raw text to be passed to the Claude parser.
+Returns raw text to be passed to the LLM parser.
 """
 import hashlib
 import io
