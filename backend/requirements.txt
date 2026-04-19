@@ -17,6 +17,8 @@ scikit-learn==1.8.0
 pandas>=2.2
 numpy>=1.26
 joblib>=1.4
+imbalanced-learn>=0.12
+xgboost>=2.0
 
 # Validation
 pydantic==2.7.4

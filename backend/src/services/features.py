@@ -67,6 +67,12 @@ def extract_features(cv: CVSchema) -> dict:
     # Parse quality as ordinal score
     parse_quality_score = {"complete": 2, "partial": 1, "poor": 0}.get(cv.parse_quality, 1)
 
+    # ── Derived features (ratios & interactions) ────────────────────────────
+    experience_education_ratio = round(total_years / max(education_score, 1), 2)
+    certs_per_year = round(num_certifications / max(total_years, 0.5), 2)
+    experience_x_seniority = round(total_years * has_senior_title, 2)
+    experience_x_education = round(total_years * education_score, 2)
+
     return {
         # Original
         "total_years_experience": total_years,
@@ -85,6 +91,11 @@ def extract_features(cv: CVSchema) -> dict:
         "has_summary": has_summary,
         "num_certifications": num_certifications,
         "parse_quality_score": parse_quality_score,
+        # Derived
+        "experience_education_ratio": experience_education_ratio,
+        "certs_per_year": certs_per_year,
+        "experience_x_seniority": experience_x_seniority,
+        "experience_x_education": experience_x_education,
     }
 
 
@@ -137,4 +148,9 @@ FEATURE_COLUMNS = [
     "has_summary",
     "num_certifications",
     "parse_quality_score",
+    # Derived
+    "experience_education_ratio",
+    "certs_per_year",
+    "experience_x_seniority",
+    "experience_x_education",
 ]
