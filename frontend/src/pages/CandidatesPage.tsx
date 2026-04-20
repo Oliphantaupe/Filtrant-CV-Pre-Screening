@@ -475,8 +475,8 @@ export default function CandidatesPage() {
 
 const STAT_ACCENTS: Record<string, { dot: string; glow: string }> = {
   'Total CVs': { dot: 'var(--text-3)', glow: 'transparent' },
-  'Invited':   { dot: 'var(--invite)', glow: 'rgba(48, 209, 88, 0.06)' },
-  'Rejected':  { dot: 'var(--reject)', glow: 'rgba(255, 69, 58, 0.06)' },
+  'Invited':   { dot: 'var(--invite)', glow: 'transparent' },
+  'Rejected':  { dot: 'var(--reject)', glow: 'transparent' },
 }
 
 function GlassStatCard({ label, value }: { label: string; value: number }) {

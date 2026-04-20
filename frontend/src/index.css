@@ -68,6 +68,58 @@
   --backdrop-heavy: rgba(0, 0, 0, 0.65);
 }
 
+/* ─── Light theme overrides ─────────────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:  #f0f4f8;
+  --bg2: #e8edf5;
+
+  --glass:        rgba(255, 255, 255, 0.60);
+  --glass-subtle: rgba(255, 255, 255, 0.40);
+  --glass-dim:    rgba(255, 255, 255, 0.35);
+  --glass-hover:  rgba(255, 255, 255, 0.75);
+  --glass-active: rgba(255, 255, 255, 0.90);
+  --glass-panel:  rgba(255, 255, 255, 0.55);
+
+  --border:          rgba(0, 0, 0, 0.08);
+  --border-subtle:   rgba(0, 0, 0, 0.05);
+  --border-dim:      rgba(0, 0, 0, 0.06);
+  --border-strong:   rgba(0, 0, 0, 0.11);
+  --border-top:      rgba(255, 255, 255, 0.92);
+  --border-top-strong: rgba(255, 255, 255, 0.97);
+
+  --text-1:       rgba(10, 10, 20, 0.92);
+  --text-heading: rgba(10, 10, 20, 0.90);
+  --text-bright:  rgba(10, 10, 20, 0.85);
+  --text-body:    rgba(10, 10, 20, 0.65);
+  --text-2:       rgba(10, 10, 20, 0.55);
+  --text-label:   rgba(10, 10, 20, 0.48);
+  --text-icon:    rgba(10, 10, 20, 0.42);
+  --text-3:       rgba(10, 10, 20, 0.32);
+  --text-muted:   rgba(10, 10, 20, 0.45);
+  --text-faint:   rgba(10, 10, 20, 0.28);
+  --text-ghost:   rgba(10, 10, 20, 0.18);
+  --text-4:       rgba(10, 10, 20, 0.14);
+  --text-dim:     rgba(10, 10, 20, 0.07);
+
+  --shadow-panel: 0 8px 32px rgba(0, 0, 0, 0.10);
+  --shadow-modal: 0 25px 60px rgba(0, 0, 0, 0.14);
+  --shadow-side:  -20px 0 80px rgba(0, 0, 0, 0.10);
+
+  --backdrop-overlay: rgba(80, 90, 110, 0.40);
+  --backdrop-heavy:   rgba(80, 90, 110, 0.50);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb       { background: rgba(0,0,0,0.15); }
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+[data-theme="light"] *                                { scrollbar-color: rgba(0,0,0,0.15) transparent; }
+
+[data-theme="light"] .bokeh-1 { background: radial-gradient(circle, rgba(147,197,253,0.55) 0%, transparent 68%); }
+[data-theme="light"] .bokeh-2 { background: radial-gradient(circle, rgba(196,181,253,0.50) 0%, transparent 68%); }
+[data-theme="light"] .bokeh-3 { background: radial-gradient(circle, rgba(94,234,212,0.40)  0%, transparent 68%); }
+[data-theme="light"] .bokeh-4 { background: radial-gradient(circle, rgba(165,180,252,0.45) 0%, transparent 68%); }
+[data-theme="light"] .bokeh-5 { background: radial-gradient(circle, rgba(216,180,254,0.38) 0%, transparent 68%); }
+[data-theme="light"] .bokeh-6 { background: radial-gradient(circle, rgba(103,232,249,0.40) 0%, transparent 68%); }
+
 /* ─── Base ──────────────────────────────────────────────────────────────────── */
 @layer base {
   html, body {
