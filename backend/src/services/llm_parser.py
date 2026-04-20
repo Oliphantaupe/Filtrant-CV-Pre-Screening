@@ -1,19 +1,17 @@
 """
-Sends extracted CV text to OpenRouter (Gemini 2.0 Flash) and returns a validated CVSchema.
-Client is lazy-initialised so a bad key doesn't crash the app at startup.
+Sends extracted CV text to Anthropic Claude and returns a validated CVSchema.
 """
-import asyncio
 import json
 import logging
-import httpx
+
+import anthropic
 
 from src.config import settings
 from src.models.cv_schema import CVSchema
 
 logger = logging.getLogger(__name__)
 
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-MODEL = "google/gemini-2.0-flash-001"
+MODEL = "claude-haiku-4-5-20251001"
 
 SYSTEM_PROMPT = """You are a CV parser. Extract structured information from the CV text provided and return ONLY a valid JSON object matching this exact schema. Do not add any explanation or markdown — return raw JSON only.
 
@@ -38,65 +36,34 @@ Rules:
 - Return only the JSON object."""
 
 
-async def parse_cv(raw_text: str, max_retries: int = 4) -> CVSchema:
+async def parse_cv(raw_text: str) -> CVSchema:
     """
-    Call OpenRouter (Gemini 2.0 Flash) to parse raw CV text into a validated CVSchema.
-    Retries up to max_retries times on rate-limit (429) or server errors (5xx).
+    Call Claude to parse raw CV text into a validated CVSchema.
+    Uses prompt caching on the system prompt to reduce cost on batch uploads.
     """
-    headers = {
-        "Authorization": f"Bearer {settings.openrouter_api_key}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://filtrant.app",
-        "X-Title": "Filtrant CV Screening",
-    }
+    client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key, max_retries=4)
 
-    payload = {
-        "model": MODEL,
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": f"Parse this CV:\n\n{raw_text[:12000]}"},
+    message = await client.messages.create(
+        model=MODEL,
+        max_tokens=2048,
+        system=[
+            {
+                "type": "text",
+                "text": SYSTEM_PROMPT,
+                "cache_control": {"type": "ephemeral"},
+            }
         ],
-        "temperature": 0,
-    }
+        messages=[
+            {"role": "user", "content": f"Parse this CV:\n\n{raw_text[:12000]}"}
+        ],
+    )
 
-    async with httpx.AsyncClient(timeout=90.0) as client:
-        for attempt in range(max_retries + 1):
-            try:
-                response = await client.post(OPENROUTER_URL, headers=headers, json=payload)
-            except httpx.TimeoutException:
-                if attempt < max_retries:
-                    wait = 5 * (2 ** attempt)
-                    logger.warning("OpenRouter timeout, retrying in %ss (attempt %d)", wait, attempt + 1)
-                    await asyncio.sleep(wait)
-                    continue
-                raise
+    raw_json = message.content[0].text.strip()
 
-            if response.status_code == 429 or response.status_code >= 500:
-                if attempt < max_retries:
-                    wait = 5 * (2 ** attempt)
-                    logger.warning("OpenRouter %s, retrying in %ss (attempt %d)", response.status_code, wait, attempt + 1)
-                    await asyncio.sleep(wait)
-                    continue
-                response.raise_for_status()
+    if raw_json.startswith("```"):
+        lines = raw_json.splitlines()
+        raw_json = "\n".join(lines[1:-1]).strip()
 
-            response.raise_for_status()
-
-            raw_json = response.json()["choices"][0]["message"]["content"].strip()
-
-            # Strip markdown code fences if present (e.g. ```json ... ```)
-            if raw_json.startswith("```"):
-                lines = raw_json.splitlines()
-                raw_json = "\n".join(lines[1:-1]).strip()
-
-            try:
-                data = json.loads(raw_json)
-            except json.JSONDecodeError as e:
-                logger.error("Gemini returned invalid JSON on attempt %d: %s", attempt + 1, e)
-                if attempt < max_retries:
-                    continue
-                raise
-
-            logger.debug("CV parsed successfully (parse_quality=%s)", data.get("parse_quality"))
-            return CVSchema(**data)
-
-    raise RuntimeError("CV parsing failed after all retries")
+    data = json.loads(raw_json)
+    logger.debug("CV parsed successfully (parse_quality=%s)", data.get("parse_quality"))
+    return CVSchema(**data)
