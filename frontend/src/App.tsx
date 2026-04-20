@@ -6,24 +6,20 @@ export default function App() {
     <div className="min-h-screen">
       <AnimatedBackground />
 
-      {/* Frosted glass nav */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/90 border-b border-gray-200/60">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          {/* Logo */}
-          <span className="text-base font-bold tracking-tight bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent select-none">
+      {/* Floating glass pill nav */}
+      <header className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+        <nav className="glass-nav rounded-full px-2 py-2 flex items-center gap-0.5 pointer-events-auto">
+          <span className="font-bricolage text-sm font-bold text-[--text-heading] px-4 py-1 tracking-tight select-none">
             Filtrant
           </span>
-
-          {/* Nav */}
-          <nav className="flex items-center gap-1">
-            <NavItem to="/dashboard">Dashboard</NavItem>
-            <NavItem to="/candidates">Candidates</NavItem>
-            <NavItem to="/upload">Upload CV</NavItem>
-          </nav>
-        </div>
+          <div className="w-px h-4 bg-[--glass-active] mx-1" />
+          <NavItem to="/dashboard">Dashboard</NavItem>
+          <NavItem to="/candidates">Candidates</NavItem>
+          <NavItem to="/upload">Upload CV</NavItem>
+        </nav>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-10">
+      <main className="max-w-6xl mx-auto px-6 pt-24 pb-12">
         <Outlet />
       </main>
     </div>
@@ -35,10 +31,10 @@ function NavItem({ to, children }: { to: string; children: React.ReactNode }) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-150 ${
+        `px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
           isActive
-            ? 'bg-gray-900 text-white'
-            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+            ? 'bg-[--teal-subtle] text-[--teal]'
+            : 'text-[--text-2] hover:text-[--text-bright] hover:bg-[--glass-hover]'
         }`
       }
     >

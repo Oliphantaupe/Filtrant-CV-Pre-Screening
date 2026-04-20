@@ -24,6 +24,8 @@ export const api = {
     recommendation?: string
     date_from?: string
     date_to?: string
+    search?: string
+    sort_by?: string
   }): Promise<ListResponse> => {
     const qs = new URLSearchParams()
     if (params.page) qs.set('page', String(params.page))
@@ -31,6 +33,8 @@ export const api = {
     if (params.recommendation) qs.set('recommendation', params.recommendation)
     if (params.date_from) qs.set('date_from', params.date_from)
     if (params.date_to) qs.set('date_to', params.date_to)
+    if (params.search) qs.set('search', params.search)
+    if (params.sort_by) qs.set('sort_by', params.sort_by)
     return request(`/api/v1/candidates?${qs}`)
   },
 

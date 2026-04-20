@@ -16,6 +16,8 @@ def list_candidates(
     recommendation: str | None = Query(None),
     date_from: str | None = Query(None, description="YYYY-MM-DD — inclusive start date"),
     date_to: str | None = Query(None, description="YYYY-MM-DD — inclusive end date"),
+    search: str | None = Query(None),
+    sort_by: str | None = Query('date_desc'),
 ):
     offset = (page - 1) * page_size
     filters = []
@@ -30,8 +32,25 @@ def list_candidates(
     if date_to:
         filters.append("(processed_at AT TIME ZONE 'UTC')::date <= %s")
         params.append(date_to)
+    if search:
+        filters.append("(cv_data->'personal'->>'full_name' ILIKE %s OR cv_data->>'target_role' ILIKE %s)")
+        params.extend([f"%{search}%", f"%{search}%"])
 
     where = ("WHERE " + " AND ".join(filters)) if filters else ""
+    
+    order_clause = "ORDER BY "
+    is_confidence_sort = sort_by in ('confidence_desc', 'confidence_asc')
+    if not recommendation and is_confidence_sort:
+        order_clause += "CASE WHEN recommendation = 'Invite' THEN 1 ELSE 2 END ASC, "
+
+    if sort_by == 'confidence_desc':
+        order_clause += "confidence DESC NULLS LAST"
+    elif sort_by == 'confidence_asc':
+        order_clause += "confidence ASC NULLS LAST"
+    elif sort_by == 'date_asc':
+        order_clause += "processed_at ASC, id ASC"
+    else:
+        order_clause += "processed_at DESC, id DESC"
     params += [page_size, offset]
 
     with get_conn() as conn:
@@ -45,7 +64,7 @@ def list_candidates(
                        cv_data->>'target_role' AS target_role
                 FROM candidates
                 {where}
-                ORDER BY processed_at DESC
+                {order_clause}
                 LIMIT %s OFFSET %s
                 """,
                 params,

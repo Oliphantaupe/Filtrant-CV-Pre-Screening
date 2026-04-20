@@ -5,6 +5,30 @@ import type { UploadResult } from '../types/cv'
 import BlurText from '../components/BlurText'
 import CountUp from '../components/CountUp'
 
+function ConfidenceArc({ value, color }: { value: number; color: string }) {
+  const r = 40
+  const circ = 2 * Math.PI * r
+  return (
+    <div className="relative flex items-center justify-center" style={{ width: 96, height: 96 }}>
+      <svg width="96" height="96" style={{ transform: 'rotate(-90deg)', position: 'absolute' }}>
+        <circle cx="48" cy="48" r={r} fill="none" stroke="var(--glass)" strokeWidth="5" />
+        <motion.circle cx="48" cy="48" r={r} fill="none" stroke={color} strokeWidth="5" strokeLinecap="round"
+          initial={{ strokeDasharray: circ, strokeDashoffset: circ }}
+          animate={{ strokeDashoffset: circ * (1 - value / 100) }}
+          transition={{ delay: 0.35, duration: 1.3, ease: 'easeOut' }}
+          style={{ filter: `drop-shadow(0 0 6px ${color}80)` }}
+        />
+      </svg>
+      <div className="relative z-10 text-center">
+        <span className="font-jetbrains text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>
+          <CountUp to={value} duration={1.2} />
+        </span>
+        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>%</span>
+      </div>
+    </div>
+  )
+}
+
 export default function UploadPage() {
   const [dragging, setDragging] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -14,110 +38,101 @@ export default function UploadPage() {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleFile = async (file: File) => {
-    setLoading(true)
-    setError(null)
-    setResult(null)
-    setFilename(file.name)
-    try {
-      const res = await api.uploadCV(file)
-      setResult(res)
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Upload failed')
-    } finally {
-      setLoading(false)
-    }
+    setLoading(true); setError(null); setResult(null); setFilename(file.name)
+    try { setResult(await api.uploadCV(file)) }
+    catch (e: unknown) { setError(e instanceof Error ? e.message : 'Upload failed') }
+    finally { setLoading(false) }
   }
 
   const reset = () => {
-    setResult(null)
-    setError(null)
-    setFilename(null)
+    setResult(null); setError(null); setFilename(null)
     if (inputRef.current) inputRef.current.value = ''
   }
 
   const onDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setDragging(false)
+    e.preventDefault(); setDragging(false)
     const file = e.dataTransfer.files[0]
     if (file) handleFile(file)
   }
 
   const isInvite = result?.recommendation === 'Invite'
   const isReject = result?.recommendation === 'Reject'
+  const resultColor = isInvite ? 'var(--teal)' : isReject ? 'var(--text-muted)' : 'var(--text-faint)'
+  const resultGlowBg = isInvite ? 'var(--teal-dim)' : 'transparent'
+  const resultBoxGlow = isInvite
+    ? '0 0 60px var(--teal-subtle), var(--shadow-modal)'
+    : 'var(--shadow-modal)'
 
   return (
     <div className="max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">Upload CV</h1>
-      <p className="text-sm text-gray-700 mb-6">PDF, DOCX, or TXT — up to 5 MB</p>
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 28 }}>
+        <h1 className="font-bricolage text-3xl font-bold tracking-tight mb-1" style={{ color: 'var(--text-1)' }}>
+          Upload CV
+        </h1>
+        <p className="text-sm mb-8" style={{ color: 'var(--text-muted)' }}>PDF, DOCX, or TXT — up to 5 MB</p>
+      </motion.div>
 
       {/* Drop zone */}
-      <div
-        className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all duration-200 ${
-          dragging
-            ? 'border-blue-400 bg-blue-50 scale-[1.01]'
-            : loading
-            ? 'border-gray-200 bg-white/80 cursor-default'
-            : 'border-gray-300 bg-white/90 hover:border-blue-300 hover:bg-white'
-        }`}
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08, type: 'spring', stiffness: 280, damping: 26 }}
+        className="relative rounded-3xl p-12 text-center cursor-pointer transition-all duration-300"
+        style={{
+          background: dragging ? 'var(--teal-dim)' : 'var(--glass-subtle)',
+          backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+          border: dragging ? '1.5px dashed var(--teal-border)' : '1.5px dashed var(--glass-active)',
+          boxShadow: dragging ? '0 0 40px var(--teal-subtle), inset 0 0 20px var(--teal-dim)' : 'none',
+        }}
         onDragOver={e => { e.preventDefault(); if (!loading) setDragging(true) }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={onDrop}
+        onDragLeave={() => setDragging(false)} onDrop={onDrop}
         onClick={() => { if (!loading) inputRef.current?.click() }}
       >
-        <input
-          ref={inputRef}
-          type="file"
-          className="hidden"
-          accept=".pdf,.docx,.doc,.txt"
-          onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f) }}
-        />
+        <input ref={inputRef} type="file" className="hidden" accept=".pdf,.docx,.doc,.txt"
+          onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f) }} />
 
         <AnimatePresence mode="wait">
           {loading ? (
-            <motion.div
-              key="loading"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="flex flex-col items-center gap-3"
-            >
-              <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-              <p className="text-sm text-gray-500">Claude is reading the CV…</p>
+            <motion.div key="loading" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }} transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+              className="flex flex-col items-center gap-4">
+              <div className="relative w-14 h-14">
+                <div className="absolute inset-0 rounded-full" style={{ border: '2px solid var(--glass)' }} />
+                <div className="absolute inset-0 rounded-full animate-spin"
+                  style={{ border: '2px solid transparent', borderTopColor: 'var(--teal)', boxShadow: '0 0 18px var(--teal-glow)' }} />
+              </div>
+              <p className="text-sm" style={{ color: 'var(--text-2)' }}>AI is reading the CV…</p>
               {filename && (
-                <span className="text-xs bg-gray-100 text-gray-500 px-3 py-1 rounded-full">{filename}</span>
+                <span className="text-xs px-3 py-1 rounded-full font-jetbrains"
+                  style={{ background: 'var(--glass-hover)', color: 'var(--text-muted)' }}>{filename}</span>
               )}
             </motion.div>
           ) : (
-            <motion.div
-              key="idle"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="flex flex-col items-center gap-3"
-            >
-              <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
-                <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            <motion.div key="idle" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }} transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+              className="flex flex-col items-center gap-4">
+              <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                className="w-14 h-14 rounded-full flex items-center justify-center"
+                style={{ background: 'var(--teal-dim)', boxShadow: '0 0 28px var(--teal-muted)' }}>
+                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="var(--teal)" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                 </svg>
-              </div>
+              </motion.div>
               <div>
-                <p className="text-sm font-medium text-gray-700">Drop a file here</p>
-                <p className="text-xs text-gray-400 mt-0.5">or click to browse</p>
+                <p className="text-sm font-medium" style={{ color: 'var(--text-body)' }}>Drop a file here</p>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--text-3)' }}>or click to browse</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
 
       {/* Error */}
       <AnimatePresence>
         {error && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-start gap-2"
-          >
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className="mt-4 p-4 rounded-2xl text-sm flex items-start gap-2"
+            style={{ background: 'var(--reject-dim)', border: '1px solid var(--reject-border)', color: 'var(--reject)' }}>
             <span className="shrink-0 mt-0.5">✕</span>
             <span>{error}</span>
           </motion.div>
@@ -127,79 +142,57 @@ export default function UploadPage() {
       {/* Result */}
       <AnimatePresence>
         {result && (
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-            className={`mt-6 rounded-2xl border overflow-hidden shadow-sm ${
-              isInvite ? 'border-green-200 bg-white' : isReject ? 'border-red-200 bg-white' : 'border-gray-200 bg-white'
-            }`}
-          >
-            {/* Verdict header */}
-            <div className={`px-6 py-5 ${isInvite ? 'bg-green-50' : isReject ? 'bg-red-50' : 'bg-gray-50'}`}>
-              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">AI Recommendation</p>
-              <div className="flex items-end justify-between">
-                <BlurText
-                  text={result.recommendation}
-                  animateBy="letters"
-                  delay={60}
-                  className={`text-3xl font-black tracking-tight ${
-                    isInvite ? 'text-green-700' : isReject ? 'text-red-700' : 'text-gray-600'
-                  }`}
-                />
-                {result.confidence !== null && (
-                  <span className="text-2xl font-bold text-gray-700 tabular-nums">
-                    <CountUp to={Math.round(result.confidence * 100)} duration={1.2} />
-                    <span className="text-base font-normal text-gray-400">%</span>
-                  </span>
-                )}
-              </div>
-              {result.confidence !== null && (
-                <div className="mt-3 h-1.5 bg-white/60 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(result.confidence * 100).toFixed(0)}%` }}
-                    transition={{ delay: 0.4, duration: 0.8, ease: 'easeOut' }}
-                    className={`h-full rounded-full ${isInvite ? 'bg-green-400' : isReject ? 'bg-red-400' : 'bg-gray-400'}`}
-                  />
+          <motion.div initial={{ opacity: 0, y: 24, scale: 0.94 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.97 }} transition={{ type: 'spring', stiffness: 280, damping: 26 }}
+            className="mt-6 rounded-3xl overflow-hidden relative"
+            style={{ background: 'var(--glass)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)',
+              border: '1px solid var(--border)', borderTopColor: 'var(--border-top)', boxShadow: resultBoxGlow }}>
+            <div className="absolute inset-0 pointer-events-none rounded-3xl"
+              style={{ background: `radial-gradient(ellipse at 50% -10%, ${resultGlowBg} 0%, transparent 65%)` }} />
+
+            <div className="px-6 pt-6 pb-5 relative z-10">
+              <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: 'var(--text-faint)' }}>AI Recommendation</p>
+              <div className="flex items-center justify-between">
+                <div style={{ color: resultColor }}>
+                  <BlurText text={result.recommendation} animateBy="letters" delay={60}
+                    className="font-bricolage text-4xl font-bold tracking-tight" />
                 </div>
-              )}
+                {result.confidence !== null && <ConfidenceArc value={Math.round(result.confidence * 100)} color={resultColor} />}
+              </div>
             </div>
 
-            {/* Details */}
-            <div className="px-6 py-4 bg-white space-y-2">
+            <div className="px-6 py-4 space-y-3 relative z-10" style={{ borderTop: '1px solid var(--border-subtle)' }}>
               {result.name && (
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-jetbrains shrink-0"
+                    style={{ background: isInvite ? 'var(--teal-muted)' : 'var(--glass-hover)', color: resultColor }}>
                     {result.name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()}
                   </div>
-                  <span className="font-semibold text-gray-800">{result.name}</span>
+                  <span className="font-semibold" style={{ color: 'var(--text-bright)' }}>{result.name}</span>
                 </div>
               )}
-              <div className="flex items-center gap-3 text-sm text-gray-500 flex-wrap">
-                <span>
-                  Parse quality:{' '}
-                  <span className={`font-medium ${
-                    result.parse_quality === 'complete' ? 'text-green-600' :
-                    result.parse_quality === 'partial' ? 'text-amber-600' : 'text-red-600'
-                  }`}>{result.parse_quality}</span>
+              <div className="flex items-center gap-3 text-sm flex-wrap" style={{ color: 'var(--text-icon)' }}>
+                <span>Parse quality:{' '}
+                  <span className="font-medium" style={{
+                    color: result.parse_quality === 'complete' ? 'var(--text-bright)' :
+                           result.parse_quality === 'partial'  ? 'var(--text-2)' : 'var(--reject)' }}>
+                    {result.parse_quality}
+                  </span>
                 </span>
-                {filename && <span className="text-gray-400 truncate max-w-[180px]">{filename}</span>}
+                {filename && <span className="truncate max-w-[180px] font-jetbrains text-xs" style={{ color: 'var(--text-faint)' }}>{filename}</span>}
               </div>
               {result.missing_fields.length > 0 && (
-                <p className="text-xs text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg">
+                <p className="text-xs px-3 py-1.5 rounded-xl"
+                  style={{ background: 'var(--gold-dim)', color: 'var(--gold-text)', border: '1px solid var(--gold-border)' }}>
                   Missing: {result.missing_fields.join(', ')}
                 </p>
               )}
             </div>
 
-            {/* Footer */}
-            <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex justify-end">
-              <button
-                onClick={reset}
-                className="text-xs text-gray-400 hover:text-gray-700 transition-colors"
-              >
+            <div className="px-6 py-3.5 flex justify-end relative z-10" style={{ borderTop: '1px solid var(--glass)' }}>
+              <button onClick={reset} className="text-xs transition-colors" style={{ color: 'var(--text-faint)' }}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-body)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-faint)')}>
                 Upload another CV →
               </button>
             </div>

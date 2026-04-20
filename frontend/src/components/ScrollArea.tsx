@@ -44,14 +44,17 @@ export default function ScrollArea({ children, className = '' }: ScrollAreaProps
       const ratio = (ev.clientY - dragStart.current.y) / (clientHeight - thumbHeight)
       el.scrollTop = dragStart.current.scrollTop + ratio * (scrollHeight - clientHeight)
     }
-    const onUp = () => { dragging.current = false; window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp) }
+    const onUp = () => {
+      dragging.current = false
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+    }
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseup', onUp)
   }
 
   return (
     <div className={`relative overflow-hidden ${className}`}>
-      {/* Viewport — native scrollbar hidden via inline style */}
       <div
         ref={viewportRef}
         onScroll={updateThumb}
@@ -61,12 +64,15 @@ export default function ScrollArea({ children, className = '' }: ScrollAreaProps
         {children}
       </div>
 
-      {/* Custom scrollbar */}
       {thumb.visible && (
         <div className="absolute right-1.5 top-2 bottom-2 w-[3px] rounded-full pointer-events-none">
           <div
-            className="absolute w-full rounded-full bg-blue-200 hover:bg-blue-300 transition-colors cursor-pointer pointer-events-auto"
-            style={{ top: thumb.top, height: thumb.height }}
+            className="absolute w-full rounded-full cursor-pointer pointer-events-auto transition-colors"
+            style={{
+              top: thumb.top,
+              height: thumb.height,
+              background: 'var(--text-ghost)',
+            }}
             onMouseDown={onMouseDown}
           />
         </div>

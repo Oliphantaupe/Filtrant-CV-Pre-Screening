@@ -2,60 +2,256 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Design tokens ─────────────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg: #04080f;
+  --bg2: #070d1a;
+
+  /* Glass surfaces */
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-subtle: rgba(255, 255, 255, 0.04);
+  --glass-dim: rgba(255, 255, 255, 0.05);
+  --glass-hover: rgba(255, 255, 255, 0.09);
+  --glass-active: rgba(255, 255, 255, 0.13);
+  --glass-panel: rgba(255, 255, 255, 0.05);
+
+  /* Borders */
+  --border: rgba(255, 255, 255, 0.10);
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-dim: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --border-top: rgba(255, 255, 255, 0.22);
+  --border-top-strong: rgba(255, 255, 255, 0.28);
+
+  /* Text */
+  --text-1: rgba(255, 255, 255, 0.92);
+  --text-heading: rgba(255, 255, 255, 0.90);
+  --text-bright: rgba(255, 255, 255, 0.85);
+  --text-body: rgba(255, 255, 255, 0.65);
+  --text-2: rgba(255, 255, 255, 0.55);
+  --text-label: rgba(255, 255, 255, 0.48);
+  --text-icon: rgba(255, 255, 255, 0.42);
+  --text-3: rgba(255, 255, 255, 0.32);
+  --text-muted: rgba(255, 255, 255, 0.38);
+  --text-faint: rgba(255, 255, 255, 0.28);
+  --text-ghost: rgba(255, 255, 255, 0.22);
+  --text-4: rgba(255, 255, 255, 0.20);
+  --text-dim: rgba(255, 255, 255, 0.10);
+
+  /* Accents */
+  --invite: #30d158;
+  --reject: #ff453a;
+  --reject-dim: rgba(255, 69, 58, 0.09);
+  --reject-border: rgba(255, 69, 58, 0.20);
+  --accent: #0a84ff;
+  --purple: #a78bfa;
+  --gold: #ffd60a;
+  --gold-dim: rgba(255, 214, 10, 0.07);
+  --gold-border: rgba(255, 214, 10, 0.14);
+  --gold-text: rgba(255, 214, 10, 0.72);
+  --teal: #2dd4bf;
+  --teal-muted: rgba(45, 212, 191, 0.14);
+  --teal-subtle: rgba(45, 212, 191, 0.10);
+  --teal-dim: rgba(45, 212, 191, 0.07);
+  --teal-bright: rgba(45, 212, 191, 0.80);
+  --teal-border: rgba(45, 212, 191, 0.30);
+  --teal-glow: rgba(45, 212, 191, 0.25);
+
+  /* Shadows */
+  --shadow-panel: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --shadow-modal: 0 25px 60px rgba(0, 0, 0, 0.50);
+  --shadow-side: -20px 0 80px rgba(0, 0, 0, 0.60);
+
+  /* Overlays */
+  --backdrop-overlay: rgba(0, 0, 0, 0.60);
+  --backdrop-heavy: rgba(0, 0, 0, 0.65);
+}
+
+/* ─── Base ──────────────────────────────────────────────────────────────────── */
 @layer base {
-  html {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  html, body {
+    background: var(--bg);
+    color: var(--text-1);
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--glass-active); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-ghost); }
+
+  * { scrollbar-width: thin; scrollbar-color: var(--glass-active) transparent; }
 }
 
+/* ─── Glass component classes ───────────────────────────────────────────────── */
+@layer components {
+  .glass-card {
+    background: var(--glass);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border);
+    border-top-color: var(--border-top);
+    border-radius: 20px;
+    transition: background 0.2s ease;
+  }
+  .glass-card:hover {
+    background: var(--glass-hover);
+  }
 
-.aurora-blob {
+  .glass-panel {
+    background: var(--glass-panel);
+    backdrop-filter: blur(48px);
+    -webkit-backdrop-filter: blur(48px);
+    border-left: 1px solid var(--border);
+    border-top: 1px solid var(--border-top);
+  }
+
+  .glass-nav {
+    background: var(--glass-hover);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border: 1px solid var(--border-strong);
+    border-top-color: var(--border-top-strong);
+    box-shadow: var(--shadow-panel), 0 1px 0 var(--glass-dim) inset;
+  }
+
+  .glass-input {
+    background: var(--glass-dim);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-1);
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .glass-input:focus {
+    outline: none;
+    border-color: rgba(10, 132, 255, 0.5);
+    background: rgba(10, 132, 255, 0.04);
+  }
+
+  .glass-pill-group {
+    background: var(--glass-dim);
+    border: 1px solid var(--border-dim);
+    border-radius: 12px;
+    padding: 4px;
+    display: flex;
+    gap: 2px;
+  }
+
+  .glass-pill-btn {
+    padding: 4px 14px;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-3);
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .glass-pill-btn:hover {
+    color: var(--text-2);
+    background: var(--glass);
+  }
+  .glass-pill-btn.active {
+    background: var(--glass-active);
+    color: var(--text-1);
+    box-shadow: 0 0 12px var(--glass);
+  }
+
+  .glass-dropdown {
+    background: var(--glass);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border);
+    border-top-color: var(--border-top);
+    box-shadow: var(--shadow-panel), 0 1px 0 var(--glass-dim) inset;
+  }
+}
+
+/* ─── Bokeh background ──────────────────────────────────────────────────────── */
+.bokeh-blob {
   position: absolute;
   border-radius: 50%;
+  will-change: transform;
+}
+
+.bokeh-1 {
+  width: 72vw; height: 72vw;
+  background: radial-gradient(circle, rgba(30, 58, 138, 0.75) 0%, transparent 68%);
   filter: blur(90px);
+  top: -28%; left: -22%;
+  animation: bokeh1 38s ease-in-out infinite alternate;
+}
+.bokeh-2 {
+  width: 58vw; height: 58vw;
+  background: radial-gradient(circle, rgba(88, 28, 135, 0.65) 0%, transparent 68%);
+  filter: blur(80px);
+  top: 10%; right: -28%;
+  animation: bokeh2 44s ease-in-out infinite alternate;
+}
+.bokeh-3 {
+  width: 62vw; height: 62vw;
+  background: radial-gradient(circle, rgba(14, 116, 144, 0.45) 0%, transparent 68%);
+  filter: blur(100px);
+  bottom: -22%; left: 28%;
+  animation: bokeh3 30s ease-in-out infinite alternate;
+}
+.bokeh-4 {
+  width: 46vw; height: 46vw;
+  background: radial-gradient(circle, rgba(49, 46, 129, 0.55) 0%, transparent 68%);
+  filter: blur(85px);
+  top: 38%; left: -12%;
+  animation: bokeh4 40s ease-in-out infinite alternate;
+}
+.bokeh-5 {
+  width: 42vw; height: 42vw;
+  background: radial-gradient(circle, rgba(109, 40, 217, 0.38) 0%, transparent 68%);
+  filter: blur(90px);
+  bottom: 2%; right: -12%;
+  animation: bokeh5 34s ease-in-out infinite alternate;
+}
+.bokeh-6 {
+  width: 36vw; height: 36vw;
+  background: radial-gradient(circle, rgba(7, 89, 133, 0.50) 0%, transparent 68%);
+  filter: blur(75px);
+  top: 55%; right: 18%;
+  animation: bokeh6 48s ease-in-out infinite alternate;
 }
 
-.blob-1 {
-  width: 65vw;
-  height: 65vw;
-  background: radial-gradient(circle, #93c5fd 0%, transparent 70%);
-  opacity: 0.55;
-  top: -20%;
-  left: -15%;
-  animation: drift1 20s ease-in-out infinite alternate;
-}
-
-.blob-2 {
-  width: 55vw;
-  height: 55vw;
-  background: radial-gradient(circle, #60a5fa 0%, transparent 70%);
-  opacity: 0.4;
-  top: 20%;
-  right: -20%;
-  animation: drift2 25s ease-in-out infinite alternate;
-}
-
-.blob-3 {
-  width: 50vw;
-  height: 50vw;
-  background: radial-gradient(circle, #bae6fd 0%, transparent 70%);
-  opacity: 0.5;
-  bottom: -15%;
-  left: 25%;
-  animation: drift3 18s ease-in-out infinite alternate;
-}
-
-@keyframes drift1 {
+@keyframes bokeh1 {
   from { transform: translate(0, 0) scale(1); }
-  to   { transform: translate(6vw, 8vh) scale(1.12); }
+  to   { transform: translate(9vw, 11vh) scale(1.16); }
 }
-@keyframes drift2 {
-  from { transform: translate(0, 0) scale(1.08); }
-  to   { transform: translate(-7vw, -6vh) scale(1); }
+@keyframes bokeh2 {
+  from { transform: translate(0, 0) scale(1.09); }
+  to   { transform: translate(-11vw, -9vh) scale(1); }
 }
-@keyframes drift3 {
+@keyframes bokeh3 {
   from { transform: translate(0, 0) scale(1); }
-  to   { transform: translate(5vw, -7vh) scale(1.1); }
+  to   { transform: translate(7vw, -10vh) scale(1.13); }
+}
+@keyframes bokeh4 {
+  from { transform: translate(0, 0) scale(1.06); }
+  to   { transform: translate(14vw, 6vh) scale(1); }
+}
+@keyframes bokeh5 {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(-7vw, -13vh) scale(1.11); }
+}
+@keyframes bokeh6 {
+  from { transform: translate(0, 0) scale(1.07); }
+  to   { transform: translate(9vw, 9vh) scale(0.91); }
+}
+
+/* ─── Utility animations ────────────────────────────────────────────────────── */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+@keyframes float-up {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
 }

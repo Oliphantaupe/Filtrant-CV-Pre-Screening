@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 
 interface SpotlightCardProps extends React.PropsWithChildren {
   className?: string
+  style?: React.CSSProperties
   spotlightColor?: string
   onClick?: () => void
 }
@@ -9,7 +10,8 @@ interface SpotlightCardProps extends React.PropsWithChildren {
 const SpotlightCard: React.FC<SpotlightCardProps> = ({
   children,
   className = '',
-  spotlightColor = 'rgba(59, 130, 246, 0.08)',
+  style,
+  spotlightColor = 'rgba(255, 255, 255, 0.06)',
   onClick,
 }) => {
   const divRef = useRef<HTMLDivElement>(null)
@@ -33,12 +35,13 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
       onMouseLeave={() => setOpacity(0)}
       onClick={onClick}
       className={`relative overflow-hidden ${className}`}
+      style={style}
     >
       <div
         className="pointer-events-none absolute inset-0 transition-opacity duration-500"
         style={{
           opacity,
-          background: `radial-gradient(circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 70%)`,
+          background: `radial-gradient(circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 65%)`,
         }}
       />
       {children}
