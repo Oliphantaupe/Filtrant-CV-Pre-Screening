@@ -1,45 +1,45 @@
-# Guide Complet -- Les Algorithmes ML du Projet Filtrant
+# Complete Guide — ML Algorithms in the Filtrant Project
 
 ## Introduction
 
-Ce document explique **chaque algorithme et technique** utilise dans le projet Filtrant pour le screening automatique de CVs. L'objectif : que quelqu'un qui ne connait rien au ML puisse comprendre comment et pourquoi chaque piece du puzzle fonctionne.
+This document explains **every algorithm and technique** used in the Filtrant project for automated CV screening. The goal: anyone with no ML background should be able to understand how and why each piece of the puzzle works.
 
 ---
 
 
-## PARTIE 1 : Le Pipeline Global
+## PART 1: The Global Pipeline
 
-### Comment un CV devient une decision ?
+### How does a CV become a decision?
 
-Imagine qu'un recruteur recoit un CV en PDF. Voici ce que le systeme fait, etape par etape :
-
-```
-1. Le CV arrive (PDF ou DOCX)
-         |
-2. extractor.py extrait le TEXTE brut du fichier
-         |
-3. llm_parser.py envoie le texte a Gemini (IA) qui le structure en JSON
-         |
-4. features.py transforme le JSON en 16 CHIFFRES
-         |
-5. predictor.py donne ces 16 chiffres au modele ML
-         |
-6. Le modele repond : "Invite" ou "Reject" + un score de confiance
-```
-
-**Le modele ML ne lit jamais le CV.** Il ne voit que 16 nombres. C'est Gemini (le LLM) qui fait le travail de comprehension du texte.
-
-### Pourquoi 16 chiffres ?
-
-Parce qu'un algorithme ML classique ne comprend pas les mots. Il ne sait travailler qu'avec des nombres. Donc on transforme chaque CV en une "fiche" de 16 mesures :
-
-**Exemple concret :**
+Imagine a recruiter receives a CV as a PDF. Here is what the system does, step by step:
 
 ```
-Marie Dupont, 7 ans d'experience, Master en informatique, 3 postes occupes,
-parle 2 langues, a 4 certifications, titre "Senior Developer"
+1. The CV arrives (PDF or DOCX)
+         |
+2. extractor.py extracts the raw TEXT from the file
+         |
+3. llm_parser.py sends the text to Anthropic Claude (Haiku 4.5), which structures it as JSON
+         |
+4. features.py transforms the JSON into 16 NUMBERS
+         |
+5. predictor.py feeds these 16 numbers to the ML model
+         |
+6. The model responds: "Invite" or "Reject" + a confidence score
+```
 
--> Ces infos deviennent :
+**The ML model never reads the CV.** It only sees 16 numbers. It is Claude (the LLM) that handles the text comprehension work.
+
+### Why 16 numbers?
+
+Because a classical ML algorithm does not understand words. It can only work with numbers. So we transform each CV into a "profile sheet" of 16 measurements:
+
+**Concrete example:**
+
+```
+Marie Dupont, 7 years of experience, Master's in Computer Science, 3 positions held,
+speaks 2 languages, has 4 certifications, title "Senior Developer"
+
+-> This information becomes:
    total_years_experience = 7.0
    num_positions = 3
    avg_tenure_months = 28.0
@@ -58,31 +58,31 @@ parle 2 langues, a 4 certifications, titre "Senior Developer"
    experience_x_education = 28.0 (7*4)
 ```
 
-Le modele regarde ces 16 nombres et decide : **Invite** (90% de confiance).
+The model looks at these 16 numbers and decides: **Invite** (90% confidence).
 
 ---
 
-## PARTIE 2 : Les Algorithmes de Classification
+## PART 2: Classification Algorithms
 
-Le but de ces algorithmes : apprendre a partir d'exemples passes (des CVs avec leur decision Invite/Reject) pour predire la decision sur de nouveaux CVs.
+The goal of these algorithms: learn from past examples (CVs with their Invite/Reject decision) to predict the decision on new CVs.
 
-### 1. Regression Logistique
+### 1. Logistic Regression
 
-**C'est quoi en une phrase ?**
-Un calcul qui fait la somme ponderee de toutes les features et dit "Invite" si le total est assez eleve.
+**What is it in one sentence?**
+A calculation that computes a weighted sum of all features and says "Invite" if the total is high enough.
 
-**Comment ca marche (avec un exemple) ?**
+**How does it work (with an example)?**
 
-Imagine que le modele a appris ces poids :
+Imagine the model has learned these weights:
 
 ```
-experience :     +2.0  (beaucoup d'experience = bon signe)
-education :      +1.5  (diplome eleve = bon signe)
-career_gap :     -0.5  (trous de carriere = mauvais signe)
-skills :         +0.1  (peu d'impact)
+experience :     +2.0  (lots of experience = good sign)
+education :      +1.5  (high degree = good sign)
+career_gap :     -0.5  (career gaps = bad sign)
+skills :         +0.1  (low impact)
 ```
 
-Pour Marie (7 ans exp, Master, 5 mois de gap, 14 skills) :
+For Marie (7 years exp, Master, 5 months gap, 14 skills):
 
 ```
 Score = (7 * 2.0) + (4 * 1.5) + (5 * -0.5) + (14 * 0.1)
@@ -90,9 +90,9 @@ Score = (7 * 2.0) + (4 * 1.5) + (5 * -0.5) + (14 * 0.1)
       = 18.9
 ```
 
-18.9 est largement positif -> **Invite**.
+18.9 is clearly positive -> **Invite**.
 
-Pour un profil faible (0 exp, lycee, 0 certif) :
+For a weak profile (0 exp, high school, 0 certifications):
 
 ```
 Score = (0 * 2.0) + (1 * 1.5) + (0 * -0.5) + (2 * 0.1)
@@ -100,107 +100,107 @@ Score = (0 * 2.0) + (1 * 1.5) + (0 * -0.5) + (2 * 0.1)
       = 1.7
 ```
 
-1.7 est faible -> **Reject**.
+1.7 is low -> **Reject**.
 
-**Pourquoi on l'utilise ?**
-- Simple et rapide
-- On peut voir exactement QUOI a influence la decision (les poids)
-- Fonctionne bien quand on a peu de donnees (notre cas : 200 lignes)
-- C'est le modele qui a gagne dans notre comparaison
+**Why do we use it?**
+- Simple and fast
+- You can see exactly WHAT influenced the decision (the weights)
+- Works well with little data (our case: 200 rows)
+- It is the model that won in our comparison
 
-**Le parametre important : `C`**
+**The important parameter: `C`**
 
-`C` controle la "rigueur" du modele :
-- `C` grand (ex: 10) : le modele essaie de coller parfaitement aux donnees d'entrainement -> risque d'overfitting
-- `C` petit (ex: 0.01) : le modele reste simple et generalise mieux -> c'est ce qu'on a choisi
+`C` controls the "strictness" of the model:
+- Large `C` (e.g. 10): the model tries to fit the training data perfectly -> risk of overfitting
+- Small `C` (e.g. 0.01): the model stays simple and generalises better -> this is what we chose
 
-Notre modele a choisi `C=0.01`, ce qui veut dire : "reste simple, ne sur-apprends pas ces 200 exemples".
+Our model chose `C=0.01`, which means: "stay simple, don't over-learn these 200 examples".
 
 ---
 
-### 2. Random Forest (Foret Aleatoire)
+### 2. Random Forest
 
-**C'est quoi en une phrase ?**
-300 "arbres de decision" qui votent ensemble -- la majorite l'emporte.
+**What is it in one sentence?**
+300 "decision trees" that vote together — the majority wins.
 
-**Comment ca marche (avec un exemple) ?**
+**How does it work (with an example)?**
 
-Un arbre de decision, c'est comme un jeu de questions :
+A decision tree is like a game of questions:
 
 ```
-Arbre 1 :
-  Est-ce que experience > 3 ans ?
-    OUI -> Est-ce que education >= Master ?
-              OUI -> INVITE
-              NON -> REJECT
-    NON -> REJECT
+Tree 1:
+  Is experience > 3 years?
+    YES -> Is education >= Master?
+              YES -> INVITE
+              NO  -> REJECT
+    NO  -> REJECT
 
-Arbre 2 :
-  Est-ce que certifications > 2 ?
-    OUI -> Est-ce que senior_title = 1 ?
-              OUI -> INVITE
-              NON -> Est-ce que experience > 5 ?
-                        OUI -> INVITE
-                        NON -> REJECT
-    NON -> REJECT
+Tree 2:
+  Are certifications > 2?
+    YES -> Is senior_title = 1?
+              YES -> INVITE
+              NO  -> Is experience > 5?
+                        YES -> INVITE
+                        NO  -> REJECT
+    NO  -> REJECT
 
-...300 arbres au total...
+...300 trees in total...
 ```
 
-Chaque arbre est different (il regarde des features et des seuils differents). Pour un nouveau CV :
-- 180 arbres disent "Invite"
-- 120 arbres disent "Reject"
-- Majorite -> **Invite** (60% de confiance)
+Each tree is different (it looks at different features and thresholds). For a new CV:
+- 180 trees say "Invite"
+- 120 trees say "Reject"
+- Majority -> **Invite** (60% confidence)
 
-**Pourquoi on l'utilise ?**
-- Capture des relations complexes (ex: "experience > 5 ET Master" ensemble)
-- Pas besoin de normaliser les donnees
-- Donne une mesure d'importance des features
+**Why do we use it?**
+- Captures complex relationships (e.g. "experience > 5 AND Master" together)
+- No need to normalise the data
+- Provides a feature importance measure
 
-**Pourquoi il n'a pas gagne ici ?**
-Avec seulement 200 exemples, les 300 arbres ont tendance a "memoriser" les donnees au lieu d'apprendre les vrais patterns. C'est l'**overfitting**.
+**Why didn't it win here?**
+With only 200 examples, the 300 trees tend to "memorise" the data instead of learning the real patterns. This is **overfitting**.
 
 ---
 
 ### 3. Gradient Boosting
 
-**C'est quoi en une phrase ?**
-Des arbres construits l'un apres l'autre, ou chaque nouvel arbre corrige les erreurs du precedent.
+**What is it in one sentence?**
+Trees built one after the other, where each new tree corrects the errors of the previous one.
 
-**Comment ca marche (avec un exemple) ?**
+**How does it work (with an example)?**
 
 ```
-Etape 1 : Arbre 1 fait ses predictions -> se trompe sur 30 candidats
-Etape 2 : Arbre 2 se concentre SUR ces 30 erreurs -> corrige 20 d'entre elles
-Etape 3 : Arbre 3 se concentre sur les 10 erreurs restantes -> en corrige 7
-...200 arbres au total...
+Step 1: Tree 1 makes its predictions -> gets 30 candidates wrong
+Step 2: Tree 2 focuses ON those 30 errors -> corrects 20 of them
+Step 3: Tree 3 focuses on the 10 remaining errors -> corrects 7
+...200 trees in total...
 ```
 
-C'est comme un etudiant qui revise : il ne relit pas tout le cours, il se concentre sur ce qu'il a rate au dernier test.
+It is like a student revising: they don't reread the entire course, they focus on what they got wrong in the last test.
 
-**Le parametre important : `learning_rate`**
+**The important parameter: `learning_rate`**
 
-C'est la "vitesse d'apprentissage" :
-- `learning_rate=0.2` : chaque arbre apporte une grosse correction -> risque d'overfitting
-- `learning_rate=0.05` : chaque arbre apporte une petite correction -> plus lent mais plus stable
+This is the "learning speed":
+- `learning_rate=0.2`: each tree makes a large correction -> risk of overfitting
+- `learning_rate=0.05`: each tree makes a small correction -> slower but more stable
 
-**Pourquoi on l'utilise ?**
-- Souvent le meilleur modele en pratique
-- Tres utilise en industrie et en competitions ML
+**Why do we use it?**
+- Often the best model in practice
+- Widely used in industry and ML competitions
 
-**Pourquoi il n'a pas gagne ici ?**
-Meme probleme que Random Forest : trop complexe pour 200 lignes de donnees bruitees.
+**Why didn't it win here?**
+Same problem as Random Forest: too complex for 200 rows of noisy data.
 
 ---
 
-### 4. SVM (Support Vector Machine) -- Machine a Vecteurs de Support
+### 4. SVM (Support Vector Machine)
 
-**C'est quoi en une phrase ?**
-Cherche la meilleure "frontiere" pour separer les Invite des Reject dans l'espace des features.
+**What is it in one sentence?**
+Finds the best "boundary" to separate Invite from Reject in the feature space.
 
-**Comment ca marche (avec un exemple) ?**
+**How does it work (with an example)?**
 
-Imagine un graphique 2D avec experience en X et education en Y. Les Invite sont des points verts, les Reject des points rouges.
+Imagine a 2D chart with experience on the X axis and education on the Y axis. Invite candidates are green dots, Reject are red dots.
 
 ```
 education
@@ -213,275 +213,275 @@ education
       0  2  4  6  8
 ```
 
-SVM trace une **ligne** (en 2D) ou un **hyperplan** (en 16D) qui separe au mieux les deux groupes. Il choisit la ligne qui est **le plus loin possible** des deux groupes -- c'est la "marge maximale".
+SVM draws a **line** (in 2D) or a **hyperplane** (in 16D) that best separates the two groups. It chooses the line that is **as far as possible** from both groups — this is the "maximum margin".
 
-Avec le **kernel RBF**, SVM peut tracer des frontieres courbes, pas seulement des lignes droites. Ca lui permet de capturer des patterns non-lineaires.
+With the **RBF kernel**, SVM can draw curved boundaries, not just straight lines. This allows it to capture non-linear patterns.
 
-**Pourquoi on l'utilise ?**
-- Excellent sur les petits datasets (notre cas)
-- Robuste a l'overfitting grace a la marge maximale
-- Kernel RBF = frontieres flexibles
+**Why do we use it?**
+- Excellent on small datasets (our case)
+- Robust to overfitting thanks to the maximum margin
+- RBF kernel = flexible boundaries
 
-**Le parametre important : `C` et `gamma`**
-- `C` : tolerance aux erreurs. C petit = accepte quelques erreurs pour une meilleure generalisation
-- `gamma` : rayon d'influence de chaque point. Petit gamma = frontiere lisse, grand gamma = frontiere complexe
+**The important parameters: `C` and `gamma`**
+- `C`: tolerance to errors. Small C = accepts some errors for better generalisation
+- `gamma`: radius of influence of each point. Small gamma = smooth boundary, large gamma = complex boundary
 
 ---
 
 ### 5. HistGradientBoosting
 
-**C'est quoi en une phrase ?**
-Gradient Boosting ameliore : plus rapide et gere mieux le desequilibre des classes.
+**What is it in one sentence?**
+An improved Gradient Boosting: faster and handles class imbalance better.
 
-**Comment ca marche ?**
-Meme principe que Gradient Boosting (arbres qui corrigent les erreurs precedentes), mais avec des optimisations :
-- **Histogrammes** : au lieu de tester tous les seuils possibles pour chaque feature, il regroupe les valeurs en "bins" (intervalles). Ex: au lieu de tester "experience > 3.1? > 3.2? > 3.3?...", il teste "experience > 3? > 5? > 7?". C'est beaucoup plus rapide.
-- **class_weight="balanced"** : supporte nativement le desequilibre Invite/Reject (contrairement au GB classique)
+**How does it work?**
+Same principle as Gradient Boosting (trees correcting previous errors), but with optimisations:
+- **Histograms**: instead of testing every possible threshold for each feature, it groups values into "bins" (intervals). E.g. instead of testing "experience > 3.1? > 3.2? > 3.3?...", it tests "experience > 3? > 5? > 7?". This is much faster.
+- **class_weight="balanced"**: natively supports the Invite/Reject imbalance (unlike standard GB)
 
-**Pourquoi on l'utilise ?**
-- Plus rapide que Gradient Boosting classique
-- Gere nativement le desequilibre des classes
+**Why do we use it?**
+- Faster than standard Gradient Boosting
+- Natively handles class imbalance
 
 ---
 
 ### 6. XGBoost (eXtreme Gradient Boosting)
 
-**C'est quoi en une phrase ?**
-La version "course automobile" du Gradient Boosting -- c'est l'algorithme qui gagne le plus de competitions de ML.
+**What is it in one sentence?**
+The "Formula 1" version of Gradient Boosting — it is the algorithm that wins the most ML competitions.
 
-**Comment ca marche ?**
-Meme principe de base que Gradient Boosting (arbres sequentiels), mais avec des ameliorations :
+**How does it work?**
+Same core principle as Gradient Boosting (sequential trees), but with improvements:
 
-1. **Regularisation** : empeche le modele de devenir trop complexe (evite l'overfitting)
-2. **Parallelisme** : utilise tous les coeurs du processeur pour aller plus vite
-3. **Gestion native du desequilibre** : le parametre `scale_pos_weight` dit au modele "un exemple Invite vaut 3 exemples Reject" (puisqu'on a 3x plus de Reject)
+1. **Regularisation**: prevents the model from becoming too complex (avoids overfitting)
+2. **Parallelism**: uses all CPU cores to run faster
+3. **Native imbalance handling**: the `scale_pos_weight` parameter tells the model "one Invite example is worth 3 Reject examples" (since we have 3× more Rejects)
 
-**Le parametre important : `scale_pos_weight`**
+**The important parameter: `scale_pos_weight`**
 
 ```
-scale_pos_weight = nb_reject / nb_invite = 149 / 51 = 2.92
+scale_pos_weight = num_reject / num_invite = 149 / 51 = 2.92
 ```
 
-Ca veut dire : "quand tu te trompes sur un Invite, considere que c'est 3 fois plus grave que de te tromper sur un Reject".
+This means: "when you get an Invite wrong, treat it as 3 times worse than getting a Reject wrong".
 
-**Pourquoi on l'utilise ?**
-- Reference en ML competitif
-- Gestion native du desequilibre
-- Tres configurable
+**Why do we use it?**
+- Reference algorithm in competitive ML
+- Native imbalance handling
+- Highly configurable
 
 ---
 
-## PARTIE 3 : Les Techniques d'amelioration
+## PART 3: Improvement Techniques
 
 ### SMOTE (Synthetic Minority Over-sampling Technique)
 
-**Le probleme :**
-On a 51 Invite et 149 Reject. Le modele a 3x plus d'exemples "Reject" pour apprendre. Il a donc tendance a tout rejeter (c'est la "solution facile").
+**The problem:**
+We have 51 Invite and 149 Reject. The model has 3× more "Reject" examples to learn from. It therefore tends to reject everything (the "easy solution").
 
-**La solution SMOTE :**
-Creer de **faux exemples Invite** en melangeant les vrais.
+**The SMOTE solution:**
+Create **fake Invite examples** by mixing real ones.
 
-**Exemple concret :**
+**Concrete example:**
 
 ```
-Vrai Invite A : experience=5, education=4, skills=12
-Vrai Invite B : experience=7, education=4, skills=15
+Real Invite A: experience=5, education=4, skills=12
+Real Invite B: experience=7, education=4, skills=15
 
-SMOTE cree un faux Invite C (entre A et B) :
+SMOTE creates a fake Invite C (between A and B):
   experience = 5 + 0.6*(7-5) = 6.2
   education  = 4 + 0.6*(4-4) = 4
   skills     = 12 + 0.6*(15-12) = 13.8
 ```
 
-Le "C" est un point imaginaire qui se situe entre A et B. C'est un Invite *plausible*.
+"C" is an imaginary point situated between A and B. It is a *plausible* Invite.
 
 ```
-Avant SMOTE :  51 Invite, 149 Reject
-Apres SMOTE : 149 Invite, 149 Reject
+Before SMOTE:  51 Invite, 149 Reject
+After SMOTE:  149 Invite, 149 Reject
 ```
 
-Maintenant le modele a autant d'exemples des deux classes pour apprendre.
+Now the model has just as many examples from both classes to learn from.
 
-**Attention :** SMOTE ne cree pas de vraies donnees. Les faux exemples sont des interpolations. Si les donnees d'origine sont bruitees, SMOTE amplifie le bruit.
+**Warning:** SMOTE does not create real data. The fake examples are interpolations. If the original data is noisy, SMOTE amplifies the noise.
 
 ---
 
 ### StandardScaler (Normalisation)
 
-**Le probleme :**
-Les features ont des echelles tres differentes :
+**The problem:**
+Features have very different scales:
 
 ```
-has_certifications : 0 ou 1       (echelle 0-1)
-career_gap_months  : 0 a 40       (echelle 0-40)
-latest_job_duration : 0 a 58      (echelle 0-58)
+has_certifications  : 0 or 1         (scale 0–1)
+career_gap_months   : 0 to 40        (scale 0–40)
+latest_job_duration : 0 to 58        (scale 0–58)
 ```
 
-Sans normalisation, le modele accorderait beaucoup plus d'importance a `latest_job_duration` (parce que ses valeurs sont plus grandes) meme si `has_certifications` est plus informatif.
+Without normalisation, the model would give far more importance to `latest_job_duration` (because its values are larger) even if `has_certifications` is more informative.
 
-**La solution StandardScaler :**
-Transformer chaque feature pour qu'elle ait une **moyenne de 0** et un **ecart-type de 1**.
+**The StandardScaler solution:**
+Transform each feature so that it has a **mean of 0** and a **standard deviation of 1**.
 
 ```
-Avant : has_certifications = [1, 0, 1, 1, 0, ...]  -> moyenne=0.8, ecart-type=0.4
-Apres : has_certifications = [0.5, -2.0, 0.5, 0.5, -2.0, ...]
+Before: has_certifications = [1, 0, 1, 1, 0, ...]  -> mean=0.8, std=0.4
+After:  has_certifications = [0.5, -2.0, 0.5, 0.5, -2.0, ...]
 
-Avant : career_gap_months = [14, 0, 16, 12, 0, ...]  -> moyenne=8.5, ecart-type=9.2
-Apres : career_gap_months = [0.6, -0.9, 0.8, 0.4, -0.9, ...]
+Before: career_gap_months = [14, 0, 16, 12, 0, ...]  -> mean=8.5, std=9.2
+After:  career_gap_months = [0.6, -0.9, 0.8, 0.4, -0.9, ...]
 ```
 
-Maintenant les deux features sont sur la meme echelle et le modele peut les comparer equitablement.
+Now both features are on the same scale and the model can compare them fairly.
 
 ---
 
-### RandomizedSearchCV (Recherche d'hyperparametres)
+### RandomizedSearchCV (Hyperparameter Search)
 
-**Le probleme :**
-Chaque modele a des "reglages" (hyperparametres) qu'il faut choisir. Par exemple :
-- Regression Logistique : quel `C` ? (0.01, 0.1, 1, 10 ?)
-- Random Forest : combien d'arbres ? (100, 200, 300 ?)
-- Gradient Boosting : quelle vitesse d'apprentissage ? (0.01, 0.05, 0.1 ?)
+**The problem:**
+Each model has "settings" (hyperparameters) that need to be chosen. For example:
+- Logistic Regression: which `C`? (0.01, 0.1, 1, 10?)
+- Random Forest: how many trees? (100, 200, 300?)
+- Gradient Boosting: what learning rate? (0.01, 0.05, 0.1?)
 
-Choisir a la main, c'est comme essayer de deviner la meilleure recette sans gouter.
+Choosing by hand is like trying to guess the best recipe without tasting it.
 
-**La solution RandomizedSearchCV :**
-Tester automatiquement plein de combinaisons et garder la meilleure.
+**The RandomizedSearchCV solution:**
+Automatically test many combinations and keep the best one.
 
 ```
-Essai 1 : C=0.01, penalty=l2  -> F1 = 0.548 <- MEILLEUR
-Essai 2 : C=0.1,  penalty=l2  -> F1 = 0.510
-Essai 3 : C=1.0,  penalty=l2  -> F1 = 0.505
-Essai 4 : C=5.0,  penalty=l2  -> F1 = 0.490
+Trial 1: C=0.01, penalty=l2  -> F1 = 0.548  <- BEST
+Trial 2: C=0.1,  penalty=l2  -> F1 = 0.510
+Trial 3: C=1.0,  penalty=l2  -> F1 = 0.505
+Trial 4: C=5.0,  penalty=l2  -> F1 = 0.490
 ...
 ```
 
-Le "CV" dans le nom veut dire **Cross-Validation** : pour chaque combinaison, on coupe les donnees en 5 morceaux, on entraine sur 4 et on teste sur le 5eme, 5 fois de suite. Ca donne un score fiable.
+The "CV" in the name stands for **Cross-Validation**: for each combination, the data is split into 5 chunks, training on 4 and testing on the 5th, 5 times in a row. This gives a reliable score.
 
 ---
 
-### Cross-Validation (Validation Croisee)
+### Cross-Validation
 
-**Le probleme :**
-Si on coupe les donnees en 1 train + 1 test, le score depend beaucoup de QUEL candidat est dans quel groupe. Avec 40 candidats en test, un seul candidat mal place change le score de 2.5%.
+**The problem:**
+If you split the data into 1 train + 1 test set, the score depends heavily on WHICH candidate ends up in which group. With 40 candidates in the test set, one misplaced candidate shifts the score by 2.5%.
 
-**La solution (5-fold cross-validation) :**
+**The solution (5-fold cross-validation):**
 
 ```
-Pli 1 : [AAAA][BBBB][CCCC][DDDD] -> test [EEEE] -> F1 = 0.52
-Pli 2 : [AAAA][BBBB][CCCC][EEEE] -> test [DDDD] -> F1 = 0.60
-Pli 3 : [AAAA][BBBB][DDDD][EEEE] -> test [CCCC] -> F1 = 0.55
-Pli 4 : [AAAA][CCCC][DDDD][EEEE] -> test [BBBB] -> F1 = 0.48
-Pli 5 : [BBBB][CCCC][DDDD][EEEE] -> test [AAAA] -> F1 = 0.58
+Fold 1: [AAAA][BBBB][CCCC][DDDD] -> test [EEEE] -> F1 = 0.52
+Fold 2: [AAAA][BBBB][CCCC][EEEE] -> test [DDDD] -> F1 = 0.60
+Fold 3: [AAAA][BBBB][DDDD][EEEE] -> test [CCCC] -> F1 = 0.55
+Fold 4: [AAAA][CCCC][DDDD][EEEE] -> test [BBBB] -> F1 = 0.48
+Fold 5: [BBBB][CCCC][DDDD][EEEE] -> test [AAAA] -> F1 = 0.58
 
-Score moyen = (0.52 + 0.60 + 0.55 + 0.48 + 0.58) / 5 = 0.548
+Average score = (0.52 + 0.60 + 0.55 + 0.48 + 0.58) / 5 = 0.548
 ```
 
-Chaque candidat est dans le jeu de test exactement 1 fois. Le score moyen est beaucoup plus fiable qu'un seul split.
+Each candidate is in the test set exactly once. The average score is much more reliable than a single split.
 
 ---
 
-### Features derivees (Feature Engineering)
+### Derived Features (Feature Engineering)
 
-**Le probleme :**
-Le modele voit `total_years_experience=7` et `education_level_score=4` separement. Mais il ne "comprend" pas que **7 ans + Master** c'est un profil beaucoup plus fort que **7 ans + Lycee**.
+**The problem:**
+The model sees `total_years_experience=7` and `education_level_score=4` separately. But it does not "understand" that **7 years + Master's** is a much stronger profile than **7 years + high school**.
 
-**La solution :**
-Creer des features qui **combinent** les features existantes :
+**The solution:**
+Create features that **combine** existing features:
 
-| Feature derivee | Formule | Exemple Marie (7 ans, Master) | Exemple Paul (7 ans, Lycee) |
+| Derived feature | Formula | Example Marie (7 yrs, Master) | Example Paul (7 yrs, high school) |
 |---|---|---|---|
-| `experience_x_education` | exp * edu | 7 * 4 = **28** | 7 * 1 = **7** |
-| `experience_x_seniority` | exp * senior | 7 * 1 = **7** | 7 * 0 = **0** |
+| `experience_x_education` | exp × edu | 7 × 4 = **28** | 7 × 1 = **7** |
+| `experience_x_seniority` | exp × senior | 7 × 1 = **7** | 7 × 0 = **0** |
 | `experience_education_ratio` | exp / edu | 7 / 4 = **1.75** | 7 / 1 = **7.0** |
 | `certs_per_year` | certs / exp | 4 / 7 = **0.57** | 0 / 7 = **0.0** |
 
-Maintenant le modele voit directement que Marie (28) et Paul (7) ont des profils tres differents, meme s'ils ont la meme experience.
+Now the model directly sees that Marie (28) and Paul (7) have very different profiles, even though they have the same experience.
 
 ---
 
-## PARTIE 4 : Comment le modele est selectionne
+## PART 4: How the Model Is Selected
 
-### Le processus complet
+### The complete process
 
 ```
-1. Charger les 200 candidats avec leurs labels (Invite/Reject)
-2. Calculer les 4 features derivees
-3. Supprimer les 3 features constantes (variance = 0)
-4. Couper en 80% train (160) / 20% test (40)
-5. Pour chaque modele (6 au total) :
-   a. Creer le pipeline : SMOTE -> StandardScaler -> Modele
-   b. Entrainer sur le train set
-   c. Mesurer l'AUC sur le test set
-   d. Mesurer le F1 en cross-validation 5-fold sur le train set
-6. Garder le modele avec le MEILLEUR F1 en cross-validation
-7. Optimiser ses hyperparametres avec RandomizedSearchCV
-8. Reentrainer le modele optimise sur 100% des donnees
-9. Sauvegarder le modele dans model.joblib
+1. Load the 200 candidates with their labels (Invite/Reject)
+2. Compute the 4 derived features
+3. Remove the 3 constant features (variance = 0)
+4. Split into 80% train (160) / 20% test (40)
+5. For each model (6 in total):
+   a. Create the pipeline: SMOTE -> StandardScaler -> Model
+   b. Train on the train set
+   c. Measure AUC on the test set
+   d. Measure F1 with 5-fold cross-validation on the train set
+6. Keep the model with the BEST F1 in cross-validation
+7. Optimise its hyperparameters with RandomizedSearchCV
+8. Retrain the optimised model on 100% of the data
+9. Save the model to model.joblib
 ```
 
-### Pourquoi F1 et pas accuracy ?
+### Why F1 and not accuracy?
 
-**Accuracy** = % de bonnes reponses totales.
-Avec notre dataset desequilibre (74% Reject), un modele qui dit TOUJOURS "Reject" a une accuracy de 74%. Mais il rate 100% des bons candidats. C'est inutile.
+**Accuracy** = % of correct answers overall.
+With our imbalanced dataset (74% Reject), a model that ALWAYS says "Reject" has an accuracy of 74%. But it misses 100% of good candidates. That is useless.
 
-**F1** = equilibre entre precision et recall.
-- **Precision** : "Quand le modele dit Invite, a-t-il raison ?" (35% dans notre cas)
-- **Recall** : "Parmi les vrais Invite, combien le modele en trouve ?" (60% dans notre cas)
-- **F1** = moyenne harmonique des deux = 0.44
+**F1** = balance between precision and recall.
+- **Precision**: "When the model says Invite, is it right?" (35% in our case)
+- **Recall**: "Among the real Invites, how many does the model find?" (60% in our case)
+- **F1** = harmonic mean of the two = 0.44
 
-Le F1 penalise un modele qui fait trop de faux positifs OU qui rate trop de vrais positifs.
+F1 penalises a model that produces too many false positives OR misses too many true positives.
 
 ---
 
-## PARTIE 5 : Resume visuel
+## PART 5: Visual Summary
 
 ```
-                    DONNEES
-                  200 candidats
+                    DATA
+                  200 candidates
                   51 Invite (26%)
                   149 Reject (74%)
                        |
               +--------+--------+
               |                 |
-        PROBLEMES          SOLUTIONS
+          PROBLEMS          SOLUTIONS
               |                 |
-   Desequilibre 1:3     SMOTE + class_weight
-   3 features mortes    Suppression auto
-   Pas de combos        4 features derivees
-   Params au hasard     RandomizedSearchCV
-   12 labels bruites    Detection + alerte
+   1:3 imbalance        SMOTE + class_weight
+   3 dead features      Auto-removal
+   No combinations      4 derived features
+   Random params        RandomizedSearchCV
+   12 noisy labels      Detection + alert
               |
               v
-        6 MODELES TESTES
+        6 MODELS TESTED
    LogReg | RF | GB | SVM | HistGB | XGBoost
               |
               v
-        GAGNANT: LogisticRegression
-          C=0.01, avec SMOTE
+        WINNER: LogisticRegression
+          C=0.01, with SMOTE
           F1 = 0.548
-          Recall Invite = 60%
+          Invite Recall = 60%
               |
               v
          model.joblib
-   (utilise par predictor.py)
+   (used by predictor.py)
 ```
 
 ---
 
-## Glossaire
+## Glossary
 
-| Terme | Definition simple |
+| Term | Simple definition |
 |---|---|
-| **Feature** | Un chiffre qui decrit le CV (ex: annees d'experience) |
-| **Label** | La reponse attendue (Invite ou Reject) |
-| **Training** | L'etape ou le modele apprend a partir des exemples |
-| **Overfitting** | Le modele memorise les exemples au lieu d'apprendre les patterns |
-| **AUC** | Score de 0.5 (hasard) a 1.0 (parfait) qui mesure la qualite du modele |
-| **F1** | Score qui equilibre precision et recall |
-| **Precision** | "Quand le modele dit Invite, a-t-il raison ?" |
-| **Recall** | "Parmi les vrais Invite, combien le modele en trouve ?" |
-| **Cross-validation** | Tester le modele plusieurs fois sur des morceaux differents |
-| **Hyperparametre** | Un reglage du modele qu'on choisit avant l'entrainement |
-| **Pipeline** | Chaine d'etapes : SMOTE -> Normalisation -> Modele |
-| **SMOTE** | Technique qui cree des exemples synthetiques pour equilibrer les classes |
-| **StandardScaler** | Normalise les features pour qu'elles aient la meme echelle |
+| **Feature** | A number that describes the CV (e.g. years of experience) |
+| **Label** | The expected answer (Invite or Reject) |
+| **Training** | The step where the model learns from examples |
+| **Overfitting** | The model memorises examples instead of learning the real patterns |
+| **AUC** | Score from 0.5 (random) to 1.0 (perfect) measuring model quality |
+| **F1** | Score that balances precision and recall |
+| **Precision** | "When the model says Invite, is it right?" |
+| **Recall** | "Among the real Invites, how many does the model find?" |
+| **Cross-validation** | Testing the model multiple times on different data chunks |
+| **Hyperparameter** | A model setting chosen before training |
+| **Pipeline** | Chain of steps: SMOTE -> Normalisation -> Model |
+| **SMOTE** | Technique that creates synthetic examples to balance the classes |
+| **StandardScaler** | Normalises features so they all share the same scale |

@@ -1,214 +1,214 @@
-# Rapport -- Modele ML de screening de CVs (v2)
-## Projet Filtrant -- LuxTalent Advisory Group S.A.
+# ML Model Report — CV Screening (v2)
+## Filtrant — LuxTalent Advisory Group S.A.
 
 ---
 
-## 1. Le probleme a resoudre
+## 1. Problem Statement
 
-LuxTalent recoit des dizaines de CVs par jour. Le but est d'automatiser la premiere etape de tri : est-ce que ce candidat merite d'etre invite a un entretien, ou non ?
+LuxTalent receives dozens of CVs per day. The goal is to automate the first filtering step: should this candidate be invited to an interview, or not?
 
-On veut donc un modele qui prend un CV en entree et retourne **Invite** ou **Reject**.
-
----
-
-## 2. Pourquoi un modele ML classique et pas juste le LLM ?
-
-Le LLM (Gemini) est deja utilise dans le projet pour **lire et structurer** le CV. Mais on ne lui demande pas de decider. Pourquoi ?
-
-- Un LLM peut avoir des biais imprevisibles dans ses decisions
-- On ne peut pas entrainer un LLM sur nos propres donnees historiques
-- Un modele sklearn est **tracable** : on peut voir exactement quelles features ont pese dans la decision
-- C'est beaucoup plus rapide et moins cher a l'utilisation
-
-Le LLM fait le travail de comprehension du texte. Le modele ML fait la decision basee sur des criteres objectifs appris depuis les donnees.
+The model takes a CV as input and returns **Invite** or **Reject**.
 
 ---
 
-## 3. Les donnees
+## 2. Why a classical ML model instead of just the LLM?
 
-### D'ou viennent-elles ?
+The LLM (Anthropic Claude, Haiku 4.5) is already used in the project to **read and structure** the CV. But we don't ask it to make the decision. Why?
 
-Les donnees viennent des CVs qui ont ete uploades et traites par l'application. Pour chaque CV, on stocke les features extraites + la recommandation.
+- An LLM can have unpredictable biases in its decisions
+- You cannot train an LLM on your own historical data
+- A scikit-learn model is **traceable**: you can see exactly which features influenced the decision
+- It is much faster and cheaper to run
 
-Le fichier `candidates_export.csv` contient une ligne par candidat avec ses features et son label (Invite ou Reject).
+The LLM handles text comprehension. The ML model makes the decision based on objective criteria learned from historical data.
 
-### Ce qu'on a
+---
 
-| | Valeur |
+## 3. The Data
+
+### Where does it come from?
+
+The data comes from CVs that were uploaded and processed by the application. For each CV, the extracted features and the recommendation are stored.
+
+The file `candidates_export.csv` contains one row per candidate with their features and label (Invite or Reject).
+
+### Dataset summary
+
+| | Value |
 |---|---|
-| Nombre de candidats | 200 |
-| Invites | 51 (26%) |
-| Rejetes | 149 (74%) |
+| Number of candidates | 200 |
+| Invited | 51 (26%) |
+| Rejected | 149 (74%) |
 
-### Le desequilibre des classes
+### Class imbalance
 
-On a 3x plus de Reject que d'Invite. C'est normal dans le recrutement -- tous les candidats ne sont pas retenus. Mais ca pose un probleme au modele : il pourrait apprendre a tout rejeter et avoir l'air d'etre bon (74% de bonnes reponses juste en disant "Reject" tout le temps).
+There are 3× more Reject than Invite. This is normal in recruitment — not all candidates make it through. But it creates a problem for the model: it could learn to reject everything and appear accurate (74% correct just by always saying "Reject").
 
-**Solutions utilisees (v2) :**
+**Solutions used (v2):**
 
-1. **`class_weight="balanced"`** dans sklearn : ca force le modele a traiter les deux classes de facon equilibree, meme si l'une est minoritaire
-2. **SMOTE** (Synthetic Minority Over-sampling Technique) : ca *cree* de nouveaux exemples "Invite" synthetiques pour equilibrer les donnees avant l'entrainement
-3. **`scale_pos_weight`** dans XGBoost : meme principe, pondere plus fort les exemples "Invite"
-
----
-
-## 4. Les features -- qu'est-ce qu'on mesure ?
-
-Un modele ML ne peut pas lire du texte. On doit transformer chaque CV en **chiffres**. Ces chiffres sont calcules automatiquement par `features.py` depuis le JSON retourne par le LLM.
-
-### 4.1 Features de base (15)
-
-#### Groupe Experience
-
-| Feature | Description | Exemple |
-|---|---|---|
-| `total_years_experience` | Total des annees de travail | 5.5 |
-| `num_positions` | Nombre de postes occupes | 3 |
-| `avg_tenure_months` | Duree moyenne dans un poste (mois) | 22 |
-
-Ces features mesurent la stabilite et l'experience accumulee. Un candidat avec 10 ans et 2 postes stables est different d'un avec 10 ans et 8 postes courts.
-
-#### Groupe Formation
-
-| Feature | Description | Valeurs |
-|---|---|---|
-| `education_level_score` | Niveau du diplome le plus eleve | 1=Lycee, 2=BTS, 3=Licence, 4=Master, 5=PhD |
-
-#### Groupe Competences
-
-| Feature | Description | Exemple |
-|---|---|---|
-| `total_skills_count` | Total skills (technique + methodes + management) | 12 |
-| `has_certifications` | A au moins une certification | 0 ou 1 |
-| `num_certifications` | Nombre exact de certifications | 3 |
-
-#### Groupe Langues
-
-| Feature | Description | Valeurs |
-|---|---|---|
-| `language_count` | Nombre de langues parlees | 2 |
-| `max_language_score` | Meilleur niveau CEFR | 1=A1 ... 6=C2 |
-
-#### Groupe Signaux de qualite
-
-| Feature | Description | Ce que ca indique |
-|---|---|---|
-| `has_senior_title` | Titre contient Senior/Lead/Manager... | Experience de seniorite |
-| `career_gap_months` | Total des trous entre postes (mois) | 0 = carriere continue |
-| `latest_job_duration` | Duree du dernier poste (mois) | Stabilite recente |
-| `has_summary` | CV a un resume professionnel | Soin apporte au CV |
-| `section_completeness_score` | Sections remplies parmi 6 | 6 = CV complet |
-| `parse_quality_score` | Qualite du parsing LLM | 0=mauvais, 2=complet |
-
-### 4.2 Features derivees (4) -- NOUVEAU en v2
-
-Ces features sont **calculees a partir des features de base**. Elles capturent des relations que le modele ne verrait pas autrement.
-
-| Feature | Formule | Ce que ca mesure |
-|---|---|---|
-| `experience_education_ratio` | annees_exp / niveau_diplome | Un autodidacte avec beaucoup d'experience vs un diplome sans experience |
-| `certs_per_year` | nb_certifications / annees_exp | Intensite de la formation continue |
-| `experience_x_seniority` | annees_exp * a_titre_senior | Combine experience + titre senior (vaut 0 si pas senior) |
-| `experience_x_education` | annees_exp * niveau_diplome | Score combine experience + diplome |
-
-### 4.3 Suppression automatique des features constantes
-
-Dans notre dataset actuel, 3 features ont **exactement la meme valeur** pour tous les candidats :
-
-```
-section_completeness_score -> toujours 6
-has_summary                -> toujours 1
-parse_quality_score        -> toujours 2
-```
-
-Le script v2 les detecte et les retire automatiquement. Ca laisse **16 features effectives** (12 base + 4 derivees).
-
-**Pourquoi on les garde dans le code ?** Parce que sur de vrais CVs (incomplets, mal formates), ces features auront de la variance et redeviendront utiles.
+1. **`class_weight="balanced"`** in scikit-learn: forces the model to treat both classes equally, even if one is a minority
+2. **SMOTE** (Synthetic Minority Over-sampling Technique): creates new synthetic "Invite" examples to balance the data before training
+3. **`scale_pos_weight`** in XGBoost: same principle, weights "Invite" examples more heavily
 
 ---
 
-## 5. Analyse des features -- ce qu'on a decouvert
+## 4. Features — what gets measured?
 
-### Features avec un signal reel
+An ML model cannot read text. Each CV must be transformed into **numbers**. These numbers are computed automatically by `features.py` from the JSON returned by the LLM.
+
+### 4.1 Base features (15)
+
+#### Experience group
+
+| Feature | Description | Example |
+|---|---|---|
+| `total_years_experience` | Total years of work | 5.5 |
+| `num_positions` | Number of positions held | 3 |
+| `avg_tenure_months` | Average time spent in a position (months) | 22 |
+
+These features measure stability and accumulated experience. A candidate with 10 years and 2 stable positions is different from one with 10 years and 8 short stints.
+
+#### Education group
+
+| Feature | Description | Values |
+|---|---|---|
+| `education_level_score` | Highest degree level | 1=High school, 2=Associate, 3=Bachelor, 4=Master, 5=PhD |
+
+#### Skills group
+
+| Feature | Description | Example |
+|---|---|---|
+| `total_skills_count` | Total skills (technical + methods + management) | 12 |
+| `has_certifications` | Has at least one certification | 0 or 1 |
+| `num_certifications` | Exact number of certifications | 3 |
+
+#### Languages group
+
+| Feature | Description | Values |
+|---|---|---|
+| `language_count` | Number of languages spoken | 2 |
+| `max_language_score` | Best CEFR level | 1=A1 … 6=C2 |
+
+#### Quality signals group
+
+| Feature | Description | What it indicates |
+|---|---|---|
+| `has_senior_title` | Title contains Senior/Lead/Manager… | Seniority signal |
+| `career_gap_months` | Total gap months between positions | 0 = continuous career |
+| `latest_job_duration` | Duration of most recent position (months) | Recent stability |
+| `has_summary` | CV includes a professional summary | Care taken with the CV |
+| `section_completeness_score` | Sections filled out of 6 | 6 = complete CV |
+| `parse_quality_score` | LLM parsing quality | 0=poor, 2=complete |
+
+### 4.2 Derived features (4) — NEW in v2
+
+These features are **computed from base features**. They capture relationships the model would not otherwise see.
+
+| Feature | Formula | What it measures |
+|---|---|---|
+| `experience_education_ratio` | years_exp / edu_level | Self-taught with lots of experience vs. degree with little experience |
+| `certs_per_year` | num_certs / years_exp | Intensity of continuous learning |
+| `experience_x_seniority` | years_exp × has_senior_title | Combines experience + seniority (0 if not senior) |
+| `experience_x_education` | years_exp × edu_level | Combined experience + education score |
+
+### 4.3 Automatic removal of constant features
+
+In the current dataset, 3 features have **exactly the same value** for all candidates:
 
 ```
-latest_job_duration         Invite=22.5 mois  vs  Reject=15.7 mois  -> difference de 6.8
-avg_tenure_months           Invite=13.2 mois  vs  Reject=8.8 mois   -> difference de 4.4
-experience_x_education      Invite=11.0       vs  Reject=6.8        -> difference de 4.2 (NOUVEAU)
-total_years_experience      Invite=3.1 ans    vs  Reject=2.0 ans    -> difference de 1.1
-experience_x_seniority      Invite=2.5        vs  Reject=1.3        -> difference de 1.2 (NOUVEAU)
+section_completeness_score -> always 6
+has_summary                -> always 1
+parse_quality_score        -> always 2
 ```
 
-Les candidats invites ont en moyenne **plus d'experience, restent plus longtemps dans leurs postes, et combinent experience + diplome**.
+The v2 script detects and removes them automatically. This leaves **16 effective features** (12 base + 4 derived).
 
-### Detection de labels bruites (NOUVEAU en v2)
-
-Le script detecte automatiquement les labels incoherents :
-
-```
-12 profils forts (5+ ans, Master+, Senior) labellises Reject
--> 12 labels potentiellement bruites sur 200 (6%)
-```
-
-Corriger ces labels ameliorerait significativement les performances.
+**Why keep them in the code?** Because on real CVs (incomplete, poorly formatted), these features will have variance and become useful again.
 
 ---
 
-## 6. Entrainement -- choix du modele
+## 5. Feature analysis — what we found
 
-On a compare **6 modeles** de classification (3 de plus qu'en v1).
-
-### 6.1 Regression Logistique
-
-C'est le modele le plus simple. Il calcule un score en faisant une somme ponderee des features :
+### Features with a real signal
 
 ```
-score = (experience * w1) + (education * w2) + (skills * w3) + ...
+latest_job_duration         Invite=22.5 months  vs  Reject=15.7 months  -> diff of 6.8
+avg_tenure_months           Invite=13.2 months  vs  Reject=8.8 months   -> diff of 4.4
+experience_x_education      Invite=11.0         vs  Reject=6.8          -> diff of 4.2 (NEW)
+total_years_experience      Invite=3.1 years    vs  Reject=2.0 years    -> diff of 1.1
+experience_x_seniority      Invite=2.5          vs  Reject=1.3          -> diff of 1.2 (NEW)
 ```
 
-Les poids (w1, w2, w3...) sont appris pendant l'entrainement. Si le score depasse un seuil, c'est Invite, sinon Reject.
+Invited candidates have on average **more experience, stay longer in their positions, and combine experience + education**.
 
-**Avantage** : simple, rapide, interpretable. On voit exactement le poids de chaque feature.
-**Inconvenient** : ne capture pas les relations complexes entre features.
+### Noisy label detection (NEW in v2)
+
+The script automatically detects inconsistent labels:
+
+```
+12 strong profiles (5+ years, Master+, Senior) labelled as Reject
+-> 12 potentially noisy labels out of 200 (6%)
+```
+
+Correcting these labels would significantly improve performance.
+
+---
+
+## 6. Training — model selection
+
+Six classification models were compared (3 more than in v1).
+
+### 6.1 Logistic Regression
+
+The simplest model. It computes a score as a weighted sum of features:
+
+```
+score = (experience × w1) + (education × w2) + (skills × w3) + …
+```
+
+Weights (w1, w2, w3…) are learned during training. If the score exceeds a threshold, it's Invite, otherwise Reject.
+
+**Advantage**: simple, fast, interpretable — exact weight of each feature is visible.  
+**Drawback**: does not capture complex interactions between features.
 
 ### 6.2 Random Forest
 
-Construit 300 arbres de decision. Chaque arbre apprend des regles du type "si experience > 5 ans ET certifications > 1 -> Invite". Les 300 arbres votent et la majorite l'emporte.
+Builds 300 decision trees. Each tree learns rules like "if experience > 5 years AND certifications > 1 → Invite". The 300 trees vote and the majority wins.
 
-**Avantage** : capture des relations non-lineaires entre les features.
-**Inconvenient** : peut overfitter sur peu de donnees.
+**Advantage**: captures non-linear relationships between features.  
+**Drawback**: can overfit on small datasets.
 
 ### 6.3 Gradient Boosting
 
-Similaire a Random Forest mais chaque arbre corrige les erreurs du precedent, en sequence.
+Similar to Random Forest but each tree corrects the errors of the previous one, sequentially.
 
-**Avantage** : souvent le meilleur en pratique.
-**Inconvenient** : plus lent, ne supporte pas nativement class_weight.
+**Advantage**: often the best in practice.  
+**Drawback**: slower, does not natively support class_weight.
 
-### 6.4 SVM (Support Vector Machine) -- NOUVEAU en v2
+### 6.4 SVM (Support Vector Machine) — NEW in v2
 
-Cherche une frontiere optimale pour separer les deux classes. En mode RBF (Radial Basis Function), il peut trouver des frontieres non-lineaires.
+Finds an optimal boundary to separate the two classes. In RBF mode (Radial Basis Function), it can find non-linear boundaries.
 
-**Avantage** : tres bon sur les petits datasets, robuste a l'overfitting.
-**Inconvenient** : lent sur les gros datasets, moins interpretable.
+**Advantage**: very strong on small datasets, robust against overfitting.  
+**Drawback**: slow on large datasets, less interpretable.
 
-### 6.5 HistGradientBoosting -- NOUVEAU en v2
+### 6.5 HistGradientBoosting — NEW in v2
 
-Version amelioree de Gradient Boosting. Plus rapide et supporte nativement `class_weight="balanced"`.
+Improved version of Gradient Boosting. Faster and natively supports `class_weight="balanced"`.
 
-**Avantage** : rapide, gere le desequilibre, souvent meilleur que GB classique.
-**Inconvenient** : "boite noire" -- difficile a interpreter.
+**Advantage**: fast, handles class imbalance, often better than standard GB.  
+**Drawback**: "black box" — harder to interpret.
 
-### 6.6 XGBoost -- NOUVEAU en v2
+### 6.6 XGBoost — NEW in v2
 
-L'algorithme de reference en machine learning competitif. Construit des arbres de boosting avec des optimisations avancees (regularisation, parallelisme).
+The reference algorithm in competitive machine learning. Builds boosting trees with advanced optimisations (regularisation, parallelism).
 
-**Avantage** : tres performant, gere nativement le desequilibre via `scale_pos_weight`.
-**Inconvenient** : plus de parametres a regler, "boite noire".
+**Advantage**: highly performant, natively handles imbalance via `scale_pos_weight`.  
+**Drawback**: more parameters to tune, "black box".
 
-### Resultats de la comparaison
+### Comparison results
 
-| Modele | AUC (test) | F1 Invite (cv5) |
+| Model | AUC (test) | F1 Invite (cv5) |
 |---|---|---|
 | **LogisticRegression** | **0.530** | **0.515** |
 | SVM_RBF | 0.530 | 0.423 |
@@ -217,152 +217,152 @@ L'algorithme de reference en machine learning competitif. Construit des arbres d
 | GradientBoosting | 0.503 | 0.363 |
 | RandomForest | 0.510 | 0.350 |
 
-La Regression Logistique gagne a nouveau. Avec seulement 200 lignes et des donnees bruitees, les modeles simples generalisent mieux que les modeles complexes.
+Logistic Regression wins again. With only 200 rows and noisy data, simple models generalise better than complex ones.
 
-### Optimisation des hyperparametres (NOUVEAU en v2)
+### Hyperparameter optimisation (NEW in v2)
 
-Apres avoir selectionne le meilleur modele, on optimise ses parametres avec `RandomizedSearchCV` :
+After selecting the best model, its parameters are optimised with `RandomizedSearchCV`:
 
 ```
-Meilleurs parametres : C=0.01, penalty=l2
-F1 (cv5) optimise   : 0.548 (vs 0.515 avant optimisation)
+Best parameters : C=0.01, penalty=l2
+Optimised F1 (cv5) : 0.548 (vs 0.515 before optimisation)
 ```
 
-Le `C=0.01` signifie que le modele a besoin d'une forte regularisation -- il simplifie au maximum pour eviter l'overfitting sur ces donnees bruitees.
+`C=0.01` means the model needs strong regularisation — it simplifies as much as possible to avoid overfitting on this noisy data.
 
 ---
 
-## 7. Evaluation -- comprendre les metriques
+## 7. Evaluation — understanding the metrics
 
-### L'AUC-ROC
+### AUC-ROC
 
-L'AUC mesure la capacite du modele a distinguer Invite de Reject. Elle va de 0.5 (aleatoire) a 1.0 (parfait).
-
-```
-0.5   -> aussi bon qu'une piece de monnaie
-0.653 -> notre modele (v2)
-0.8   -> bon modele
-1.0   -> parfait (suspect en pratique = overfitting)
-```
-
-### La matrice de confusion (v2)
+AUC measures how well the model can distinguish Invite from Reject. It ranges from 0.5 (random) to 1.0 (perfect).
 
 ```
-                      Predit Reject   Predit Invite
-Reellement Reject  |      19         |      11      |
-Reellement Invite  |       4         |       6      |
+0.5   -> as good as a coin flip
+0.653 -> our model (v2)
+0.8   -> good model
+1.0   -> perfect (suspicious in practice = overfitting)
 ```
 
-Sur 40 candidats du jeu de test :
-- **19 Reject correctement identifies** (vs 17 en v1)
-- **6 Invite correctement identifies** (vs 5 en v1, +20%)
-- **11 faux Invite** (vs 13 en v1, amelioration)
-- **4 faux Reject** (vs 5 en v1, amelioration)
+### Confusion matrix (v2)
 
-### Comparaison v1 vs v2
+```
+                     Predicted Reject   Predicted Invite
+Actually Reject   |       19          |       11         |
+Actually Invite   |        4          |        6         |
+```
 
-| Metrique | v1 | v2 | Evolution |
+Out of 40 candidates in the test set:
+- **19 Reject correctly identified** (vs 17 in v1)
+- **6 Invite correctly identified** (vs 5 in v1, +20%)
+- **11 false Invites** (vs 13 in v1, improvement)
+- **4 false Rejects** (vs 5 in v1, improvement)
+
+### v1 vs v2 comparison
+
+| Metric | v1 | v2 | Change |
 |---|---|---|---|
-| Precision Invite | 0.28 | 0.35 | +25% |
-| Recall Invite | 0.50 | 0.60 | +20% |
+| Invite Precision | 0.28 | 0.35 | +25% |
+| Invite Recall | 0.50 | 0.60 | +20% |
 | F1 Invite (cv5) | 0.521 | 0.548 | +5% |
 
 ---
 
-## 8. Ce que le modele a vraiment appris
+## 8. What the model actually learned
 
-La feature importance apres optimisation :
+Feature importance after optimisation:
 
 ```
-language_count               -> 0.2055 (le plus fort)
+language_count               -> 0.2055 (strongest)
 education_level_score        -> 0.1275
-certs_per_year               -> 0.1271 (NOUVEAU - derivee)
+certs_per_year               -> 0.1271 (NEW — derived)
 has_senior_title             -> 0.1028
 avg_tenure_months            -> 0.0958
-experience_education_ratio   -> 0.0914 (NOUVEAU - derivee)
+experience_education_ratio   -> 0.0914 (NEW — derived)
 latest_job_duration          -> 0.0891
 total_years_experience       -> 0.0815
 num_certifications           -> 0.0763
 has_certifications           -> 0.0749
-experience_x_seniority       -> 0.0722 (NOUVEAU - derivee)
-experience_x_education       -> 0.0690 (NOUVEAU - derivee)
+experience_x_seniority       -> 0.0722 (NEW — derived)
+experience_x_education       -> 0.0690 (NEW — derived)
 max_language_score           -> 0.0575
-num_positions                -> 0.0052 (presque inutile)
-total_skills_count           -> 0.0013 (presque inutile)
-career_gap_months            -> 0.0005 (presque inutile)
+num_positions                -> 0.0052 (nearly useless)
+total_skills_count           -> 0.0013 (nearly useless)
+career_gap_months            -> 0.0005 (nearly useless)
 ```
 
-**Observation cle** : les 4 features derivees (NOUVEAU) contribuent toutes de maniere significative. `certs_per_year` et `experience_education_ratio` sont dans le top 6. Ces combinaisons apportent de l'information que les features individuelles ne capturaient pas.
+**Key observation**: all 4 derived features (NEW) contribute significantly. `certs_per_year` and `experience_education_ratio` are in the top 6. These combinations provide information that the individual features did not capture.
 
 ---
 
-## 9. Techniques utilisees -- resume
+## 9. Techniques used — summary
 
 ### SMOTE (Synthetic Minority Over-sampling Technique)
 
-**Probleme** : 51 Invite vs 149 Reject -- le modele a tendance a tout rejeter.
+**Problem**: 51 Invite vs 149 Reject — the model tends to reject everything.
 
-**Solution** : SMOTE cree de nouveaux exemples Invite *synthetiques* en interpolant entre les vrais exemples. Si on a deux candidats invites A et B, SMOTE cree un candidat C dont les features sont "entre" A et B.
+**Solution**: SMOTE creates new synthetic Invite examples by interpolating between real ones. If we have two invited candidates A and B, SMOTE creates a candidate C whose features are "between" A and B.
 
 ```
-Avant SMOTE :  51 Invite, 149 Reject (ratio 1:3)
-Apres SMOTE : 149 Invite, 149 Reject (ratio 1:1)
+Before SMOTE:  51 Invite, 149 Reject (ratio 1:3)
+After SMOTE:  149 Invite, 149 Reject (ratio 1:1)
 ```
 
 ### StandardScaler
 
-Les features ont des echelles tres differentes : `has_certifications` va de 0 a 1, mais `career_gap_months` peut aller de 0 a 40. Sans normalisation, le modele accorderait trop d'importance aux features a grande echelle.
+Features have very different scales: `has_certifications` ranges from 0 to 1, but `career_gap_months` can range from 0 to 40. Without normalisation, the model would give too much weight to large-scale features.
 
-StandardScaler transforme chaque feature pour avoir une moyenne de 0 et un ecart-type de 1.
+StandardScaler transforms each feature to have a mean of 0 and a standard deviation of 1.
 
 ### RandomizedSearchCV
 
-Au lieu de fixer les parametres a la main, on teste automatiquement plusieurs combinaisons et on garde la meilleure.
+Instead of manually setting parameters, multiple combinations are automatically tested and the best is kept.
 
 ---
 
-## 10. Limites et ameliorations possibles
+## 10. Limitations and possible improvements
 
-### Limites actuelles
+### Current limitations
 
-| Limite | Impact |
+| Limitation | Impact |
 |---|---|
-| 200 lignes de donnees | Modele peu generalisable |
-| 12 labels bruites (6%) | Le modele apprend des erreurs |
-| Donnees homogenes (CVs de test bien formates) | 3 features constantes |
-| Pas de donnees clients reelles | Les patterns appris peuvent ne pas correspondre a la realite |
+| 200 rows of data | Model has limited generalisation |
+| 12 noisy labels (6%) | Model learns from mistakes |
+| Homogeneous data (well-formatted test CVs) | 3 constant features |
+| No real client data | Learned patterns may not reflect reality |
 
-### Ce qu'on ferait avec plus de donnees
+### What we would do with more data
 
-- Reentrainer sur les vraies donnees historiques de LuxTalent
-- Ajouter des features textuelles (TF-IDF sur les titres de poste)
-- Tester des modeles de deep learning (si > 5000 lignes)
-- Calibrer le modele pour que les scores de confiance soient fiables
+- Retrain on LuxTalent's real historical data
+- Add text features (TF-IDF on job titles)
+- Test deep learning models (if > 5,000 rows)
+- Calibrate the model so confidence scores are reliable
 
-### Comment ameliorer sans nouvelles donnees
+### How to improve without new data
 
-- **Corriger les 12 labels bruites** -- amelioration estimee : AUC +0.05-0.15
-- Augmenter les donnees synthetiques avec plus de variance
-- Tester d'autres features derivees (ratio skills/experience, etc.)
+- **Correct the 12 noisy labels** — estimated improvement: AUC +0.05–0.15
+- Increase synthetic data with more variance
+- Test additional derived features (skills/experience ratio, etc.)
 
 ---
 
 ## 11. Conclusion
 
-On a construit un pipeline ML complet (v2) :
+A complete ML pipeline (v2) was built:
 
 ```
 CV (PDF/DOCX)
-    | extractor.py    -> texte brut
-    | llm_parser.py   -> JSON structure (Gemini 2.0 Flash)
-    | features.py     -> 16 features (12 base + 4 derivees)
-    | predictor.py    -> Invite / Reject + score de confiance
+    | extractor.py    -> raw text
+    | llm_parser.py   -> structured JSON (Anthropic Claude, Haiku 4.5)
+    | features.py     -> 16 features (12 base + 4 derived)
+    | predictor.py    -> Invite / Reject + confidence score
 ```
 
-Le modele retenu est une **Regression Logistique** avec normalisation StandardScaler et surechantillonnage SMOTE. Les ameliorations v2 (features derivees, SMOTE, optimisation hyperparametres) ont ameliore le recall Invite de 50% a 60% et la precision de 28% a 35%.
+The selected model is a **Logistic Regression** with StandardScaler normalisation and SMOTE oversampling. The v2 improvements (derived features, SMOTE, hyperparameter optimisation) raised Invite recall from 50% to 60% and precision from 28% to 35%.
 
-Le test de coherence confirme que le modele fonctionne :
-- Profil fort (10 ans, Master, 15 skills) -> **Invite 90%**
-- Profil faible (0.5 an, lycee, 2 skills) -> **Reject 83%**
+The consistency check confirms the model works:
+- Strong profile (10 years, Master, 15 skills) → **Invite 90%**
+- Weak profile (0.5 year, high school, 2 skills) → **Reject 83%**
 
-La principale limitation reste la **qualite des donnees** : corriger les 12 labels bruites et augmenter le volume au-dela de 500 candidats ameliorerait significativement les performances.
+The main limitation remains **data quality**: correcting the 12 noisy labels and increasing the volume beyond 500 candidates would significantly improve performance.

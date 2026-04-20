@@ -1,7 +1,7 @@
 # Filtrant — Automated CV Pre-Screening System
 
 Automated CV screening for **LuxTalent Advisory Group S.A.**
-Uploads a CV (PDF, DOCX, or image) → OpenRouter (Gemini 2.0 Flash) parses it into structured JSON → ML model predicts **Invite** or **Reject** → stored in PostgreSQL → visible in a React dashboard.
+Uploads a CV (PDF, DOCX, or image) → Anthropic Claude (Haiku 4.5) parses it into structured JSON → ML model predicts **Invite** or **Reject** → stored in PostgreSQL → visible in a React dashboard.
 
 ---
 
@@ -13,14 +13,14 @@ Uploads a CV (PDF, DOCX, or image) → OpenRouter (Gemini 2.0 Flash) parses it i
          FastAPI (backend :8000)
               ↓
     1. Text extraction (pdfplumber / python-docx)
-    2. OpenRouter (Gemini 2.0 Flash)  →  Universal JSON schema
+    2. Anthropic Claude (Haiku 4.5)  →  Universal JSON schema
     3. ML model  →  Invite / Reject + confidence
     4. Store in PostgreSQL
               ↓
          React dashboard (:3000) reads /api/v1/candidates
 ```
 
-**Stack:** FastAPI · OpenRouter (`gemini-2.0-flash`) · scikit-learn · PostgreSQL · React + Vite + TypeScript + Tailwind · Docker Compose
+**Stack:** FastAPI · Anthropic Claude (`claude-haiku-4-5`) · scikit-learn · PostgreSQL · React + Vite + TypeScript + Tailwind · Framer Motion · Docker Compose
 
 ---
 
@@ -31,7 +31,7 @@ Uploads a CV (PDF, DOCX, or image) → OpenRouter (Gemini 2.0 Flash) parses it i
 | Docker Desktop or OrbStack | — | Docker Compose v2 required |
 | Node.js | 18 LTS | For the frontend dev server |
 | Python | 3.11+ | For the local IDE venv and ML retraining |
-| OpenRouter API key | — | `sk-or-...` from openrouter.ai/keys |
+| Anthropic API key | — | `sk-ant-...` from console.anthropic.com |
 
 > **VS Code users:** the Python extension (`ms-python.python`) is strongly recommended. The repo ships a `.vscode/settings.json` that points to the local venv automatically — see [IDE Setup](#ide-setup-vs-code) below.
 
@@ -50,7 +50,7 @@ cp .env.example .env
 Open `.env` and fill in your key:
 
 ```
-OPENROUTER_API_KEY=sk-or-YOUR_KEY_HERE
+ANTHROPIC_API_KEY=sk-ant-YOUR_KEY_HERE
 ```
 
 Leave the rest as-is for local development.
@@ -161,7 +161,7 @@ curl http://localhost:8000/api/v1/candidates/export.csv -o backend/ml/candidates
 docker compose exec backend python /app/ml/train.py
 ```
 
-`train.py` compares LogisticRegression, RandomForest, and GradientBoosting, selects the best by AUC-ROC, and saves the pipeline to `model.joblib`. The updated model is loaded on the next prediction call — no restart needed.
+`train.py` compares six classifiers (LogisticRegression, RandomForest, GradientBoosting, SVM, HistGradientBoosting, XGBoost), selects the best by cross-validated F1 score, optimises hyperparameters with RandomizedSearchCV, and saves the pipeline to `model.joblib`. The updated model is loaded on the next prediction call — no restart needed.
 
 ### Exploratory analysis
 
@@ -228,7 +228,7 @@ filtrant/
 │       │   └── cv_schema.py  # Pydantic CV schema (universal JSON)
 │       ├── services/
 │       │   ├── extractor.py       # PDF/DOCX/TXT → raw text + SHA-256
-│       │   ├── llm_parser.py      # OpenRouter (Gemini 2.0 Flash) → structured JSON
+│       │   ├── llm_parser.py      # Anthropic Claude (Haiku 4.5) → structured JSON
 │       │   ├── features.py        # JSON → ML feature vector
 │       │   ├── predictor.py       # Load model, run prediction
 │       │   └── watcher.py         # Background task: polls incoming_cvs/ auto-processes
@@ -256,7 +256,9 @@ filtrant/
 │   └── failed_cvs/           # Moved here on failure
 │
 └── docs/
-    └── SPECS.md              # Client requirements (Work Package 1)
+    ├── SPECS.md              # Client requirements (Work Package 1)
+    ├── ML_RAPPORT.md         # ML model report — metrics, feature importance, v1 vs v2
+    └── ML_GUIDE_COMPLET.md   # Deep-dive on every ML algorithm used
 ```
 
 ---
@@ -265,7 +267,7 @@ filtrant/
 
 | Variable | Required | Description |
 |---|---|---|
-| `OPENROUTER_API_KEY` | Yes | Your OpenRouter API key (`sk-or-...` from openrouter.ai/keys) |
+| `ANTHROPIC_API_KEY` | Yes | Your Anthropic API key (`sk-ant-...` from console.anthropic.com) |
 | `DATABASE_URL` | Yes | PostgreSQL connection string. Set automatically by Railway in production. |
 | `ENV` | No | `development` (default) or `production` |
 | `LOG_LEVEL` | No | `INFO` (default) |
@@ -280,7 +282,7 @@ filtrant/
 1. Create a new Railway project.
 2. Add a **PostgreSQL** plugin — Railway injects `DATABASE_URL` automatically.
 3. Add a service from this repo, set root to `backend/`, Dockerfile is auto-detected.
-4. Set the `OPENROUTER_API_KEY` environment variable in Railway.
+4. Set the `ANTHROPIC_API_KEY` environment variable in Railway.
 
 ### Vercel (frontend)
 
