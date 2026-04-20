@@ -38,7 +38,7 @@ Rules:
 - Return only the JSON object."""
 
 
-async def parse_cv(raw_text: str, max_retries: int = 2) -> CVSchema:
+async def parse_cv(raw_text: str, max_retries: int = 4) -> CVSchema:
     """
     Call OpenRouter (Gemini 2.0 Flash) to parse raw CV text into a validated CVSchema.
     Retries up to max_retries times on rate-limit (429) or server errors (5xx).
@@ -59,13 +59,13 @@ async def parse_cv(raw_text: str, max_retries: int = 2) -> CVSchema:
         "temperature": 0,
     }
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
+    async with httpx.AsyncClient(timeout=90.0) as client:
         for attempt in range(max_retries + 1):
             try:
                 response = await client.post(OPENROUTER_URL, headers=headers, json=payload)
             except httpx.TimeoutException:
                 if attempt < max_retries:
-                    wait = 2 ** attempt
+                    wait = 5 * (2 ** attempt)
                     logger.warning("OpenRouter timeout, retrying in %ss (attempt %d)", wait, attempt + 1)
                     await asyncio.sleep(wait)
                     continue
@@ -73,7 +73,7 @@ async def parse_cv(raw_text: str, max_retries: int = 2) -> CVSchema:
 
             if response.status_code == 429 or response.status_code >= 500:
                 if attempt < max_retries:
-                    wait = 2 ** attempt
+                    wait = 5 * (2 ** attempt)
                     logger.warning("OpenRouter %s, retrying in %ss (attempt %d)", response.status_code, wait, attempt + 1)
                     await asyncio.sleep(wait)
                     continue
