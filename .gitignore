@@ -30,6 +30,7 @@ frontend/.env
 data/incoming_cvs/*
 data/processed_cvs/*
 data/failed_cvs/*
+data/test_cvs/*
 !data/incoming_cvs/.gitkeep
 !data/processed_cvs/.gitkeep
 !data/failed_cvs/.gitkeep

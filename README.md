@@ -292,8 +292,8 @@ filtrant/
 └── docs/
     ├── SPECS_WP1.md          # Client requirements (Work Package 1)
     ├── SPECS_WP2.md          # Fairness audit & model redesign (Work Package 2)
-    ├── ML_RAPPORT.md         # ML model report — metrics, feature importance, v1 vs v2
-    └── ML_GUIDE_COMPLET.md   # Deep-dive on every ML algorithm used
+    ├── ML_REPORT.md          # ML model report — metrics, feature importance, v1 vs v2
+    └── ML_COMPLETE_GUIDE.md  # Deep-dive on every ML algorithm used
 ```
 
 ---
