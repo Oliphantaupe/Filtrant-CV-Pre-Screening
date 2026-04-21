@@ -30,7 +30,10 @@ Schema:
 }
 
 Rules:
-- Compute duration_months from start/end if possible.
+- Compute duration_months from start/end dates only if BOTH are explicitly stated. If either date is missing or ambiguous, set duration_months to null — never estimate.
+- List experience entries in reverse chronological order (most recent first).
+- target_role: copy the exact job title from the CV if present; if absent, use the most recent job title; never rephrase or infer a broader role.
+- Skills categorization: technical = tools, software, programming languages, platforms; methods = frameworks, methodologies, processes (e.g. Agile, BPMN); management = people or project leadership skills. Do not duplicate a skill across categories.
 - Set parse_quality to "complete" if all main sections are present, "partial" if some are missing, "poor" if very little data.
 - List any missing important fields in missing_fields.
 - Return only the JSON object."""
@@ -46,6 +49,7 @@ async def parse_cv(raw_text: str) -> CVSchema:
     message = await client.messages.create(
         model=MODEL,
         max_tokens=2048,
+        temperature=0,
         system=[
             {
                 "type": "text",
