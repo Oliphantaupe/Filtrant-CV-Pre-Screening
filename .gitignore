@@ -32,6 +32,7 @@ data/processed_cvs/*
 data/failed_cvs/*
 data/test_cvs/*
 !data/incoming_cvs/.gitkeep
+!data/test_cvs/.gitkeep
 !data/processed_cvs/.gitkeep
 !data/failed_cvs/.gitkeep
 data/raw/
