@@ -107,25 +107,6 @@
 
   --backdrop-overlay: rgba(80, 90, 110, 0.40);
   --backdrop-heavy:   rgba(80, 90, 110, 0.50);
-
-  /* Accents — darkened for legibility on light backgrounds */
-  --invite:       #16a34a;
-  --reject:       #dc2626;
-  --reject-dim:   rgba(220, 38, 38, 0.08);
-  --reject-border:rgba(220, 38, 38, 0.20);
-  --accent:       #1d6feb;
-  --purple:       #7c3aed;
-  --gold:         #d97706;
-  --gold-dim:     rgba(217, 119, 6, 0.08);
-  --gold-border:  rgba(217, 119, 6, 0.20);
-  --gold-text:    rgba(180, 83, 9, 0.90);
-  --teal:         #0d9488;
-  --teal-muted:   rgba(13, 148, 136, 0.14);
-  --teal-subtle:  rgba(13, 148, 136, 0.10);
-  --teal-dim:     rgba(13, 148, 136, 0.07);
-  --teal-bright:  rgba(13, 148, 136, 0.85);
-  --teal-border:  rgba(13, 148, 136, 0.30);
-  --teal-glow:    rgba(13, 148, 136, 0.20);
 }
 
 [data-theme="light"] ::-webkit-scrollbar-thumb       { background: rgba(0,0,0,0.15); }
@@ -200,8 +181,8 @@
   }
   .glass-input:focus {
     outline: none;
-    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
-    background: color-mix(in srgb, var(--accent) 4%, transparent);
+    border-color: rgba(10, 132, 255, 0.5);
+    background: rgba(10, 132, 255, 0.04);
   }
 
   .glass-pill-group {
