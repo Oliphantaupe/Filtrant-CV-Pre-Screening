@@ -56,6 +56,21 @@ FEATURE_COLUMNS = [
 SENSITIVE_ATTRIBUTES = ["gender", "age_cohort", "is_multilingual"]
 
 
+# ── EG wrapper (module-level so joblib can pickle it) ─────────────────────────
+
+class EGWrapper:
+    """Wraps ExponentiatedGradient + scaler into a sklearn-compatible object."""
+    def __init__(self, scaler, eg):
+        self.scaler = scaler
+        self.eg = eg
+
+    def predict(self, X):
+        return self.eg.predict(self.scaler.transform(X))
+
+    def predict_proba(self, X):
+        return self.eg._pmf_predict(self.scaler.transform(X))
+
+
 # ── Re-weighting ──────────────────────────────────────────────────────────────
 
 def compute_reweighting(df: pd.DataFrame, sensitive_col: str) -> np.ndarray:
@@ -227,16 +242,7 @@ def main():
             final_pred, final_proba, final_auc, final_metrics = y_pred_eg, y_proba_eg, auc_eg, metrics_eg
             final_method = "ExponentiatedGradient"
 
-            # Wrap in a sklearn-compatible object for joblib
-            class _EGWrapper:
-                def __init__(self, scaler, eg):
-                    self.scaler = scaler
-                    self.eg = eg
-                def predict(self, X):
-                    return self.eg.predict(self.scaler.transform(X))
-                def predict_proba(self, X):
-                    return self.eg._pmf_predict(self.scaler.transform(X))
-            final_pipeline = _EGWrapper(scaler, mitigator)
+            final_pipeline = EGWrapper(scaler, mitigator)
         else:
             print("  -> Re-weighted RandomForest selected (better EOD)")
             final_pred, final_proba, final_auc, final_metrics = y_pred_rw, y_proba_rw, auc_rw, metrics_rw
