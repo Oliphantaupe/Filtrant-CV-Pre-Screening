@@ -35,10 +35,15 @@ data/failed_cvs/*
 !data/failed_cvs/.gitkeep
 data/raw/
 CVs/
+backend/ml/CVs/
 student_labels.csv
+backend/ml/student_labels.csv
+student_labels*.csv
 
 # Generated ML artifacts
 backend/ml/candidates_export.csv
+backend/ml/candidates_export_*.csv
+backend/ml/parse_failed.csv
 
 # Docker
 *.log

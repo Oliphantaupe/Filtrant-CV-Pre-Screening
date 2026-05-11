@@ -19,6 +19,8 @@ numpy>=1.26
 joblib>=1.4
 imbalanced-learn>=0.12
 xgboost>=2.0
+matplotlib>=3.8
+seaborn>=0.13
 
 # Validation
 pydantic==2.7.4

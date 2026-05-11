@@ -15,10 +15,11 @@ logger = logging.getLogger(__name__)
 
 _model = None
 _effective_features = None  # features actually used by the model (may exclude constants)
+_decision_threshold = 0.5    # fallback for legacy artifacts without a tuned threshold
 
 
 def _load_model():
-    global _model, _effective_features
+    global _model, _effective_features, _decision_threshold
     if not os.path.exists(settings.ml_model_path):
         return
 
@@ -29,19 +30,22 @@ def _load_model():
     if isinstance(artifact, dict) and "pipeline" in artifact:
         _model = artifact["pipeline"]
         _effective_features = artifact.get("effective_features", FEATURE_COLUMNS)
+        _decision_threshold = float(artifact.get("decision_threshold", 0.5))
         model_name = artifact.get("model_name", "unknown")
         logger.info(
-            "Loaded ML model (v2): %s — %d features, AUC=%.3f, F1_cv=%.3f, SMOTE=%s",
+            "Loaded ML model (v2): %s — %d features, AUC=%.3f, F1_cv=%.3f, threshold=%.2f, SMOTE=%s",
             model_name,
             len(_effective_features),
             artifact.get("best_auc", 0),
-            artifact.get("best_f1_cv", 0),
+            artifact.get("threshold_f1_cv", artifact.get("best_f1_cv", 0)),
+            _decision_threshold,
             artifact.get("smote_used", False),
         )
     else:
         # Legacy format: bare pipeline
         _model = artifact
         _effective_features = FEATURE_COLUMNS
+        _decision_threshold = 0.5
         logger.info("Loaded ML model (legacy format) — %d features", len(_effective_features))
 
     # Verify class ordering: pipeline exposes classes_ via the final step
@@ -86,10 +90,11 @@ def predict(features: dict) -> tuple[str, float | None]:
 
     X = np.array([[features.get(col, 0) for col in _effective_features]])
     proba = _model.predict_proba(X)[0]
-    label_idx = int(np.argmax(proba))
 
+    # Model classes: 0 = Reject, 1 = Invite. Decision uses the tuned threshold.
+    is_invite = proba[1] >= _decision_threshold
+    label_idx = 1 if is_invite else 0
     confidence = round(float(proba[label_idx]), 3)
 
-    # Model classes: 0 = Reject, 1 = Invite
-    recommendation = "Invite" if label_idx == 1 else "Reject"
+    recommendation = "Invite" if is_invite else "Reject"
     return recommendation, confidence

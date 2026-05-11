@@ -27,10 +27,13 @@ from sklearn.ensemble import (
     RandomForestClassifier,
 )
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
+from sklearn.metrics import classification_report, confusion_matrix, f1_score, roc_auc_score
 from sklearn.model_selection import (
+    ParameterGrid,
     RandomizedSearchCV,
+    RepeatedStratifiedKFold,
     StratifiedKFold,
+    cross_val_predict,
     cross_val_score,
     train_test_split,
 )
@@ -155,6 +158,53 @@ def detect_noisy_labels(df: pd.DataFrame) -> None:
         print("  -> Conseil : vérifier ces labels manuellement pour améliorer la qualité du modèle.")
 
 
+def auto_clean_labels(X, y, cv, confidence_threshold: float = 0.85) -> tuple[np.ndarray, np.ndarray, int]:
+    """
+    Identifie les samples où un modèle baseline (LogReg balanced) prédit l'inverse
+    du label avec haute confiance (>= confidence_threshold) en cross_val_predict.
+
+    Retourne (X_clean, y_clean, n_removed). Ces samples sont probablement mal labellisés.
+    """
+    baseline = Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", LogisticRegression(max_iter=1000, class_weight="balanced",
+                                    C=1.0, random_state=42)),
+    ])
+    proba_oof = cross_val_predict(baseline, X, y, cv=cv, method="predict_proba")[:, 1]
+
+    # Sample bruité = labellisé Invite mais proba_invite très basse, ou inverse
+    suspect_invite_to_reject = (y == 1) & (proba_oof < (1 - confidence_threshold))
+    suspect_reject_to_invite = (y == 0) & (proba_oof > confidence_threshold)
+    suspect_mask = suspect_invite_to_reject | suspect_reject_to_invite
+
+    n_removed = int(suspect_mask.sum())
+    n_inv_to_rej = int(suspect_invite_to_reject.sum())
+    n_rej_to_inv = int(suspect_reject_to_invite.sum())
+
+    print(f"  Confiance seuil : {confidence_threshold}")
+    print(f"  Invite -> probablement Reject : {n_inv_to_rej}")
+    print(f"  Reject -> probablement Invite : {n_rej_to_inv}")
+    print(f"  Total retirés du train : {n_removed} / {len(y)} ({n_removed/len(y)*100:.1f}%)")
+
+    keep_mask = ~suspect_mask
+    return X[keep_mask], y[keep_mask], n_removed
+
+
+def tune_threshold(pipeline, X, y, cv) -> tuple[float, float]:
+    """
+    Cherche le seuil de décision qui maximise le F1 sur la classe Invite (1)
+    via cross_val_predict (probas out-of-fold).
+
+    Retourne (best_threshold, best_f1).
+    """
+    proba_oof = cross_val_predict(pipeline, X, y, cv=cv, method="predict_proba")[:, 1]
+    thresholds = np.linspace(0.05, 0.95, 91)
+    f1_scores = [f1_score(y, (proba_oof >= t).astype(int), pos_label=1, zero_division=0)
+                 for t in thresholds]
+    best_idx = int(np.argmax(f1_scores))
+    return float(thresholds[best_idx]), float(f1_scores[best_idx])
+
+
 def build_pipeline(name: str, clf, use_smote: bool = True) -> Pipeline:
     """Construit un pipeline : [SMOTE optionnel] -> StandardScaler -> Classifieur."""
     steps = []
@@ -243,6 +293,12 @@ def main():
     )
     print(f"\nSplit : {len(X_train)} train / {len(X_test)} test")
 
+    # ─── 5.5 Auto-clean des labels bruités (sur TRAIN seulement) ──────────────
+    print("\n--- Auto-clean des labels bruités (cross_val_predict) ---")
+    clean_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    X_train, y_train, n_cleaned = auto_clean_labels(X_train, y_train, clean_cv)
+    print(f"  -> Train après clean : {len(X_train)} samples")
+
     # ─── 6. Définir les modèles candidats ─────────────────────────────────────
     #
     # Chaque pipeline = [SMOTE] + StandardScaler + classifieur
@@ -256,6 +312,23 @@ def main():
             max_iter=1000,
             class_weight="balanced",
             C=1.0,
+            random_state=42,
+        ), use_smote=use_smote),
+        "LogisticRegression_L1": build_pipeline("lr_l1", LogisticRegression(
+            max_iter=2000,
+            class_weight="balanced",
+            C=0.5,
+            penalty="l1",
+            solver="liblinear",
+            random_state=42,
+        ), use_smote=use_smote),
+        "LogisticRegression_ElasticNet": build_pipeline("lr_en", LogisticRegression(
+            max_iter=2000,
+            class_weight="balanced",
+            C=0.5,
+            penalty="elasticnet",
+            l1_ratio=0.5,
+            solver="saga",
             random_state=42,
         ), use_smote=use_smote),
         "RandomForest": build_pipeline("rf", RandomForestClassifier(
@@ -314,7 +387,8 @@ def main():
     print(f"  {'Modèle':<25}  AUC (test)  F1 Invite (cv5)  F1 Reject (cv5)")
     print(f"  {'-'*25}  ----------  ---------------  ---------------")
 
-    cv_strat = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    # RepeatedStratifiedKFold : 5 folds × 3 répétitions = 15 mesures (plus stable sur petit dataset)
+    cv_strat = RepeatedStratifiedKFold(n_splits=5, n_repeats=3, random_state=42)
     best_name, best_f1_cv, best_auc, best_pipeline = None, 0.0, 0.0, None
 
     for name, pipe in candidates.items():
@@ -352,6 +426,13 @@ def main():
             "clf__C": [0.01, 0.1, 0.5, 1.0, 5.0, 10.0],
             "clf__penalty": ["l2"],
         },
+        "LogisticRegression_L1": {
+            "clf__C": [0.05, 0.1, 0.25, 0.5, 1.0, 2.0],
+        },
+        "LogisticRegression_ElasticNet": {
+            "clf__C": [0.05, 0.1, 0.25, 0.5, 1.0, 2.0],
+            "clf__l1_ratio": [0.2, 0.5, 0.8],
+        },
         "RandomForest": {
             "clf__n_estimators": [100, 200, 300, 500],
             "clf__max_depth": [3, 4, 5, 6, 8, None],
@@ -382,10 +463,12 @@ def main():
         }
 
     if best_name in param_grids:
+        # n_iter = nb réel de combinaisons (produit des longueurs), pas nb de clés
+        total_combos = len(list(ParameterGrid(param_grids[best_name])))
         search = RandomizedSearchCV(
             best_pipeline,
             param_grids[best_name],
-            n_iter=min(20, len(param_grids[best_name])),
+            n_iter=min(30, total_combos),
             cv=cv_strat,
             scoring="f1",
             random_state=42,
@@ -404,9 +487,19 @@ def main():
     else:
         print(f"  Pas de grille pour {best_name}, on garde les paramètres par défaut.")
 
+    # ─── 8.5 Tuning du seuil de décision (max F1 Invite, CV out-of-fold) ──────
+    print("\n--- Tuning du seuil de décision (classe Invite) ---")
+    # cross_val_predict exige une partition -> StratifiedKFold simple (pas Repeated)
+    threshold_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    best_threshold, threshold_f1 = tune_threshold(best_pipeline, X_train, y_train, threshold_cv)
+    print(f"  Seuil optimal : {best_threshold:.2f}  (F1 Invite cv = {threshold_f1:.3f})")
+    print(f"  Seuil par défaut (0.50) -> F1 Invite cv = {best_f1_cv:.3f}")
+    print(f"  Gain F1 vs 0.50 : {threshold_f1 - best_f1_cv:+.3f}")
+
     # ─── 9. Évaluation détaillée du meilleur ──────────────────────────────────
-    print(f"\n--- Rapport détaillé : {best_name} ---")
-    y_pred = best_pipeline.predict(X_test)
+    print(f"\n--- Rapport détaillé : {best_name} (seuil={best_threshold:.2f}) ---")
+    y_proba_test = best_pipeline.predict_proba(X_test)[:, 1]
+    y_pred = (y_proba_test >= best_threshold).astype(int)
 
     print(classification_report(y_test, y_pred, target_names=["Reject", "Invite"]))
 
@@ -432,8 +525,10 @@ def main():
         bar = "#" * int((imp / max_imp) * 25)
         print(f"  {feat:<35} {bar} {imp:.4f}")
 
-    # ─── 11. Réentraîner sur 100% des données puis sauvegarder ────────────────
-    best_pipeline.fit(X, y)
+    # ─── 11. Réentraîner sur train_clean + test puis sauvegarder ──────────────
+    X_final = np.vstack([X_train, X_test])
+    y_final = np.concatenate([y_train, y_test])
+    best_pipeline.fit(X_final, y_final)
 
     # Sauvegarder le modèle + les features effectives utilisées
     model_artifact = {
@@ -444,7 +539,11 @@ def main():
         "model_name": best_name,
         "best_auc": best_auc,
         "best_f1_cv": best_f1_cv,
-        "n_training_samples": len(X),
+        "decision_threshold": best_threshold,
+        "threshold_f1_cv": threshold_f1,
+        "n_training_samples": len(X_final),
+        "n_labels_cleaned": n_cleaned,
+        "cv_strategy": "RepeatedStratifiedKFold(5x3)",
         "smote_used": use_smote and HAS_IMBLEARN,
     }
     joblib.dump(model_artifact, MODEL_PATH)
@@ -453,7 +552,9 @@ def main():
     print(f"  [OK] model.joblib sauvegardé dans {MODEL_PATH}")
     print(f"  Modèle         : {best_name}")
     print(f"  AUC (test)     : {best_auc:.3f}")
-    print(f"  F1 Invite (cv) : {best_f1_cv:.3f}")
+    print(f"  F1 Invite (cv) : {best_f1_cv:.3f}  (seuil 0.50)")
+    print(f"  F1 Invite (cv) : {threshold_f1:.3f}  (seuil {best_threshold:.2f})")
+    print(f"  Seuil décision : {best_threshold:.2f}")
     print(f"  SMOTE          : {'Oui' if use_smote and HAS_IMBLEARN else 'Non'}")
     print(f"  Features       : {len(effective_features)} effectives / {len(all_features)} totales")
     print(f"  Entraîné sur   : {len(X)} candidats")
@@ -486,10 +587,12 @@ def main():
     profil_fort   = np.array([[all_feat_dict_fort[f] for f in effective_features]])
     profil_faible = np.array([[all_feat_dict_faible[f] for f in effective_features]])
 
-    pred_fort   = best_pipeline.predict(profil_fort)[0]
-    conf_fort   = best_pipeline.predict_proba(profil_fort)[0].max()
-    pred_faible = best_pipeline.predict(profil_faible)[0]
-    conf_faible = best_pipeline.predict_proba(profil_faible)[0].max()
+    proba_fort   = best_pipeline.predict_proba(profil_fort)[0]
+    proba_faible = best_pipeline.predict_proba(profil_faible)[0]
+    pred_fort   = int(proba_fort[1] >= best_threshold)
+    pred_faible = int(proba_faible[1] >= best_threshold)
+    conf_fort   = float(proba_fort[pred_fort])
+    conf_faible = float(proba_faible[pred_faible])
 
     print("\nTest de cohérence :")
     print(f"  Profil fort   (10 ans, Master, 15 skills) -> {'Invite' if pred_fort == 1 else 'Reject'}  {conf_fort:.0%}")
