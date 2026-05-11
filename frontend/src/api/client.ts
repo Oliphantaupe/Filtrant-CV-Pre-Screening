@@ -1,5 +1,10 @@
 import type { ListResponse, CandidateDetail, UploadResult } from '../types/cv'
 
+export interface OverrideRequest {
+  hr_decision: 'Invite' | 'Reject'
+  override_reason: string
+}
+
 const BASE = import.meta.env.VITE_API_BASE_URL || ''
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -44,4 +49,14 @@ export const api = {
   exportCsv: () => {
     window.open(`${BASE}/api/v1/candidates/export.csv`, '_blank')
   },
+
+  overrideDecision: (id: string, body: OverrideRequest): Promise<{ status: string; hr_decision: string }> =>
+    request(`/api/v1/candidates/${id}/override`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
+
+  getFairnessMetrics: (): Promise<Record<string, unknown>> =>
+    request('/api/v1/fairness/metrics'),
 }

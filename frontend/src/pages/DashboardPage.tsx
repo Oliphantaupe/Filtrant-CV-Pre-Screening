@@ -6,6 +6,22 @@ import CountUp from '../components/CountUp'
 import RecommendationBadge from '../components/RecommendationBadge'
 import { fmtUTC } from '../utils/date'
 
+interface AttributeMetrics {
+  by_group: { selection_rate: Record<string, number>; tpr: Record<string, number>; fpr: Record<string, number> }
+  overall: { selection_rate: number; tpr: number; fpr: number }
+  equal_opportunity_diff: number
+  demographic_parity_diff: number
+}
+interface FairnessReport {
+  model: string
+  auc: number
+  n_test: number
+  baseline: { auc: number; metrics: Record<string, AttributeMetrics> } | null
+  fair: { auc: number; metrics: Record<string, AttributeMetrics> }
+  label_distribution: { invite: number; reject: number; total: number }
+  group_counts: Record<string, Record<string, number>>
+}
+
 function lastNDays(n: number): string[] {
   const days: string[] = []
   const now = new Date()
@@ -21,11 +37,16 @@ export default function DashboardPage() {
   const [items, setItems] = useState<CandidateRow[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [fairness, setFairness] = useState<FairnessReport | null>(null)
+  const [fairnessError, setFairnessError] = useState(false)
 
   useEffect(() => {
     api.listCandidates({ page: 1, page_size: 100 })
       .then(res => { setItems(res.items); setTotal(res.total) })
       .finally(() => setLoading(false))
+    api.getFairnessMetrics()
+      .then(data => setFairness(data as unknown as FairnessReport))
+      .catch(() => setFairnessError(true))
   }, [])
 
   const invited  = items.filter(c => c.recommendation === 'Invite').length
@@ -221,6 +242,104 @@ export default function DashboardPage() {
             </p>
           )}
         </div>
+      </motion.div>
+
+      {/* Fairness metrics */}
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.44, type: 'spring', stiffness: 280, damping: 28 }}>
+        <div className="flex items-center gap-2 mb-3">
+          <h2 className="font-bricolage text-base font-semibold" style={{ color: 'var(--text-body)' }}>Model Fairness</h2>
+          {fairness && (
+            <span className="text-xs px-2 py-0.5 rounded-full font-medium"
+              style={{ background: 'var(--teal-subtle)', color: 'var(--teal)' }}>
+              {fairness.model}
+            </span>
+          )}
+        </div>
+
+        {fairnessError && (
+          <div className="glass-card p-5 text-center">
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+              No fairness report found — run <code className="font-jetbrains text-xs px-1.5 py-0.5 rounded" style={{ background: 'var(--glass-hover)', color: 'var(--text-2)' }}>train_fair.py</code> to generate it.
+            </p>
+          </div>
+        )}
+
+        {fairness && (() => {
+          const attrs = Object.keys(fairness.fair.metrics)
+          const maxEod = Math.max(...attrs.map(a => Math.abs(fairness.fair.metrics[a].equal_opportunity_diff)))
+          const ATTR_LABELS: Record<string, string> = {
+            gender: 'Gender', age_cohort: 'Age cohort', is_multilingual: 'Language diversity',
+          }
+          return (
+            <div className="space-y-3">
+              {maxEod > 0.10 && (
+                <div className="px-4 py-3 rounded-xl flex items-start gap-3"
+                  style={{ background: 'var(--gold-dim)', border: '1px solid var(--gold-border)' }}>
+                  <span style={{ color: 'var(--gold)' }}>⚠</span>
+                  <p className="text-xs" style={{ color: 'var(--gold-text)' }}>
+                    Equal Opportunity Difference exceeds 10% for one or more groups. Review HR decisions carefully.
+                  </p>
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {attrs.map(attr => {
+                  const m = fairness.fair.metrics[attr]
+                  const bm = fairness.baseline?.metrics[attr]
+                  const eod = m.equal_opportunity_diff
+                  const dpd = m.demographic_parity_diff
+                  const eodColor = Math.abs(eod) <= 0.05 ? 'var(--teal)' : Math.abs(eod) <= 0.10 ? 'var(--gold)' : 'var(--reject)'
+                  const selByGroup = m.by_group.selection_rate
+                  const maxSel = Math.max(0.01, ...Object.values(selByGroup))
+                  return (
+                    <div key={attr} className="glass-card p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-faint)' }}>
+                          {ATTR_LABELS[attr] ?? attr}
+                        </p>
+                        <span className="text-xs font-jetbrains font-bold" style={{ color: eodColor }}>
+                          EOD {eod >= 0 ? '+' : ''}{eod.toFixed(3)}
+                        </span>
+                      </div>
+                      {/* Selection rate by group */}
+                      <div className="space-y-1.5">
+                        {Object.entries(selByGroup).sort().map(([grp, sr]) => (
+                          <div key={grp}>
+                            <div className="flex justify-between text-xs mb-0.5">
+                              <span style={{ color: 'var(--text-2)' }}>{grp}</span>
+                              <span className="font-jetbrains" style={{ color: 'var(--text-body)' }}>{(sr * 100).toFixed(0)}%</span>
+                            </div>
+                            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--glass-hover)' }}>
+                              <div className="h-full rounded-full transition-all" style={{ width: `${(sr / maxSel) * 100}%`, background: 'var(--teal)' }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="pt-2 space-y-1" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+                        <div className="flex justify-between text-xs">
+                          <span style={{ color: 'var(--text-muted)' }}>Dem. Parity Diff</span>
+                          <span className="font-jetbrains" style={{ color: 'var(--text-2)' }}>{dpd >= 0 ? '+' : ''}{dpd.toFixed(3)}</span>
+                        </div>
+                        {bm && (
+                          <div className="flex justify-between text-xs">
+                            <span style={{ color: 'var(--text-muted)' }}>Baseline EOD</span>
+                            <span className="font-jetbrains" style={{ color: 'var(--text-faint)' }}>
+                              {bm.equal_opportunity_diff >= 0 ? '+' : ''}{bm.equal_opportunity_diff.toFixed(3)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              <p className="text-xs text-right" style={{ color: 'var(--text-faint)' }}>
+                AUC {fairness.auc.toFixed(3)} · {fairness.n_test} test samples
+                {fairness.baseline && ` · baseline AUC ${fairness.baseline.auc.toFixed(3)}`}
+              </p>
+            </div>
+          )
+        })()}
       </motion.div>
     </div>
   )

@@ -19,6 +19,8 @@ numpy>=1.26
 joblib>=1.4
 imbalanced-learn>=0.12
 xgboost>=2.0
+fairlearn>=0.10
+shap>=0.45
 
 # Validation
 pydantic==2.7.4

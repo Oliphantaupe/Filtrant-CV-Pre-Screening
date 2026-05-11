@@ -1,95 +1,140 @@
 """
-Loads the trained ML model and produces Invite/Reject predictions.
-Returns "pending" if no model file is found yet.
-
-v2: Supports the new model artifact format (dict with pipeline + metadata)
-    as well as the legacy format (bare pipeline) for backward compatibility.
+predictor.py — ML inference + SHAP explanations (WP2)
+======================================================
+Loads model_fair.joblib (fair model) with fallback to model.joblib (baseline).
+Returns prediction + top contributing features via SHAP.
 """
-import os
 import logging
+import os
 import numpy as np
 from src.config import settings
 from src.services.features import FEATURE_COLUMNS
 
 logger = logging.getLogger(__name__)
 
-_model = None
-_effective_features = None  # features actually used by the model (may exclude constants)
+_model      = None
+_explainer  = None
+_feat_cols  = None
+
+FAIR_MODEL_PATH = os.path.join(os.path.dirname(settings.ml_model_path), "model_fair.joblib")
+
+FEATURE_LABELS = {
+    "total_years_experience":     "Years of experience",
+    "num_positions":              "Number of positions held",
+    "avg_tenure_months":          "Average tenure per role",
+    "education_level_score":      "Education level",
+    "total_skills_count":         "Total skills listed",
+    "has_certifications":         "Has certifications",
+    "language_count":             "Number of languages",
+    "section_completeness_score": "CV completeness",
+    "max_language_score":         "Best language level",
+    "has_senior_title":           "Senior/Lead title",
+    "career_gap_months":          "Career gap duration",
+    "latest_job_duration":        "Duration of latest role",
+    "has_summary":                "Has professional summary",
+    "num_certifications":         "Number of certifications",
+    "parse_quality_score":        "CV parse quality",
+    "experience_education_ratio": "Experience / education ratio",
+    "certs_per_year":             "Certifications per year",
+    "experience_x_seniority":     "Experience × seniority",
+    "experience_x_education":     "Experience × education",
+}
 
 
 def _load_model():
-    global _model, _effective_features
-    if not os.path.exists(settings.ml_model_path):
+    global _model, _explainer, _feat_cols
+    import joblib
+
+    # Prefer fair model, fall back to baseline
+    path = FAIR_MODEL_PATH if os.path.exists(FAIR_MODEL_PATH) else settings.ml_model_path
+    if not os.path.exists(path):
         return
 
-    import joblib
-    artifact = joblib.load(settings.ml_model_path)
-
-    # v2 format: dict with pipeline + metadata
+    artifact = joblib.load(path)
     if isinstance(artifact, dict) and "pipeline" in artifact:
-        _model = artifact["pipeline"]
-        _effective_features = artifact.get("effective_features", FEATURE_COLUMNS)
-        model_name = artifact.get("model_name", "unknown")
-        logger.info(
-            "Loaded ML model (v2): %s — %d features, AUC=%.3f, F1_cv=%.3f, SMOTE=%s",
-            model_name,
-            len(_effective_features),
-            artifact.get("best_auc", 0),
-            artifact.get("best_f1_cv", 0),
-            artifact.get("smote_used", False),
-        )
+        _model     = artifact["pipeline"]
+        _feat_cols = artifact.get("feature_columns", artifact.get("effective_features", FEATURE_COLUMNS))
+        is_fair    = artifact.get("fairness_mitigated", False)
+        logger.info("Loaded model: %s (fair=%s) — %d features", artifact.get("model_name"), is_fair, len(_feat_cols))
     else:
-        # Legacy format: bare pipeline
-        _model = artifact
-        _effective_features = FEATURE_COLUMNS
-        logger.info("Loaded ML model (legacy format) — %d features", len(_effective_features))
+        _model     = artifact
+        _feat_cols = FEATURE_COLUMNS
+        logger.info("Loaded model (legacy) — %d features", len(_feat_cols))
 
-    # Verify class ordering: pipeline exposes classes_ via the final step
-    clf = _model.named_steps.get("clf") or _model
-    classes = list(getattr(clf, "classes_", [0, 1]))
-    if classes != [0, 1]:
-        logger.warning(
-            "Unexpected model class ordering %s — predictions may be inverted. "
-            "Retrain with 0=Reject / 1=Invite.", classes
-        )
+    _build_explainer()
 
 
-def _compute_derived_features(features: dict) -> dict:
-    """Compute derived features from the base features (matching train.py logic)."""
-    total_years = features.get("total_years_experience", 0)
-    education_score = features.get("education_level_score", 1)
-    num_certs = features.get("num_certifications", 0)
-    has_senior = features.get("has_senior_title", 0)
+def _build_explainer():
+    global _explainer
+    try:
+        import shap
+        clf = getattr(_model, "named_steps", {}).get("clf") or _model
+        if hasattr(clf, "feature_importances_"):
+            _explainer = shap.TreeExplainer(clf)
+        elif hasattr(clf, "coef_"):
+            _explainer = shap.LinearExplainer(clf, masker=shap.maskers.Independent(np.zeros((1, len(_feat_cols)))))
+        else:
+            _explainer = None
+            logger.info("SHAP: no compatible explainer for this model type")
+    except Exception as e:
+        _explainer = None
+        logger.warning("SHAP explainer could not be built: %s", e)
 
-    features["experience_education_ratio"] = round(total_years / max(education_score, 1), 2)
-    features["certs_per_year"] = round(num_certs / max(total_years, 0.5), 2)
-    features["experience_x_seniority"] = round(total_years * has_senior, 2)
-    features["experience_x_education"] = round(total_years * education_score, 2)
 
-    return features
+def _compute_shap(X_scaled: np.ndarray) -> list[dict] | None:
+    if _explainer is None:
+        return None
+    try:
+        import shap
+        shap_values = _explainer.shap_values(X_scaled)
+        # For binary classifiers TreeExplainer returns list [class0, class1]
+        if isinstance(shap_values, list):
+            sv = shap_values[1][0]
+        else:
+            sv = shap_values[0]
+
+        contributions = [
+            {"feature": f, "label": FEATURE_LABELS.get(f, f), "contribution": round(float(v), 4)}
+            for f, v in zip(_feat_cols, sv)
+        ]
+        contributions.sort(key=lambda x: abs(x["contribution"]), reverse=True)
+        positive = [c for c in contributions if c["contribution"] > 0][:3]
+        negative = [c for c in contributions if c["contribution"] < 0][:3]
+        return {"positive": positive, "negative": negative}
+    except Exception as e:
+        logger.warning("SHAP computation failed: %s", e)
+        return None
 
 
-def predict(features: dict) -> tuple[str, float | None]:
+def _get_scaled_input(features: dict) -> np.ndarray:
+    """Run only the scaler step on raw features, return scaled array."""
+    X_raw = np.array([[features.get(col, 0) for col in _feat_cols]])
+    scaler = getattr(_model, "named_steps", {}).get("scaler")
+    if scaler is not None:
+        return scaler.transform(X_raw)
+    return X_raw
+
+
+def predict(features: dict) -> tuple[str, float | None, dict | None]:
     """
-    Returns (recommendation, confidence).
-    recommendation: "Invite" | "Reject" | "pending"
-    confidence: 0.0–1.0 or None
+    Returns (recommendation, confidence, explanation).
+    recommendation : 'Invite' | 'Reject' | 'pending'
+    confidence     : 0.0–1.0 or None
+    explanation    : {'positive': [...], 'negative': [...]} or None
     """
     if _model is None:
         _load_model()
-
     if _model is None:
-        return "pending", None
+        return "pending", None, None
 
-    # Ensure derived features are computed
-    features = _compute_derived_features(features)
-
-    X = np.array([[features.get(col, 0) for col in _effective_features]])
-    proba = _model.predict_proba(X)[0]
-    label_idx = int(np.argmax(proba))
-
-    confidence = round(float(proba[label_idx]), 3)
-
-    # Model classes: 0 = Reject, 1 = Invite
+    X_raw = np.array([[features.get(col, 0) for col in _feat_cols]])
+    proba = _model.predict_proba(X_raw)[0]
+    label_idx      = int(np.argmax(proba))
+    confidence     = round(float(proba[label_idx]), 3)
     recommendation = "Invite" if label_idx == 1 else "Reject"
-    return recommendation, confidence
+
+    # SHAP on the scaled representation
+    X_scaled  = _get_scaled_input(features)
+    explanation = _compute_shap(X_scaled)
+
+    return recommendation, confidence, explanation

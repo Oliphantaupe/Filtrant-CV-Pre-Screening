@@ -1,12 +1,23 @@
 import csv
 import io
+import json
+from pathlib import Path
+from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
 from src.db import get_conn
 from src.services.features import extract_features, FEATURE_COLUMNS
 from src.models.cv_schema import CVSchema
 
 router = APIRouter(prefix="/api/v1", tags=["candidates"])
+
+FAIRNESS_REPORT_PATH = Path("/app/ml/fairness_report.json")
+
+
+class OverrideRequest(BaseModel):
+    hr_decision: str       # "Invite" | "Reject"
+    override_reason: str
 
 
 @router.get("/candidates")
@@ -116,7 +127,8 @@ def get_candidate(candidate_id: str):
             cur.execute(
                 """
                 SELECT id, processed_at, source_filename, source_format,
-                       parse_quality, recommendation, confidence, cv_data, missing_fields
+                       parse_quality, recommendation, confidence, cv_data, missing_fields,
+                       explanation, hr_decision, override_reason, overridden_at
                 FROM candidates WHERE id = %s
                 """,
                 (candidate_id,),
@@ -127,8 +139,45 @@ def get_candidate(candidate_id: str):
         raise HTTPException(status_code=404, detail="Candidate not found")
 
     cols = ["id", "processed_at", "source_filename", "source_format",
-            "parse_quality", "recommendation", "confidence", "cv_data", "missing_fields"]
+            "parse_quality", "recommendation", "confidence", "cv_data", "missing_fields",
+            "explanation", "hr_decision", "override_reason", "overridden_at"]
     result = dict(zip(cols, row))
     if result["processed_at"]:
         result["processed_at"] = result["processed_at"].isoformat()
+    if result["overridden_at"]:
+        result["overridden_at"] = result["overridden_at"].isoformat()
     return result
+
+
+@router.post("/candidates/{candidate_id}/override")
+def override_decision(candidate_id: str, body: OverrideRequest):
+    if body.hr_decision not in ("Invite", "Reject"):
+        raise HTTPException(status_code=400, detail="hr_decision must be 'Invite' or 'Reject'")
+    if not body.override_reason.strip():
+        raise HTTPException(status_code=400, detail="override_reason is required")
+
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT id FROM candidates WHERE id = %s", (candidate_id,))
+            if not cur.fetchone():
+                raise HTTPException(status_code=404, detail="Candidate not found")
+            cur.execute(
+                """
+                UPDATE candidates
+                SET hr_decision = %s, override_reason = %s, overridden_at = NOW()
+                WHERE id = %s
+                """,
+                (body.hr_decision, body.override_reason.strip(), candidate_id),
+            )
+        conn.commit()
+    return {"status": "ok", "hr_decision": body.hr_decision}
+
+
+@router.get("/fairness/metrics")
+def get_fairness_metrics():
+    if not FAIRNESS_REPORT_PATH.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Fairness report not found. Run train_fair.py first.",
+        )
+    return json.loads(FAIRNESS_REPORT_PATH.read_text())

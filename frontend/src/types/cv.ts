@@ -11,9 +11,24 @@ export interface CandidateRow {
   target_role: string | null
 }
 
+export interface ShapContribution {
+  feature: string
+  label: string
+  contribution: number
+}
+
+export interface Explanation {
+  positive: ShapContribution[]
+  negative: ShapContribution[]
+}
+
 export interface CandidateDetail extends CandidateRow {
   cv_data: CVData
   missing_fields: string[]
+  explanation: Explanation | null
+  hr_decision: 'Invite' | 'Reject' | null
+  override_reason: string | null
+  overridden_at: string | null
 }
 
 export interface CVData {

@@ -768,7 +768,35 @@ function QuickLookModal({ candidate, onClose, onOpenFull }: {
 
 // ─── Detail side panel ────────────────────────────────────────────────────────
 
-function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClose: () => void }) {
+function DetailPanel({ candidate: initialCandidate, onClose }: { candidate: CandidateDetail; onClose: () => void }) {
+  const [candidate, setCandidate] = useState(initialCandidate)
+  const [overrideOpen, setOverrideOpen] = useState(false)
+  const [overrideDecision, setOverrideDecision] = useState<'Invite' | 'Reject'>(
+    initialCandidate.hr_decision ?? 'Invite'
+  )
+  const [overrideReason, setOverrideReason] = useState(initialCandidate.override_reason ?? '')
+  const [overrideLoading, setOverrideLoading] = useState(false)
+  const [overrideError, setOverrideError] = useState<string | null>(null)
+
+  async function handleOverride() {
+    if (!overrideReason.trim()) { setOverrideError('A reason is required.'); return }
+    setOverrideLoading(true); setOverrideError(null)
+    try {
+      await api.overrideDecision(candidate.id, { hr_decision: overrideDecision, override_reason: overrideReason.trim() })
+      setCandidate(prev => ({
+        ...prev,
+        hr_decision: overrideDecision,
+        override_reason: overrideReason.trim(),
+        overridden_at: new Date().toISOString(),
+      }))
+      setOverrideOpen(false)
+    } catch (e: unknown) {
+      setOverrideError(e instanceof Error ? e.message : 'Override failed')
+    } finally {
+      setOverrideLoading(false)
+    }
+  }
+
   const cv = candidate.cv_data
   const f = deriveFeatures(cv)
   const inv = candidate.recommendation === 'Invite'
@@ -1019,6 +1047,23 @@ function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClo
                   )}
                 </div>
 
+                {/* SHAP Explanation */}
+                {candidate.explanation && (candidate.explanation.positive.length > 0 || candidate.explanation.negative.length > 0) && (
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--text-faint)' }}>
+                      Why this decision
+                    </p>
+                    <div className="space-y-2">
+                      {candidate.explanation.positive.map(c => (
+                        <ShapBar key={c.feature} label={c.label} value={c.contribution} direction="positive" />
+                      ))}
+                      {candidate.explanation.negative.map(c => (
+                        <ShapBar key={c.feature} label={c.label} value={c.contribution} direction="negative" />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Scoring factors */}
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--text-faint)' }}>
@@ -1051,6 +1096,80 @@ function DetailPanel({ candidate, onClose }: { candidate: CandidateDetail; onClo
                       </div>
                     </div>
                   </div>
+                </div>
+
+                {/* HR Override */}
+                <div className="pt-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+                  <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--text-faint)' }}>
+                    HR Decision
+                  </p>
+                  {candidate.hr_decision && !overrideOpen && (
+                    <div className="mb-3 p-3 rounded-xl" style={{ background: 'var(--glass-dim)', border: '1px solid var(--border)' }}>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <RecommendationBadge value={candidate.hr_decision} />
+                        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>overrides AI</span>
+                      </div>
+                      {candidate.override_reason && (
+                        <p className="text-xs italic mb-1" style={{ color: 'var(--text-2)' }}>"{candidate.override_reason}"</p>
+                      )}
+                      {candidate.overridden_at && (
+                        <p className="text-xs" style={{ color: 'var(--text-faint)' }}>
+                          {new Date(candidate.overridden_at).toLocaleString()}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  {!overrideOpen && (
+                    <button onClick={() => {
+                      setOverrideDecision(candidate.hr_decision ?? 'Invite')
+                      setOverrideReason(candidate.override_reason ?? '')
+                      setOverrideOpen(true)
+                    }}
+                      className="w-full py-2 rounded-xl text-xs font-semibold transition-colors"
+                      style={{ background: 'var(--glass)', border: '1px solid var(--border)', color: 'var(--text-body)' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'var(--glass-hover)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'var(--glass)')}>
+                      {candidate.hr_decision ? 'Change override' : 'Override decision'}
+                    </button>
+                  )}
+                  {overrideOpen && (
+                    <div className="space-y-3">
+                      <div className="flex gap-2">
+                        {(['Invite', 'Reject'] as const).map(d => (
+                          <button key={d} onClick={() => setOverrideDecision(d)}
+                            className="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors"
+                            style={overrideDecision === d
+                              ? { background: d === 'Invite' ? 'var(--teal)' : 'var(--reject)', color: 'white' }
+                              : { background: 'var(--glass)', color: 'var(--text-body)', border: '1px solid var(--border)' }}>
+                            {d}
+                          </button>
+                        ))}
+                      </div>
+                      <textarea
+                        value={overrideReason}
+                        onChange={e => setOverrideReason(e.target.value)}
+                        placeholder="Reason for override (required)"
+                        rows={2}
+                        className="w-full text-xs rounded-lg px-3 py-2 resize-none"
+                        style={{ background: 'var(--glass)', border: '1px solid var(--border)', color: 'var(--text-body)', outline: 'none' }}
+                      />
+                      {overrideError && (
+                        <p className="text-xs" style={{ color: 'var(--reject)' }}>{overrideError}</p>
+                      )}
+                      <div className="flex gap-2">
+                        <button onClick={() => { setOverrideOpen(false); setOverrideError(null) }}
+                          className="flex-1 py-1.5 rounded-lg text-xs font-medium"
+                          style={{ background: 'var(--glass)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>
+                          Cancel
+                        </button>
+                        <button onClick={handleOverride} disabled={overrideLoading}
+                          className="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-opacity"
+                          style={{ background: 'var(--accent)', color: 'white', opacity: overrideLoading ? 0.6 : 1 }}>
+                          {overrideLoading ? 'Saving…' : 'Confirm'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Meta */}
@@ -1132,6 +1251,25 @@ function ParseQualityBadge({ value }: { value: string }) {
       style={{ background: s.bg, color: s.color }}>
       {value}
     </span>
+  )
+}
+
+function ShapBar({ label, value, direction }: { label: string; value: number; direction: 'positive' | 'negative' }) {
+  const pct = Math.min(100, Math.round(Math.abs(value) * 400))
+  const color = direction === 'positive' ? 'var(--teal)' : 'var(--reject)'
+  const sign = direction === 'positive' ? '+' : ''
+  return (
+    <div>
+      <div className="flex justify-between text-xs mb-1">
+        <span style={{ color: 'var(--text-2)' }}>{label}</span>
+        <span className="font-semibold font-jetbrains" style={{ color }}>
+          {sign}{value.toFixed(3)}
+        </span>
+      </div>
+      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--glass-hover)' }}>
+        <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: color }} />
+      </div>
+    </div>
   )
 }
 

@@ -56,7 +56,7 @@ async def _process_cv_bytes(file_bytes: bytes, filename: str) -> dict:
         raise HTTPException(status_code=502, detail=f"CV parsing failed: {e}")
 
     features = extract_features(cv)
-    recommendation, confidence = predict(features)
+    recommendation, confidence, explanation = predict(features)
     logger.info(
         "Prediction [%s]: %s (confidence=%.3f)",
         candidate_id[:8], recommendation, confidence or 0,
@@ -69,13 +69,15 @@ async def _process_cv_bytes(file_bytes: bytes, filename: str) -> dict:
                 """
                 INSERT INTO candidates
                     (id, source_filename, source_format, parse_quality,
-                     cv_data, recommendation, confidence, file_hash, missing_fields)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                     cv_data, recommendation, confidence, file_hash, missing_fields,
+                     explanation)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """,
                 (
                     candidate_id, filename, fmt, cv.parse_quality,
                     json.dumps(cv_dict), recommendation, confidence,
                     file_hash, json.dumps(cv.missing_fields),
+                    json.dumps(explanation) if explanation else None,
                 ),
             )
             cur.execute(
@@ -91,6 +93,7 @@ async def _process_cv_bytes(file_bytes: bytes, filename: str) -> dict:
         "target_role": cv.target_role,
         "recommendation": recommendation,
         "confidence": confidence,
+        "explanation": explanation,
         "parse_quality": cv.parse_quality,
         "missing_fields": cv.missing_fields,
     }

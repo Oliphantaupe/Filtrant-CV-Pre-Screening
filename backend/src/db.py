@@ -38,8 +38,17 @@ def _create_tables() -> None:
                     recommendation TEXT NOT NULL,
                     confidence NUMERIC(4,3),
                     file_hash TEXT UNIQUE,
-                    missing_fields JSONB DEFAULT '[]'
+                    missing_fields JSONB DEFAULT '[]',
+                    explanation JSONB DEFAULT NULL,
+                    hr_decision TEXT DEFAULT NULL,
+                    override_reason TEXT DEFAULT NULL,
+                    overridden_at TIMESTAMPTZ DEFAULT NULL
                 );
+
+                ALTER TABLE candidates ADD COLUMN IF NOT EXISTS explanation JSONB DEFAULT NULL;
+                ALTER TABLE candidates ADD COLUMN IF NOT EXISTS hr_decision TEXT DEFAULT NULL;
+                ALTER TABLE candidates ADD COLUMN IF NOT EXISTS override_reason TEXT DEFAULT NULL;
+                ALTER TABLE candidates ADD COLUMN IF NOT EXISTS overridden_at TIMESTAMPTZ DEFAULT NULL;
 
                 CREATE TABLE IF NOT EXISTS processing_log (
                     id SERIAL PRIMARY KEY,
