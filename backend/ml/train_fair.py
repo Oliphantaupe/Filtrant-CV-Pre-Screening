@@ -18,6 +18,9 @@ import sys
 import warnings
 from pathlib import Path
 
+# Make src.services importable so EGWrapper pickles with the same path uvicorn uses
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import joblib
 import numpy as np
 import pandas as pd
@@ -56,20 +59,7 @@ FEATURE_COLUMNS = [
 SENSITIVE_ATTRIBUTES = ["gender", "age_cohort", "is_multilingual"]
 
 
-# ── EG wrapper (module-level so joblib can pickle it) ─────────────────────────
-
-class EGWrapper:
-    """Wraps ExponentiatedGradient + scaler into a sklearn-compatible object."""
-    def __init__(self, scaler, eg):
-        self.scaler = scaler
-        self.eg = eg
-
-    def predict(self, X):
-        return self.eg.predict(self.scaler.transform(X))
-
-    def predict_proba(self, X):
-        return self.eg._pmf_predict(self.scaler.transform(X))
-
+from src.services.fair_wrapper import EGWrapper  # noqa: E402
 
 # ── Re-weighting ──────────────────────────────────────────────────────────────
 
