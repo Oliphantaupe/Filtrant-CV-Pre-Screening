@@ -76,6 +76,8 @@ FEATURE_COLUMNS = [
     "certs_per_year",
     "experience_x_seniority",
     "experience_x_education",
+    "career_trajectory_score",
+    "latest_title_seniority",
 ]
 
 

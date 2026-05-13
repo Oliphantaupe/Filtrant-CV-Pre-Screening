@@ -41,6 +41,26 @@ SENIORITY_KEYWORDS = {
     "principal", "chief", "vp", "president",
 }
 
+SENIORITY_LEVELS = {
+    'intern': 0, 'trainee': 0, 'apprentice': 0, 'student': 0,
+    'junior': 1, 'jr': 1, 'entry': 1, 'graduate': 1, 'associate': 1,
+    'senior': 3, 'sr': 3, 'lead': 3, 'specialist': 3, 'expert': 3,
+    'principal': 4, 'staff': 4,
+    'manager': 4, 'supervisor': 4, 'head': 4,
+    'director': 5, 'vp': 5, 'vice president': 5, 'partner': 5,
+    'chief': 5, 'cto': 5, 'cfo': 5, 'ceo': 5, 'president': 5, 'founder': 5,
+}
+
+
+def _get_seniority(title: str) -> int:
+    if not title:
+        return 2
+    t = title.lower()
+    for kw in sorted(SENIORITY_LEVELS, key=len, reverse=True):
+        if kw in t:
+            return SENIORITY_LEVELS[kw]
+    return 2
+
 
 # ── Section parser ────────────────────────────────────────────────────────────
 
@@ -130,6 +150,12 @@ def parse_cv(text: str) -> dict:
         if e["title"]
     ))
 
+    # Career trajectory: count of upward seniority transitions (earliest → latest)
+    experiences_asc = sorted(experiences, key=lambda e: e["start"])
+    levels_asc = [_get_seniority(e["title"]) for e in experiences_asc]
+    career_trajectory_score = sum(1 for a, b in zip(levels_asc, levels_asc[1:]) if b > a)
+    latest_title_seniority = _get_seniority(experiences[0]["title"]) if experiences else 2
+
     # ── Skills ────────────────────────────────────────────────────────────────
     skill_lines = sections.get("skills", [])
     total_skills = 0
@@ -216,6 +242,9 @@ def parse_cv(text: str) -> dict:
         "certs_per_year": certs_per_year,
         "experience_x_seniority": experience_x_seniority,
         "experience_x_education": experience_x_education,
+        # Career trajectory
+        "career_trajectory_score": career_trajectory_score,
+        "latest_title_seniority": latest_title_seniority,
     }
 
 

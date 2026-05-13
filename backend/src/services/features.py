@@ -7,6 +7,34 @@ from src.models.cv_schema import CVSchema
 
 SENIORITY_KEYWORDS = {"senior", "lead", "manager", "head", "director", "principal", "chief", "vp", "president"}
 
+SENIORITY_LEVELS = {
+    'intern': 0, 'trainee': 0, 'apprentice': 0, 'student': 0,
+    'junior': 1, 'jr': 1, 'entry': 1, 'graduate': 1, 'associate': 1,
+    'senior': 3, 'sr': 3, 'lead': 3, 'specialist': 3, 'expert': 3,
+    'principal': 4, 'staff': 4,
+    'manager': 4, 'supervisor': 4, 'head': 4,
+    'director': 5, 'vp': 5, 'vice president': 5, 'partner': 5,
+    'chief': 5, 'cto': 5, 'cfo': 5, 'ceo': 5, 'president': 5, 'founder': 5,
+}
+
+
+def _get_seniority(title: str | None) -> int:
+    if not title:
+        return 2
+    t = title.lower()
+    for kw in sorted(SENIORITY_LEVELS, key=len, reverse=True):
+        if kw in t:
+            return SENIORITY_LEVELS[kw]
+    return 2
+
+
+def _compute_trajectory(cv: CVSchema) -> int:
+    exps = sorted(cv.experience, key=lambda e: e.start or '', reverse=False)
+    if len(exps) < 2:
+        return 0
+    levels = [_get_seniority(e.title) for e in exps]
+    return sum(1 for a, b in zip(levels, levels[1:]) if b > a)
+
 
 def extract_features(cv: CVSchema) -> dict:
     """Return a flat dict of ML-ready features."""
@@ -73,6 +101,10 @@ def extract_features(cv: CVSchema) -> dict:
     experience_x_seniority = round(total_years * has_senior_title, 2)
     experience_x_education = round(total_years * education_score, 2)
 
+    # ── Career trajectory features ───────────────────────────────────────────
+    career_trajectory_score = _compute_trajectory(cv)
+    latest_title_seniority = _get_seniority(cv.experience[0].title if cv.experience else None)
+
     return {
         # Original
         "total_years_experience": total_years,
@@ -96,6 +128,9 @@ def extract_features(cv: CVSchema) -> dict:
         "certs_per_year": certs_per_year,
         "experience_x_seniority": experience_x_seniority,
         "experience_x_education": experience_x_education,
+        # Career trajectory
+        "career_trajectory_score": career_trajectory_score,
+        "latest_title_seniority": latest_title_seniority,
     }
 
 
@@ -153,4 +188,7 @@ FEATURE_COLUMNS = [
     "certs_per_year",
     "experience_x_seniority",
     "experience_x_education",
+    # Career trajectory
+    "career_trajectory_score",
+    "latest_title_seniority",
 ]

@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import joblib
 import numpy as np
 import pandas as pd
+from imblearn.over_sampling import SMOTE
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, roc_auc_score
@@ -54,6 +55,7 @@ FEATURE_COLUMNS = [
     "has_summary", "num_certifications", "parse_quality_score",
     "experience_education_ratio", "certs_per_year",
     "experience_x_seniority", "experience_x_education",
+    "career_trajectory_score", "latest_title_seniority",
 ]
 
 SENSITIVE_ATTRIBUTES = ["gender", "age_cohort", "is_multilingual"]
@@ -152,6 +154,14 @@ def main():
 
     print(f"Split: {len(X_train)} train / {len(X_test)} test")
 
+    # ── Carve calibration holdout (30% of train, never seen by EG) ───────────
+    idx_train_arr = np.array(idx_train)
+    X_fit, X_cal, y_fit, y_cal, idx_fit, idx_cal = train_test_split(
+        X_train, y_train, idx_train_arr, test_size=0.30, stratify=y_train, random_state=42
+    )
+    df_fit = df.loc[idx_fit].copy()
+    print(f"  Fit: {len(X_fit)} | Cal holdout: {len(X_cal)}")
+
     # ── Load baseline for comparison ──────────────────────────────────────────
     baseline_metrics = None
     if BASELINE_PATH.exists():
@@ -169,23 +179,32 @@ def main():
 
     # ── Step 1: Re-weighting ──────────────────────────────────────────────────
     print("\n--- Step 1: Sample re-weighting ---")
-    w_gender = compute_reweighting(df_train, "gender")
-    w_age    = compute_reweighting(df_train, "age_cohort")
-    w_lang   = compute_reweighting(df_train, "is_multilingual")
+    w_gender = compute_reweighting(df_fit, "gender")
+    w_age    = compute_reweighting(df_fit, "age_cohort")
+    w_lang   = compute_reweighting(df_fit, "is_multilingual")
     sample_weights = combine_weights(w_gender, w_age, w_lang)
 
     print(f"  Weight range: [{sample_weights.min():.3f}, {sample_weights.max():.3f}]")
     print(f"  Weight mean:  {sample_weights.mean():.3f}")
 
-    # Base estimator for re-weighted training
+    # Scale on fit set; transform cal + test with same scaler
     scaler = StandardScaler()
-    X_train_sc = scaler.fit_transform(X_train)
-    X_test_sc  = scaler.transform(X_test)
+    X_fit_sc  = scaler.fit_transform(X_fit)
+    X_cal_sc  = scaler.transform(X_cal)
+    X_test_sc = scaler.transform(X_test)
+
+    # SMOTE on fit set to match baseline imbalance handling
+    smote = SMOTE(k_neighbors=3, random_state=42)
+    X_fit_sm, y_fit_sm = smote.fit_resample(X_fit_sc, y_fit)
+    # Extend weights for synthetic samples (SMOTE copies of minority get weight=1)
+    n_original = len(X_fit_sc)
+    n_synthetic = len(X_fit_sm) - n_original
+    sample_weights_sm = np.concatenate([sample_weights, np.ones(n_synthetic)])
 
     rf_rw = RandomForestClassifier(
         n_estimators=300, class_weight="balanced", max_depth=6, random_state=42
     )
-    rf_rw.fit(X_train_sc, y_train, sample_weight=sample_weights)
+    rf_rw.fit(X_fit_sm, y_fit_sm, sample_weight=sample_weights_sm)
 
     y_pred_rw   = rf_rw.predict(X_test_sc)
     y_proba_rw  = rf_rw.predict_proba(X_test_sc)[:, 1]
@@ -204,15 +223,16 @@ def main():
 
     if use_eg:
         print(f"\n--- Step 2: ExponentiatedGradient (max EOD {max_eod_rw:.3f} > 0.05) ---")
-        base_clf = LogisticRegression(max_iter=1000, random_state=42)
+        base_clf = LogisticRegression(max_iter=1000, random_state=42, class_weight="balanced")
         mitigator = ExponentiatedGradient(
             estimator=base_clf,
             constraints=TruePositiveRateParity(),
-            eps=0.01,
+            eps=0.03,
         )
-        # Use gender as primary sensitive feature (most binary, most interpretable)
-        sf_train = df_train["gender"].values
-        mitigator.fit(X_train_sc, y_train, sensitive_features=sf_train)
+        # EG uses original (non-SMOTE) fit set — sensitive features must align 1-to-1
+        # class_weight='balanced' on base LR handles the imbalance instead
+        sf_fit = df_fit["gender"].values
+        mitigator.fit(X_fit_sc, y_fit, sensitive_features=sf_fit)
 
         y_pred_eg  = mitigator.predict(X_test_sc)
         y_proba_eg = mitigator._pmf_predict(X_test_sc)[:, 1]
@@ -225,13 +245,14 @@ def main():
             flag = "⚠️" if abs(m["equal_opportunity_diff"]) > 0.05 else "✅"
             print(f"    {attr:<20} EOD = {m['equal_opportunity_diff']:+.3f}  {flag}")
 
-        # Pick better of the two
-        max_eod_eg = max(abs(m["equal_opportunity_diff"]) for m in metrics_eg.values())
-        if max_eod_eg < max_eod_rw:
+        # Pick better of the two — compare sum of EODs to avoid single-attribute domination
+        sum_eod_rw = sum(abs(m["equal_opportunity_diff"]) for m in metrics_rw.values())
+        sum_eod_eg = sum(abs(m["equal_opportunity_diff"]) for m in metrics_eg.values())
+        print(f"  Sum EOD — RF: {sum_eod_rw:.3f}  EG: {sum_eod_eg:.3f}")
+        if sum_eod_eg <= sum_eod_rw:
             print("  -> ExponentiatedGradient selected as final model")
             final_pred, final_proba, final_auc, final_metrics = y_pred_eg, y_proba_eg, auc_eg, metrics_eg
             final_method = "ExponentiatedGradient"
-
             final_pipeline = EGWrapper(scaler, mitigator)
         else:
             print("  -> Re-weighted RandomForest selected (better EOD)")
@@ -243,6 +264,25 @@ def main():
         final_pred, final_proba, final_auc, final_metrics = y_pred_rw, y_proba_rw, auc_rw, metrics_rw
         final_method = "RandomForest+Reweighting"
         final_pipeline = Pipeline([("scaler", scaler), ("clf", rf_rw)])
+
+    # ── Post-hoc temperature scaling on holdout ───────────────────────────────
+    # Fits a no-intercept logistic regression on logit(raw_proba) → y_cal.
+    # The learned coefficient gives T = 1/coef. T > 1 softens predictions,
+    # preventing overconfidence without distorting the ranking or inverting predictions.
+    if isinstance(final_pipeline, EGWrapper):
+        from scipy.special import logit as _logit
+        print("\n--- Step 3: Temperature scaling on holdout ---")
+        raw_proba_cal = final_pipeline.predict_proba(X_cal)[:, 1]
+        raw_logit_cal = _logit(np.clip(raw_proba_cal, 1e-7, 1 - 1e-7))
+        temp_lr = LogisticRegression(C=1e10, fit_intercept=False, random_state=42)
+        temp_lr.fit(raw_logit_cal.reshape(-1, 1), y_cal)
+        T = 1.0 / float(temp_lr.coef_[0][0])
+        print(f"  Temperature: T={T:.3f}  ({'softer' if T > 1 else 'sharper'})")
+        final_pipeline.calibrator = temp_lr
+        final_pipeline.calibrator_logit_transform = True
+        print(f"  Calibrated on {len(X_cal)} samples")
+    else:
+        print("\n  [Calibration skipped — RF probabilities calibrated via class_weight='balanced']")
 
     # ── Comparison summary ────────────────────────────────────────────────────
     print(f"\n{'='*60}")

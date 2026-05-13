@@ -38,6 +38,8 @@ FEATURE_LABELS = {
     "certs_per_year":             "Certifications per year",
     "experience_x_seniority":     "Experience × seniority",
     "experience_x_education":     "Experience × education",
+    "career_trajectory_score":    "Career progression",
+    "latest_title_seniority":     "Current role seniority",
 }
 
 
@@ -127,13 +129,11 @@ def predict(features: dict) -> tuple[str, float | None, dict | None]:
     if _model is None:
         return "pending", None, None
 
-    INVITE_THRESHOLD = 0.40  # lower than 0.5 to reduce false negatives on imbalanced data
-
     X_raw = np.array([[features.get(col, 0) for col in _feat_cols]])
     proba = _model.predict_proba(X_raw)[0]
-    invite_prob    = float(proba[1])
-    recommendation = "Invite" if invite_prob >= INVITE_THRESHOLD else "Reject"
-    confidence     = round(invite_prob if recommendation == "Invite" else float(proba[0]), 3)
+    label_idx      = int(np.argmax(proba))
+    confidence     = round(float(proba[label_idx]), 3)
+    recommendation = "Invite" if label_idx == 1 else "Reject"
 
     # SHAP on the scaled representation
     X_scaled  = _get_scaled_input(features)
