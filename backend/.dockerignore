@@ -1,0 +1,11 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+ml/CVs/
+ml/*.csv
+ml/cv_screening_ml.ipynb
+.git/
+*.log

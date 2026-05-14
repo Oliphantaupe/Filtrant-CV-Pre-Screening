@@ -1,0 +1,7 @@
+# Extra deps needed only for training (train.py / notebook).
+# Install on top of the main requirements.txt:
+#   pip install -r requirements.txt -r ml/requirements-training.txt
+pandas>=2.2
+matplotlib>=3.8
+seaborn>=0.13
+imbalanced-learn>=0.12

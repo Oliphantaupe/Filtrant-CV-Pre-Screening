@@ -1,8 +1,9 @@
 fastapi==0.111.0
 uvicorn[standard]==0.30.1
+gunicorn>=22.0
 python-multipart==0.0.9
 
-# OpenRouter (Gemini 2.0 Flash)
+# Anthropic API
 httpx>=0.27.0
 
 # PDF / DOCX extraction
@@ -12,15 +13,11 @@ pdfplumber==0.11.0
 # Database
 psycopg2-binary==2.9.9
 
-# ML
+# ML (runtime only — training deps are in ml/requirements-training.txt)
 scikit-learn==1.8.0
-pandas>=2.2
 numpy>=1.26
 joblib>=1.4
-imbalanced-learn>=0.12
 xgboost>=2.0
-matplotlib>=3.8
-seaborn>=0.13
 
 # Validation
 pydantic==2.7.4

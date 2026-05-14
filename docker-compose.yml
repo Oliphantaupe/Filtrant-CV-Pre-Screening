@@ -1,28 +1,42 @@
 services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
   backend:
     build: ./backend
-    ports:
-      - "8000:8000"
+    # Not exposed publicly — nginx proxies /api to this container.
+    # Uncomment the line below only for local debugging:
+    # ports:
+    #   - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://filtrant:filtrant@postgres:5432/filtrant
+      DATABASE_URL: postgresql://filtrant:${POSTGRES_PASSWORD:-filtrant}@postgres:5432/filtrant
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      ENV: development
+      ENV: production
+      LOG_LEVEL: INFO
+      # Lock CORS to the frontend origin. Change to your domain in production:
+      #   CORS_ORIGINS: "https://yourdomain.com"
+      CORS_ORIGINS: "http://localhost"
     volumes:
       - ./data:/app/data
       - ./backend/ml:/app/ml
+    user: "1000:1000"
     depends_on:
       postgres:
         condition: service_healthy
     restart: unless-stopped
 
   postgres:
-    image: postgres:16
+    image: postgres:16-alpine
     environment:
       POSTGRES_USER: filtrant
-      POSTGRES_PASSWORD: filtrant
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-filtrant}
       POSTGRES_DB: filtrant
-    ports:
-      - "5432:5432"
+    # Not exposed publicly. Use `docker compose exec postgres psql -U filtrant` to connect.
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -30,6 +44,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
 volumes:
   postgres_data:
