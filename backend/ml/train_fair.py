@@ -1,13 +1,13 @@
 """
 train_fair.py — Filtrant Fair Model Training (WP2)
 ===================================================
-Trains a fairness-mitigated model using:
-  1. Sample re-weighting (primary) — corrects label bias by upweighting
-     underrepresented (group, label) combinations without discarding data.
-  2. ExponentiatedGradient (secondary) — enforces TruePositiveRateParity
-     constraint during training if re-weighting alone is insufficient.
+Trains a fairness-mitigated model using sample re-weighting (AIF360 approach).
+Re-weighting corrects label bias by upweighting underrepresented (group, label)
+combinations without discarding data or distorting the model architecture.
 
-Saves model_fair.joblib and fairness_report.json for the API.
+Uses the same LogisticRegression as the baseline model so feature weights and
+ranking quality are preserved. Applies temperature scaling on a held-out
+calibration set to prevent overconfidence.
 
 Usage:
     docker compose exec backend python /app/ml/train_fair.py
@@ -18,17 +18,16 @@ import sys
 import warnings
 from pathlib import Path
 
-# Make src.services importable so EGWrapper pickles with the same path uvicorn uses
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import joblib
 import numpy as np
 import pandas as pd
 from imblearn.over_sampling import SMOTE
-from sklearn.ensemble import RandomForestClassifier
+from scipy.special import logit as _logit
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, roc_auc_score
-from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from fairlearn.metrics import (
@@ -37,7 +36,6 @@ from fairlearn.metrics import (
     true_positive_rate,
     false_positive_rate,
 )
-from fairlearn.reductions import ExponentiatedGradient, TruePositiveRateParity
 
 warnings.filterwarnings("ignore")
 
@@ -61,15 +59,12 @@ FEATURE_COLUMNS = [
 SENSITIVE_ATTRIBUTES = ["gender", "age_cohort", "is_multilingual"]
 
 
-from src.services.fair_wrapper import EGWrapper  # noqa: E402
-
 # ── Re-weighting ──────────────────────────────────────────────────────────────
 
 def compute_reweighting(df: pd.DataFrame, sensitive_col: str) -> np.ndarray:
     """
-    Manual implementation of AIF360's Reweighing algorithm.
-    Assigns each sample a weight so that every (group, label) cell
-    has the same expected probability as under a fully independent distribution.
+    AIF360 Reweighing: assigns weights so (group, label) cells have the same
+    expected probability as under a fully independent distribution.
     """
     y = df["passed_next_stage"].values
     groups = df[sensitive_col].astype(str).values
@@ -79,26 +74,23 @@ def compute_reweighting(df: pd.DataFrame, sensitive_col: str) -> np.ndarray:
     for g in np.unique(groups):
         for label in [0, 1]:
             mask = (groups == g) & (y == label)
-            p_g     = (groups == g).mean()
-            p_y     = (y == label).mean()
-            p_g_y   = mask.mean()
+            p_g   = (groups == g).mean()
+            p_y   = (y == label).mean()
+            p_g_y = mask.mean()
             if p_g_y > 0:
                 weights[mask] = (p_g * p_y) / p_g_y
 
-    # Normalise so weights sum to n
-    weights = weights / weights.mean()
-    return weights
+    return weights / weights.mean()
 
 
 def combine_weights(*weight_arrays) -> np.ndarray:
-    """Element-wise product of multiple weight vectors, then renormalise."""
     combined = np.ones(len(weight_arrays[0]))
     for w in weight_arrays:
         combined *= w
     return combined / combined.mean()
 
 
-# ── Fairness metrics helper ───────────────────────────────────────────────────
+# ── Fairness metrics ──────────────────────────────────────────────────────────
 
 def compute_fairness_metrics(y_true, y_pred, df_subset: pd.DataFrame) -> dict:
     result = {}
@@ -149,27 +141,28 @@ def main():
     X_train, X_test, y_train, y_test, idx_train, idx_test = train_test_split(
         X, y, df.index, test_size=0.2, stratify=y, random_state=42
     )
-    df_train = df.loc[idx_train].copy()
-    df_test  = df.loc[idx_test].copy()
+    df_test = df.loc[idx_test].copy()
 
     print(f"Split: {len(X_train)} train / {len(X_test)} test")
 
-    # ── Carve calibration holdout (30% of train, never seen by EG) ───────────
+    # ── Calibration holdout (30% of train, never seen during fitting) ─────────
     idx_train_arr = np.array(idx_train)
-    X_fit, X_cal, y_fit, y_cal, idx_fit, idx_cal = train_test_split(
-        X_train, y_train, idx_train_arr, test_size=0.30, stratify=y_train, random_state=42
+    X_fit, X_cal, y_fit, y_cal, idx_fit, _ = train_test_split(
+        X_train, y_train, idx_train_arr,
+        test_size=0.30, stratify=y_train, random_state=42
     )
     df_fit = df.loc[idx_fit].copy()
     print(f"  Fit: {len(X_fit)} | Cal holdout: {len(X_cal)}")
 
     # ── Load baseline for comparison ──────────────────────────────────────────
     baseline_metrics = None
+    baseline_auc = None
     if BASELINE_PATH.exists():
-        artifact = joblib.load(BASELINE_PATH)
-        baseline_pipe = artifact["pipeline"]
-        y_pred_base = baseline_pipe.predict(X_test)
-        y_proba_base = baseline_pipe.predict_proba(X_test)[:, 1]
-        baseline_auc = roc_auc_score(y_test, y_proba_base)
+        art = joblib.load(BASELINE_PATH)
+        baseline_pipe = art["pipeline"]
+        y_pred_base   = baseline_pipe.predict(X_test)
+        y_proba_base  = baseline_pipe.predict_proba(X_test)[:, 1]
+        baseline_auc  = roc_auc_score(y_test, y_proba_base)
         baseline_metrics = compute_fairness_metrics(y_test, y_pred_base, df_test)
         print(f"\nBaseline AUC: {baseline_auc:.3f}")
         print("Baseline Equal Opportunity Differences:")
@@ -177,153 +170,105 @@ def main():
             flag = "⚠️" if abs(m["equal_opportunity_diff"]) > 0.05 else "✅"
             print(f"  {attr:<20} EOD = {m['equal_opportunity_diff']:+.3f}  {flag}")
 
-    # ── Step 1: Re-weighting ──────────────────────────────────────────────────
-    print("\n--- Step 1: Sample re-weighting ---")
+    # ── Sample re-weighting ───────────────────────────────────────────────────
+    print("\n--- Sample re-weighting ---")
     w_gender = compute_reweighting(df_fit, "gender")
     w_age    = compute_reweighting(df_fit, "age_cohort")
     w_lang   = compute_reweighting(df_fit, "is_multilingual")
     sample_weights = combine_weights(w_gender, w_age, w_lang)
 
     print(f"  Weight range: [{sample_weights.min():.3f}, {sample_weights.max():.3f}]")
-    print(f"  Weight mean:  {sample_weights.mean():.3f}")
 
-    # Scale on fit set; transform cal + test with same scaler
+    # ── Fit re-weighted LR (same params as baseline) ──────────────────────────
+    print("\n--- Re-weighted LogisticRegression ---")
     scaler = StandardScaler()
     X_fit_sc  = scaler.fit_transform(X_fit)
     X_cal_sc  = scaler.transform(X_cal)
     X_test_sc = scaler.transform(X_test)
 
-    # SMOTE on fit set to match baseline imbalance handling
     smote = SMOTE(k_neighbors=3, random_state=42)
     X_fit_sm, y_fit_sm = smote.fit_resample(X_fit_sc, y_fit)
-    # Extend weights for synthetic samples (SMOTE copies of minority get weight=1)
-    n_original = len(X_fit_sc)
-    n_synthetic = len(X_fit_sm) - n_original
+    n_synthetic = len(X_fit_sm) - len(X_fit_sc)
     sample_weights_sm = np.concatenate([sample_weights, np.ones(n_synthetic)])
 
-    rf_rw = RandomForestClassifier(
-        n_estimators=300, class_weight="balanced", max_depth=6, random_state=42
+    clf = LogisticRegression(
+        C=0.01, class_weight="balanced", max_iter=1000, random_state=42
     )
-    rf_rw.fit(X_fit_sm, y_fit_sm, sample_weight=sample_weights_sm)
+    clf.fit(X_fit_sm, y_fit_sm, sample_weight=sample_weights_sm)
+    final_pipeline = Pipeline([("scaler", scaler), ("clf", clf)])
 
-    y_pred_rw   = rf_rw.predict(X_test_sc)
-    y_proba_rw  = rf_rw.predict_proba(X_test_sc)[:, 1]
-    auc_rw      = roc_auc_score(y_test, y_proba_rw)
-    metrics_rw  = compute_fairness_metrics(y_test, y_pred_rw, df_test)
+    y_pred_fair   = final_pipeline.predict(X_test)
+    y_proba_fair  = final_pipeline.predict_proba(X_test)[:, 1]
+    fair_auc      = roc_auc_score(y_test, y_proba_fair)
+    fair_metrics  = compute_fairness_metrics(y_test, y_pred_fair, df_test)
 
-    print(f"\n  Re-weighted AUC: {auc_rw:.3f}")
-    print("  Equal Opportunity Differences after re-weighting:")
-    for attr, m in metrics_rw.items():
+    print(f"  AUC: {fair_auc:.3f}")
+    print("  Equal Opportunity Differences:")
+    for attr, m in fair_metrics.items():
         flag = "⚠️" if abs(m["equal_opportunity_diff"]) > 0.05 else "✅"
-        print(f"    {attr:<20} EOD = {m['equal_opportunity_diff']:+.3f}  {flag}")
+        base_eod = baseline_metrics[attr]["equal_opportunity_diff"] if baseline_metrics else float("nan")
+        print(f"    {attr:<20} EOD = {m['equal_opportunity_diff']:+.3f}  {flag}  (baseline: {base_eod:+.3f})")
 
-    # ── Step 2: ExponentiatedGradient (if needed) ─────────────────────────────
-    max_eod_rw = max(abs(m["equal_opportunity_diff"]) for m in metrics_rw.values())
-    use_eg = max_eod_rw > 0.05
+    # ── Temperature scaling on holdout ────────────────────────────────────────
+    print("\n--- Temperature scaling on holdout ---")
+    raw_proba_cal = final_pipeline.predict_proba(X_cal)[:, 1]
+    raw_logit_cal = _logit(np.clip(raw_proba_cal, 1e-7, 1 - 1e-7))
 
-    if use_eg:
-        print(f"\n--- Step 2: ExponentiatedGradient (max EOD {max_eod_rw:.3f} > 0.05) ---")
-        base_clf = LogisticRegression(max_iter=1000, random_state=42, class_weight="balanced")
-        mitigator = ExponentiatedGradient(
-            estimator=base_clf,
-            constraints=TruePositiveRateParity(),
-            eps=0.03,
-        )
-        # EG uses original (non-SMOTE) fit set — sensitive features must align 1-to-1
-        # class_weight='balanced' on base LR handles the imbalance instead
-        sf_fit = df_fit["gender"].values
-        mitigator.fit(X_fit_sc, y_fit, sensitive_features=sf_fit)
+    temp_lr = LogisticRegression(C=1e10, fit_intercept=False, random_state=42)
+    temp_lr.fit(raw_logit_cal.reshape(-1, 1), y_cal)
+    T = 1.0 / float(temp_lr.coef_[0][0])
+    print(f"  Temperature T={T:.3f}  ({'softer' if T > 1 else 'sharper'})")
 
-        y_pred_eg  = mitigator.predict(X_test_sc)
-        y_proba_eg = mitigator._pmf_predict(X_test_sc)[:, 1]
-        auc_eg     = roc_auc_score(y_test, y_proba_eg)
-        metrics_eg = compute_fairness_metrics(y_test, y_pred_eg, df_test)
-
-        print(f"  ExponentiatedGradient AUC: {auc_eg:.3f}")
-        print("  Equal Opportunity Differences after EG:")
-        for attr, m in metrics_eg.items():
-            flag = "⚠️" if abs(m["equal_opportunity_diff"]) > 0.05 else "✅"
-            print(f"    {attr:<20} EOD = {m['equal_opportunity_diff']:+.3f}  {flag}")
-
-        # Pick better of the two — compare sum of EODs to avoid single-attribute domination
-        sum_eod_rw = sum(abs(m["equal_opportunity_diff"]) for m in metrics_rw.values())
-        sum_eod_eg = sum(abs(m["equal_opportunity_diff"]) for m in metrics_eg.values())
-        print(f"  Sum EOD — RF: {sum_eod_rw:.3f}  EG: {sum_eod_eg:.3f}")
-        if sum_eod_eg <= sum_eod_rw:
-            print("  -> ExponentiatedGradient selected as final model")
-            final_pred, final_proba, final_auc, final_metrics = y_pred_eg, y_proba_eg, auc_eg, metrics_eg
-            final_method = "ExponentiatedGradient"
-            final_pipeline = EGWrapper(scaler, mitigator)
-        else:
-            print("  -> Re-weighted RandomForest selected (better EOD)")
-            final_pred, final_proba, final_auc, final_metrics = y_pred_rw, y_proba_rw, auc_rw, metrics_rw
-            final_method = "RandomForest+Reweighting"
-            final_pipeline = Pipeline([("scaler", scaler), ("clf", rf_rw)])
-    else:
-        print(f"\n  Max EOD after re-weighting: {max_eod_rw:.3f} — ExponentiatedGradient not needed.")
-        final_pred, final_proba, final_auc, final_metrics = y_pred_rw, y_proba_rw, auc_rw, metrics_rw
-        final_method = "RandomForest+Reweighting"
-        final_pipeline = Pipeline([("scaler", scaler), ("clf", rf_rw)])
-
-    # ── Post-hoc temperature scaling on holdout ───────────────────────────────
-    # Fits a no-intercept logistic regression on logit(raw_proba) → y_cal.
-    # The learned coefficient gives T = 1/coef. T > 1 softens predictions,
-    # preventing overconfidence without distorting the ranking or inverting predictions.
-    if isinstance(final_pipeline, EGWrapper):
-        from scipy.special import logit as _logit
-        print("\n--- Step 3: Temperature scaling on holdout ---")
-        raw_proba_cal = final_pipeline.predict_proba(X_cal)[:, 1]
-        raw_logit_cal = _logit(np.clip(raw_proba_cal, 1e-7, 1 - 1e-7))
-        temp_lr = LogisticRegression(C=1e10, fit_intercept=False, random_state=42)
-        temp_lr.fit(raw_logit_cal.reshape(-1, 1), y_cal)
-        T = 1.0 / float(temp_lr.coef_[0][0])
-        print(f"  Temperature: T={T:.3f}  ({'softer' if T > 1 else 'sharper'})")
-        final_pipeline.calibrator = temp_lr
-        final_pipeline.calibrator_logit_transform = True
-        print(f"  Calibrated on {len(X_cal)} samples")
-    else:
-        print("\n  [Calibration skipped — RF probabilities calibrated via class_weight='balanced']")
+    # Verify calibrated proba range on test set
+    raw_logit_test  = _logit(np.clip(y_proba_fair, 1e-7, 1 - 1e-7))
+    p_cal_test = temp_lr.predict_proba(raw_logit_test.reshape(-1, 1))[:, 1]
+    print(f"  Calibrated invite proba range: [{p_cal_test.min():.3f}, {p_cal_test.max():.3f}]")
 
     # ── Comparison summary ────────────────────────────────────────────────────
     print(f"\n{'='*60}")
     print("  COMPARISON: Baseline → Fair model")
     print(f"{'='*60}")
-    if baseline_metrics:
-        print(f"  AUC:  {baseline_auc:.3f} → {final_auc:.3f}  (delta: {final_auc - baseline_auc:+.3f})")
+    if baseline_metrics and baseline_auc is not None:
+        print(f"  AUC:  {baseline_auc:.3f} → {fair_auc:.3f}  (delta: {fair_auc - baseline_auc:+.3f})")
         for attr in SENSITIVE_ATTRIBUTES:
             b_eod = baseline_metrics[attr]["equal_opportunity_diff"]
-            f_eod = final_metrics[attr]["equal_opportunity_diff"]
-            print(f"  EOD ({attr:<18}): {b_eod:+.3f} → {f_eod:+.3f}  (delta: {f_eod - b_eod:+.3f})")
+            f_eod = fair_metrics[attr]["equal_opportunity_diff"]
+            delta = f_eod - b_eod
+            flag = "✅" if abs(f_eod) <= abs(b_eod) else "⚠️"
+            print(f"  EOD ({attr:<18}): {b_eod:+.3f} → {f_eod:+.3f}  (delta: {delta:+.3f}) {flag}")
 
     print(f"\nClassification report (fair model):")
-    print(classification_report(y_test, final_pred, target_names=["Reject", "Invite"]))
+    print(classification_report(y_test, y_pred_fair, target_names=["Reject", "Invite"]))
 
-    # ── Save model ────────────────────────────────────────────────────────────
+    # ── Save ──────────────────────────────────────────────────────────────────
     artifact = {
         "pipeline": final_pipeline,
+        "calibrator": temp_lr,
+        "calibrator_logit_transform": True,
         "feature_columns": FEATURE_COLUMNS,
-        "model_name": final_method,
-        "best_auc": final_auc,
+        "model_name": "LogisticRegression+Reweighting",
+        "best_auc": fair_auc,
+        "temperature": T,
         "n_training_samples": len(X_train),
         "label_column": "passed_next_stage",
         "fairness_mitigated": True,
-        "mitigation_method": final_method,
+        "mitigation_method": "SampleReweighting",
     }
     joblib.dump(artifact, FAIR_MODEL_PATH)
     print(f"\n[OK] model_fair.joblib saved")
 
-    # ── Save fairness report for API ──────────────────────────────────────────
     report = {
-        "model": final_method,
-        "auc": round(final_auc, 3),
+        "model": "LogisticRegression+Reweighting",
+        "auc": round(fair_auc, 3),
+        "temperature": round(T, 3),
         "n_test": int(len(y_test)),
         "baseline": {
-            "auc": round(baseline_auc, 3) if baseline_metrics else None,
+            "auc": round(baseline_auc, 3) if baseline_auc else None,
             "metrics": baseline_metrics,
         } if baseline_metrics else None,
         "fair": {
-            "auc": round(final_auc, 3),
-            "metrics": final_metrics,
+            "auc": round(fair_auc, 3),
+            "metrics": fair_metrics,
         },
         "label_distribution": {
             "invite": int(n_invite),
@@ -336,7 +281,6 @@ def main():
         },
     }
 
-    # Convert any non-serialisable values
     def _clean(obj):
         if isinstance(obj, dict):
             return {k: _clean(v) for k, v in obj.items()}
