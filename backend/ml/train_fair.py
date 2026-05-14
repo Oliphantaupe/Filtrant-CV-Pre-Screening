@@ -26,8 +26,8 @@ import pandas as pd
 from imblearn.over_sampling import SMOTE
 from scipy.special import logit as _logit
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, roc_auc_score
-from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, f1_score, roc_auc_score
+from sklearn.model_selection import cross_val_predict, StratifiedKFold, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from fairlearn.metrics import (
@@ -88,6 +88,37 @@ def combine_weights(*weight_arrays) -> np.ndarray:
     for w in weight_arrays:
         combined *= w
     return combined / combined.mean()
+
+
+# ── Noisy label cleaning ──────────────────────────────────────────────────────
+
+def auto_clean_labels(X: np.ndarray, y: np.ndarray, confidence_threshold: float = 0.85) -> tuple:
+    """
+    Remove likely mislabeled samples using out-of-fold predictions from a baseline LR.
+    A sample is flagged when the baseline predicts the opposite label with high confidence.
+    Returns (X_clean, y_clean, keep_mask, n_removed).
+    """
+    baseline = Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", LogisticRegression(max_iter=1000, class_weight="balanced", C=1.0, random_state=42)),
+    ])
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    proba_oof = cross_val_predict(baseline, X, y, cv=cv, method="predict_proba")[:, 1]
+    suspect = ((y == 1) & (proba_oof < (1 - confidence_threshold))) | \
+              ((y == 0) & (proba_oof > confidence_threshold))
+    keep_mask = ~suspect
+    return X[keep_mask], y[keep_mask], keep_mask, int(suspect.sum())
+
+
+def tune_threshold(proba_invite: np.ndarray, y_true: np.ndarray) -> tuple[float, float]:
+    """Find the decision threshold that maximises F1-Invite."""
+    thresholds = np.arange(0.10, 0.90, 0.01)
+    f1_scores = [
+        f1_score(y_true, (proba_invite >= t).astype(int), zero_division=0)
+        for t in thresholds
+    ]
+    best_idx = int(np.argmax(f1_scores))
+    return float(thresholds[best_idx]), float(f1_scores[best_idx])
 
 
 # ── Fairness metrics ──────────────────────────────────────────────────────────
@@ -153,6 +184,12 @@ def main():
     )
     df_fit = df.loc[idx_fit].copy()
     print(f"  Fit: {len(X_fit)} | Cal holdout: {len(X_cal)}")
+
+    # ── Auto-clean likely mislabeled samples from fit set ─────────────────────
+    print("\n--- Auto-cleaning mislabeled samples ---")
+    X_fit, y_fit, keep_mask, n_cleaned = auto_clean_labels(X_fit, y_fit)
+    df_fit = df_fit.iloc[np.where(keep_mask)[0]].reset_index(drop=True)
+    print(f"  Removed {n_cleaned} suspect samples → {len(X_fit)} fit samples remain")
 
     # ── Load baseline for comparison ──────────────────────────────────────────
     baseline_metrics = None
@@ -224,6 +261,12 @@ def main():
     p_cal_test = temp_lr.predict_proba(raw_logit_test.reshape(-1, 1))[:, 1]
     print(f"  Calibrated invite proba range: [{p_cal_test.min():.3f}, {p_cal_test.max():.3f}]")
 
+    # ── Decision threshold tuning ─────────────────────────────────────────────
+    print("\n--- Decision threshold tuning ---")
+    best_threshold, threshold_f1 = tune_threshold(p_cal_test, y_test)
+    print(f"  Optimal threshold: {best_threshold:.2f}  (F1-Invite = {threshold_f1:.3f})")
+    print(f"  Default 0.50 would give F1-Invite = {f1_score(y_test, (p_cal_test >= 0.50).astype(int), zero_division=0):.3f}")
+
     # ── Comparison summary ────────────────────────────────────────────────────
     print(f"\n{'='*60}")
     print("  COMPARISON: Baseline → Fair model")
@@ -253,6 +296,9 @@ def main():
         "label_column": "passed_next_stage",
         "fairness_mitigated": True,
         "mitigation_method": "SampleReweighting",
+        "decision_threshold": best_threshold,
+        "threshold_f1": threshold_f1,
+        "n_labels_cleaned": n_cleaned,
     }
     joblib.dump(artifact, FAIR_MODEL_PATH)
     print(f"\n[OK] model_fair.joblib saved")

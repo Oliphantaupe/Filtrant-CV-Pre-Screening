@@ -12,11 +12,12 @@ from src.services.features import FEATURE_COLUMNS
 
 logger = logging.getLogger(__name__)
 
-_model      = None
-_explainer  = None
-_feat_cols  = None
-_calibrator = None
-_calibrator_logit = False
+_model              = None
+_explainer          = None
+_feat_cols          = None
+_calibrator         = None
+_calibrator_logit   = False
+_decision_threshold = 0.5
 
 FAIR_MODEL_PATH = os.path.join(os.path.dirname(settings.ml_model_path), "model_fair.joblib")
 
@@ -46,7 +47,7 @@ FEATURE_LABELS = {
 
 
 def _load_model():
-    global _model, _explainer, _feat_cols, _calibrator, _calibrator_logit
+    global _model, _explainer, _feat_cols, _calibrator, _calibrator_logit, _decision_threshold
     import joblib
 
     # Prefer fair model, fall back to baseline
@@ -58,10 +59,11 @@ def _load_model():
     if isinstance(artifact, dict) and "pipeline" in artifact:
         _model            = artifact["pipeline"]
         _feat_cols        = artifact.get("feature_columns", artifact.get("effective_features", FEATURE_COLUMNS))
-        _calibrator       = artifact.get("calibrator")
-        _calibrator_logit = artifact.get("calibrator_logit_transform", False)
-        is_fair           = artifact.get("fairness_mitigated", False)
-        T                 = artifact.get("temperature")
+        _calibrator         = artifact.get("calibrator")
+        _calibrator_logit   = artifact.get("calibrator_logit_transform", False)
+        _decision_threshold = float(artifact.get("decision_threshold", 0.5))
+        is_fair             = artifact.get("fairness_mitigated", False)
+        T                   = artifact.get("temperature")
         logger.info(
             "Loaded model: %s (fair=%s, T=%s) — %d features",
             artifact.get("model_name"), is_fair, f"{T:.2f}" if T else "none", len(_feat_cols),
@@ -150,9 +152,10 @@ def predict(features: dict) -> tuple[str, float | None, dict | None]:
             p_cal = float(_calibrator.predict_proba([[raw_p]])[0, 1])
         proba = np.array([1 - p_cal, p_cal])
 
-    label_idx      = int(np.argmax(proba))
+    is_invite      = bool(proba[1] >= _decision_threshold)
+    label_idx      = 1 if is_invite else 0
     confidence     = round(float(proba[label_idx]), 3)
-    recommendation = "Invite" if label_idx == 1 else "Reject"
+    recommendation = "Invite" if is_invite else "Reject"
 
     # SHAP on the scaled representation
     X_scaled  = _get_scaled_input(features)
