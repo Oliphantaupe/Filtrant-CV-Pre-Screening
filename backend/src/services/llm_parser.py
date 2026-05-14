@@ -30,7 +30,7 @@ Schema:
 }
 
 Rules:
-- Compute duration_months from start/end dates only if BOTH are explicitly stated. If either date is missing or ambiguous, set duration_months to null — never estimate.
+- Compute duration_months whenever start is known: if end is "present" or not stated, compute months from start to today (2026-05). If start itself is unknown, set duration_months to null.
 - List experience entries in reverse chronological order (most recent first).
 - target_role: copy the exact job title from the CV if present; if absent, use the most recent job title; never rephrase or infer a broader role.
 - Skills categorization: technical = tools, software, programming languages, platforms; methods = frameworks, methodologies, processes (e.g. Agile, BPMN); management = people or project leadership skills. Do not duplicate a skill across categories.

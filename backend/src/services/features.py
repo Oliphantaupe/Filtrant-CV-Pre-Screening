@@ -36,11 +36,32 @@ def _compute_trajectory(cv: CVSchema) -> int:
     return sum(1 for a, b in zip(levels, levels[1:]) if b > a)
 
 
+def _duration_months(e) -> int:
+    """
+    Return duration in months for an Experience entry.
+    Uses the LLM-provided value when available; otherwise computes from
+    start/end strings so 'present' roles are never counted as 0.
+    """
+    if e.duration_months is not None and e.duration_months > 0:
+        return e.duration_months
+    if not e.start:
+        return 0
+    try:
+        start_dt = datetime.strptime(e.start, "%Y-%m")
+        if e.end and e.end.lower() not in ("present", ""):
+            end_dt = datetime.strptime(e.end, "%Y-%m")
+        else:
+            end_dt = datetime.now().replace(day=1)
+        return max(0, (end_dt.year - start_dt.year) * 12 + (end_dt.month - start_dt.month))
+    except ValueError:
+        return 0
+
+
 def extract_features(cv: CVSchema) -> dict:
     """Return a flat dict of ML-ready features."""
 
     # ── Original features ────────────────────────────────────────────────────
-    total_months = sum(e.duration_months for e in cv.experience if e.duration_months)
+    total_months = sum(_duration_months(e) for e in cv.experience)
     total_years = round(total_months / 12, 2)
 
     num_positions = len(cv.experience)
@@ -84,7 +105,7 @@ def extract_features(cv: CVSchema) -> dict:
     career_gap_months = _compute_career_gap(cv)
 
     # Latest job duration (most recent = index 0 as parsed)
-    latest_job_duration = cv.experience[0].duration_months if cv.experience and cv.experience[0].duration_months else 0
+    latest_job_duration = _duration_months(cv.experience[0]) if cv.experience else 0
 
     # Has a written summary (signals care taken with CV)
     has_summary = 1 if cv.summary and len(cv.summary.strip()) > 20 else 0
