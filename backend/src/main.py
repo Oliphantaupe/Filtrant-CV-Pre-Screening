@@ -83,9 +83,13 @@ def health():
     except Exception:
         logger.warning("Health check: DB unreachable")
 
-    return {
+    fair_model = os.path.join(os.path.dirname(settings.ml_model_path), "model_fair.joblib")
+    model_ok = os.path.exists(fair_model) or os.path.exists(settings.ml_model_path)
+
+    body = {
         "status": "ok" if db_ok else "degraded",
         "db": db_ok,
         "env": settings.env,
-        "model_file": os.path.exists(settings.ml_model_path),
+        "model_file": model_ok,
     }
+    return JSONResponse(status_code=200 if db_ok else 503, content=body)

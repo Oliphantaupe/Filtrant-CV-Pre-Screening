@@ -19,7 +19,6 @@ build/
 
 # ML models (commit intentionally when ready)
 backend/ml/model.joblib
-backend/ml/model_fair.joblib
 
 # Node / Frontend
 node_modules/
