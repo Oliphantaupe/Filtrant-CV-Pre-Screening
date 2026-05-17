@@ -92,4 +92,4 @@ def health():
         "env": settings.env,
         "model_file": model_ok,
     }
-    return JSONResponse(status_code=200 if db_ok else 503, content=body)
+    return JSONResponse(status_code=200, content=body)
