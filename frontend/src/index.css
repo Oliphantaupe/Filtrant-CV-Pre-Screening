@@ -107,6 +107,14 @@
 
   --backdrop-overlay: rgba(80, 90, 110, 0.40);
   --backdrop-heavy:   rgba(80, 90, 110, 0.50);
+
+  --teal:        #0d9488;
+  --teal-muted:  rgba(13, 148, 136, 0.14);
+  --teal-subtle: rgba(13, 148, 136, 0.10);
+  --teal-dim:    rgba(13, 148, 136, 0.08);
+  --teal-bright: rgba(13, 148, 136, 0.90);
+  --teal-border: rgba(13, 148, 136, 0.35);
+  --teal-glow:   rgba(13, 148, 136, 0.20);
 }
 
 [data-theme="light"] ::-webkit-scrollbar-thumb       { background: rgba(0,0,0,0.15); }
