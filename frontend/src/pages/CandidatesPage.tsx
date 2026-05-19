@@ -1047,23 +1047,6 @@ function DetailPanel({ candidate: initialCandidate, onClose }: { candidate: Cand
                   )}
                 </div>
 
-                {/* SHAP Explanation */}
-                {candidate.explanation && (candidate.explanation.positive.length > 0 || candidate.explanation.negative.length > 0) && (
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--text-faint)' }}>
-                      Why this decision
-                    </p>
-                    <div className="space-y-2">
-                      {candidate.explanation.positive.map(c => (
-                        <ShapBar key={c.feature} label={c.label} value={c.contribution} direction="positive" />
-                      ))}
-                      {candidate.explanation.negative.map(c => (
-                        <ShapBar key={c.feature} label={c.label} value={c.contribution} direction="negative" />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
                 {/* Scoring factors */}
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--text-faint)' }}>
@@ -1254,24 +1237,6 @@ function ParseQualityBadge({ value }: { value: string }) {
   )
 }
 
-function ShapBar({ label, value, direction }: { label: string; value: number; direction: 'positive' | 'negative' }) {
-  const pct = Math.min(100, Math.round(Math.abs(value) * 400))
-  const color = direction === 'positive' ? 'var(--teal)' : 'var(--reject)'
-  const sign = direction === 'positive' ? '+' : ''
-  return (
-    <div>
-      <div className="flex justify-between text-xs mb-1">
-        <span style={{ color: 'var(--text-2)' }}>{label}</span>
-        <span className="font-semibold font-jetbrains" style={{ color }}>
-          {sign}{value.toFixed(3)}
-        </span>
-      </div>
-      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--glass-hover)' }}>
-        <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: color }} />
-      </div>
-    </div>
-  )
-}
 
 function initials(name: string | null): string {
   if (!name) return '?'

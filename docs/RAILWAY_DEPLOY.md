@@ -36,16 +36,17 @@ ENV=production
 
 ## Frontend — Build Variables
 
-Set these under **filtrant-frontend → Variables** (they are baked in at build time by Vite, not available at runtime):
+Set these under **filtrant-frontend → Variables**:
 
 ```
 VITE_API_BASE_URL=https://filtrant-backend-production.up.railway.app
+PORT=3000
 ```
 
 | Variable | Required | Notes |
 |---|---|---|
-| `VITE_API_BASE_URL` | Yes | Full backend URL, no trailing slash. Baked into the JS bundle at build time. |
-| `PORT` | **Do not set** | Railway injects this automatically to match the port configured in the service GUI (3000). Setting it manually overrides Railway's injection and breaks routing. |
+| `VITE_API_BASE_URL` | Yes | Full backend URL, no trailing slash. Baked into the JS bundle at build time by Vite. |
+| `PORT` | **Yes — set explicitly to `3000`** | Railway's edge proxy routes to the domain target port (3000). Railway's health checker hits the PORT env var. If PORT is left unset, Railway may auto-inject a different value, causing the health check to pass but all traffic to 502. Setting PORT=3000 keeps both aligned. |
 
 > If `VITE_API_BASE_URL` is not set the frontend builds fine but all API calls silently go to the frontend's own origin and fail.
 
@@ -83,8 +84,8 @@ The backend health check verifies DB connectivity and model file presence. It re
 ## Troubleshooting
 
 **Frontend 502 / connection refused**
-- Do NOT set `PORT` manually in Railway frontend variables — Railway injects it automatically to match the GUI port (3000). Overriding it breaks routing.
-- nginx listens on whatever `PORT` Railway injects via the custom `docker-entrypoint.sh`.
+- **Always set `PORT=3000` explicitly** in Railway frontend Variables. Railway's health checker uses the PORT env var; the edge proxy uses the domain target port (3000). If they differ, health check passes but all traffic 502s.
+- The Caddyfile uses `:{$PORT:3000}` — it binds on whatever PORT is set to. With PORT=3000, Caddy, the health checker, and the edge proxy all agree on port 3000.
 
 **Backend `{"detail": "Not Found"}` at root URL**
 - Expected — FastAPI has no route at `/`. Hit `/api/v1/health` to confirm the backend is healthy.
