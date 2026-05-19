@@ -63,3 +63,4 @@ docs/PROGRESS.md
 .DS_Store
 Thumbs.db
 candidates_export.csv
+.env
