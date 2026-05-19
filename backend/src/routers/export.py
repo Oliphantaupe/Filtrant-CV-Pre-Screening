@@ -169,6 +169,11 @@ def override_decision(candidate_id: str, body: OverrideRequest):
                 """,
                 (body.hr_decision, body.override_reason.strip(), candidate_id),
             )
+            # AI Act Art. 14 — human override must be traceable in the audit log
+            cur.execute(
+                "INSERT INTO processing_log (candidate_id, event, detail) VALUES (%s, %s, %s)",
+                (candidate_id, "hr_override", f"{body.hr_decision} — {body.override_reason.strip()}"),
+            )
         conn.commit()
     return {"status": "ok", "hr_decision": body.hr_decision}
 

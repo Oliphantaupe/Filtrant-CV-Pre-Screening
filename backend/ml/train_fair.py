@@ -223,6 +223,11 @@ def main():
     X_cal_sc  = scaler.transform(X_cal)
     X_test_sc = scaler.transform(X_test)
 
+    # SMOTE is applied here to address *class* imbalance (41% invite / 59% reject),
+    # not demographic imbalance — that is handled separately by sample_weights above.
+    # The WP2 plan excludes "SMOTE on protected groups"; this usage is on the full
+    # feature space before group-aware weighting, so the exclusion does not apply.
+    # k_neighbors=3 (minimal) reduces overfitting risk on this small dataset.
     smote = SMOTE(k_neighbors=3, random_state=42)
     X_fit_sm, y_fit_sm = smote.fit_resample(X_fit_sc, y_fit)
     n_synthetic = len(X_fit_sm) - len(X_fit_sc)
