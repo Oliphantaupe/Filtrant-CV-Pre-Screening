@@ -4,8 +4,8 @@ Filtrant runs as three Railway services inside a single project:
 
 | Service | Root dir | Build | Port |
 |---|---|---|---|
-| `filtrant-backend` | `backend/` | `backend/Dockerfile` | auto (`$PORT`) |
-| `filtrant-frontend` | `frontend/` | `frontend/Dockerfile` | `80` (hardcoded) |
+| `filtrant-backend` | `backend/` | `backend/Dockerfile` | `8080` (set in Railway GUI) |
+| `filtrant-frontend` | `frontend/` | `frontend/Dockerfile` | `3000` (set in Railway GUI) |
 | `filtrant-postgres` | — | Railway-managed PostgreSQL | — |
 
 Railway picks up `backend/railway.toml` and `frontend/railway.toml` automatically based on each service's root directory.
@@ -40,13 +40,12 @@ Set these under **filtrant-frontend → Variables** (they are baked in at build 
 
 ```
 VITE_API_BASE_URL=https://filtrant-backend-production.up.railway.app
-PORT=80
 ```
 
 | Variable | Required | Notes |
 |---|---|---|
 | `VITE_API_BASE_URL` | Yes | Full backend URL, no trailing slash. Baked into the JS bundle at build time. |
-| `PORT` | Yes | Must be `80` — tells Railway to route traffic to nginx's port. |
+| `PORT` | **Do not set** | Railway injects this automatically to match the port configured in the service GUI (3000). Setting it manually overrides Railway's injection and breaks routing. |
 
 > If `VITE_API_BASE_URL` is not set the frontend builds fine but all API calls silently go to the frontend's own origin and fail.
 
@@ -84,8 +83,8 @@ The backend health check verifies DB connectivity and model file presence. It re
 ## Troubleshooting
 
 **Frontend 502 / connection refused**
-- Confirm `PORT=80` is set in Railway frontend variables.
-- nginx listens on port 80. Railway must be told to route to 80 via the `PORT` variable.
+- Do NOT set `PORT` manually in Railway frontend variables — Railway injects it automatically to match the GUI port (3000). Overriding it breaks routing.
+- nginx listens on whatever `PORT` Railway injects via the custom `docker-entrypoint.sh`.
 
 **Backend `{"detail": "Not Found"}` at root URL**
 - Expected — FastAPI has no route at `/`. Hit `/api/v1/health` to confirm the backend is healthy.
