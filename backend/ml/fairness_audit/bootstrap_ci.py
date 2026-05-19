@@ -155,8 +155,15 @@ def main() -> None:
     models = []
     for label, path in [("Baseline", BASELINE_PATH), ("Fair", FAIR_MODEL_PATH)]:
         if path.exists():
+            import joblib as _jl
+            artifact = _jl.load(path)
+            feat_cols = (artifact.get("feature_columns") if isinstance(artifact, dict) else None) or FEATURE_COLUMNS
             pipe, name = _load_model_pipeline(path)
-            y_pred = pipe.predict(X_test)
+            X_m = df[feat_cols].fillna(0).values
+            _, X_test_m, _, _, _, _ = train_test_split(
+                X_m, y, df.index, test_size=0.2, stratify=y, random_state=42
+            )
+            y_pred = pipe.predict(X_test_m)
             models.append((label, name, np.array(y_pred)))
         else:
             print(f"  ⚠️  {label} model not found at {path} — skipping")
