@@ -1,10 +1,18 @@
-from pydantic import ConfigDict
+from pydantic import ConfigDict, field_validator
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    anthropic_api_key: str
+    anthropic_api_key: str = ""
     database_url: str
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def fix_postgres_scheme(cls, v: str) -> str:
+        # Railway injects postgres:// but psycopg2 requires postgresql://
+        if isinstance(v, str) and v.startswith("postgres://"):
+            return v.replace("postgres://", "postgresql://", 1)
+        return v
     env: str = "development"
     log_level: str = "INFO"
 
