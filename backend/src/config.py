@@ -1,5 +1,9 @@
+from pathlib import Path
 from pydantic import ConfigDict, field_validator
 from pydantic_settings import BaseSettings
+
+# Project root = two levels up from this file (backend/src/config.py → backend/ → WP2/)
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 class Settings(BaseSettings):
@@ -22,11 +26,11 @@ class Settings(BaseSettings):
     # Upload limits
     max_file_size_mb: int = 5
 
-    # Paths (relative to /app inside Docker, override locally)
-    incoming_cvs_path: str = "./data/incoming_cvs"
-    processed_cvs_path: str = "./data/processed_cvs"
-    failed_cvs_path: str = "./data/failed_cvs"
-    ml_model_path: str = "./ml/model.joblib"
+    # Paths — absolute by default so they work regardless of CWD; Docker overrides via env vars
+    incoming_cvs_path: str = str(_PROJECT_ROOT / "data" / "incoming_cvs")
+    processed_cvs_path: str = str(_PROJECT_ROOT / "data" / "processed_cvs")
+    failed_cvs_path: str = str(_PROJECT_ROOT / "data" / "failed_cvs")
+    ml_model_path: str = str(_PROJECT_ROOT / "backend" / "ml" / "model.joblib")
 
     # File watcher
     watcher_interval: int = 10  # seconds between polls

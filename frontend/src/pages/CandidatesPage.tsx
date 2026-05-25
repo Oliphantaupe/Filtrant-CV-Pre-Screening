@@ -1081,6 +1081,39 @@ function DetailPanel({ candidate: initialCandidate, onClose }: { candidate: Cand
                   </div>
                 </div>
 
+                {/* SHAP Explanation */}
+                {candidate.explanation && (
+                  <div className="pt-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+                    <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--text-faint)' }}>
+                      Why this decision
+                    </p>
+                    <div className="space-y-2">
+                      {candidate.explanation.positive.map(c => (
+                        <div key={c.feature}>
+                          <div className="flex justify-between text-xs mb-0.5">
+                            <span style={{ color: 'var(--teal)' }}>+ {c.label}</span>
+                            <span className="font-jetbrains" style={{ color: 'var(--teal)' }}>+{c.contribution.toFixed(3)}</span>
+                          </div>
+                          <div className="h-1 rounded-full overflow-hidden" style={{ background: 'var(--glass-hover)' }}>
+                            <div className="h-full rounded-full" style={{ width: `${Math.min(100, Math.abs(c.contribution) * 400)}%`, background: 'var(--teal)' }} />
+                          </div>
+                        </div>
+                      ))}
+                      {candidate.explanation.negative.map(c => (
+                        <div key={c.feature}>
+                          <div className="flex justify-between text-xs mb-0.5">
+                            <span style={{ color: 'var(--text-muted)' }}>− {c.label}</span>
+                            <span className="font-jetbrains" style={{ color: 'var(--text-muted)' }}>{c.contribution.toFixed(3)}</span>
+                          </div>
+                          <div className="h-1 rounded-full overflow-hidden" style={{ background: 'var(--glass-hover)' }}>
+                            <div className="h-full rounded-full" style={{ width: `${Math.min(100, Math.abs(c.contribution) * 400)}%`, background: 'var(--text-ghost)' }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* HR Override */}
                 <div className="pt-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
                   <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--text-faint)' }}>

@@ -1,6 +1,7 @@
 import csv
 import io
 import json
+import os
 from pathlib import Path
 from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException, Query
@@ -12,7 +13,7 @@ from src.models.cv_schema import CVSchema
 
 router = APIRouter(prefix="/api/v1", tags=["candidates"])
 
-FAIRNESS_REPORT_PATH = Path("/app/ml/fairness_report.json")
+FAIRNESS_REPORT_PATH = Path(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "ml", "fairness_report.json"))
 
 
 class OverrideRequest(BaseModel):

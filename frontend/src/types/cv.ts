@@ -74,4 +74,5 @@ export interface UploadResult {
   confidence: number | null
   parse_quality: string
   missing_fields: string[]
+  fairness_mitigated?: boolean
 }

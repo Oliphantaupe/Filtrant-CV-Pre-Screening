@@ -84,6 +84,12 @@ function ResultRow({ item }: { item: FileItem }) {
 
       {rec && (
         <div className="flex items-center gap-2 shrink-0">
+          {item.result?.fairness_mitigated && (
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
+              style={{ background: 'var(--teal-dim)', color: 'var(--teal)', border: '1px solid var(--teal-border)' }}>
+              Fair v2
+            </span>
+          )}
           {item.result?.confidence != null && (
             <span className="text-xs font-jetbrains" style={{ color: 'var(--text-faint)' }}>
               {Math.round(item.result.confidence * 100)}%

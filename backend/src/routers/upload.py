@@ -87,6 +87,17 @@ async def _process_cv_bytes(file_bytes: bytes, filename: str) -> dict:
             )
         conn.commit()
 
+    from src.services.predictor import _decision_threshold as _dt, _model as _m
+    import joblib, os
+    _fair = False
+    try:
+        fair_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "ml", "model_fair.joblib")
+        if os.path.exists(fair_path):
+            art = joblib.load(fair_path)
+            _fair = bool(art.get("fairness_mitigated", False)) if isinstance(art, dict) else False
+    except Exception:
+        pass
+
     return {
         "id": candidate_id,
         "name": cv.personal.full_name,
@@ -96,6 +107,7 @@ async def _process_cv_bytes(file_bytes: bytes, filename: str) -> dict:
         "explanation": explanation,
         "parse_quality": cv.parse_quality,
         "missing_fields": cv.missing_fields,
+        "fairness_mitigated": _fair,
     }
 
 
