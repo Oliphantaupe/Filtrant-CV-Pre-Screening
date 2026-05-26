@@ -2,8 +2,36 @@
 Derives ML features from a parsed CVSchema.
 All features are numeric — no text, no NaN.
 """
+import logging
 from datetime import datetime
 from src.models.cv_schema import CVSchema
+
+logger = logging.getLogger(__name__)
+
+LUXEMBOURG_COORDS = (49.6116, 6.1319)
+
+# -1 = unknown (geopy unavailable or geocoding failed)
+_GEOPY_AVAILABLE = False
+try:
+    from geopy.geocoders import Nominatim
+    from geopy.distance import geodesic
+    _geolocator = Nominatim(user_agent="filtrant_cv_screener", timeout=5)
+    _GEOPY_AVAILABLE = True
+except ImportError:
+    pass
+
+
+def _compute_distance_km(address: str | None) -> float:
+    """Return km distance from address to Luxembourg-Ville. Returns -1 if unknown."""
+    if not address or not _GEOPY_AVAILABLE:
+        return -1.0
+    try:
+        location = _geolocator.geocode(address)
+        if location:
+            return round(geodesic((location.latitude, location.longitude), LUXEMBOURG_COORDS).kilometers, 1)
+    except Exception as e:
+        logger.debug("Geocoding failed for '%s': %s", address, e)
+    return -1.0
 
 SENIORITY_KEYWORDS = {"senior", "lead", "manager", "head", "director", "principal", "chief", "vp", "president"}
 
@@ -126,6 +154,11 @@ def extract_features(cv: CVSchema) -> dict:
     career_trajectory_score = _compute_trajectory(cv)
     latest_title_seniority = _get_seniority(cv.experience[0].title if cv.experience else None)
 
+    # ── Geolocation feature ───────────────────────────────────────────────────
+    # Distance to Luxembourg-Ville in km (-1 = unknown address or geopy unavailable).
+    # Candidates closer to Luxembourg tend to be more likely to be invited.
+    distance_km = _compute_distance_km(cv.personal.address)
+
     return {
         # Original
         "total_years_experience": total_years,
@@ -152,6 +185,8 @@ def extract_features(cv: CVSchema) -> dict:
         # Career trajectory
         "career_trajectory_score": career_trajectory_score,
         "latest_title_seniority": latest_title_seniority,
+        # Geolocation
+        "distance_km": distance_km,
     }
 
 
@@ -212,4 +247,6 @@ FEATURE_COLUMNS = [
     # Career trajectory
     "career_trajectory_score",
     "latest_title_seniority",
+    # Geolocation
+    "distance_km",
 ]

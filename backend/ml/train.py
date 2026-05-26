@@ -78,6 +78,7 @@ FEATURE_COLUMNS = [
     "experience_x_education",
     "career_trajectory_score",
     "latest_title_seniority",
+    "distance_km",
 ]
 
 
@@ -195,18 +196,24 @@ def main():
 
     # ── Model comparison ──────────────────────────────────────────────────────
     print("\n--- Model comparison ---")
-    print(f"  {'Model':<25}  AUC (test)  F1 Invite (cv5)")
+    print(f"  {'Model':<25}  AUC (test)  F0.5 Invite (cv5)")
     print(f"  {'-'*25}  ----------  ---------------")
 
     cv_strat = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     best_name, best_f1_cv, best_auc, best_pipeline = None, 0.0, 0.0, None
+
+    # F0.5 penalises false positives (inviting an unqualified candidate) more than
+    # false negatives — better suited for recruitment than symmetric F1.
+    SCORING = "f_beta"
+    from sklearn.metrics import fbeta_score, make_scorer
+    f05_scorer = make_scorer(fbeta_score, beta=0.5)
 
     for name, pipe in candidates.items():
         try:
             pipe.fit(X_train, y_train)
             y_proba = pipe.predict_proba(X_test)[:, 1]
             auc = roc_auc_score(y_test, y_proba)
-            f1_cv = cross_val_score(pipe, X_train, y_train, cv=cv_strat, scoring="f1").mean()
+            f1_cv = cross_val_score(pipe, X_train, y_train, cv=cv_strat, scoring=f05_scorer).mean()
             marker = ""
             if f1_cv > best_f1_cv:
                 marker = "  <- BEST"
@@ -249,7 +256,7 @@ def main():
     if best_name in param_grids:
         search = RandomizedSearchCV(
             best_pipeline, param_grids[best_name],
-            n_iter=20, cv=cv_strat, scoring="f1",
+            n_iter=20, cv=cv_strat, scoring=f05_scorer,
             random_state=42, n_jobs=-1, refit=True,
         )
         search.fit(X_train, y_train)

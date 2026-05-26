@@ -245,6 +245,8 @@ def parse_cv(text: str) -> dict:
         # Career trajectory
         "career_trajectory_score": career_trajectory_score,
         "latest_title_seniority": latest_title_seniority,
+        # Geolocation — -1 means unknown (historical CVs have no address)
+        "distance_km": -1.0,
     }
 
 

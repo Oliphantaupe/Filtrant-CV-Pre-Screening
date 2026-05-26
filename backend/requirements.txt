@@ -28,3 +28,6 @@ pydantic-settings==2.3.4
 
 # Utilities
 python-dotenv==1.0.1
+
+# Geolocation (optional — used for distance_km feature)
+geopy>=2.4

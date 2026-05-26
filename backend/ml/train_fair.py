@@ -54,6 +54,7 @@ FEATURE_COLUMNS = [
     "experience_education_ratio", "certs_per_year",
     "experience_x_seniority", "experience_x_education",
     "career_trajectory_score", "latest_title_seniority",
+    "distance_km",
 ]
 
 SENSITIVE_ATTRIBUTES = ["gender", "age_cohort", "is_multilingual"]
@@ -189,7 +190,7 @@ def main():
     print("\n--- Auto-cleaning mislabeled samples ---")
     X_fit, y_fit, keep_mask, n_cleaned = auto_clean_labels(X_fit, y_fit)
     df_fit = df_fit.iloc[np.where(keep_mask)[0]].reset_index(drop=True)
-    print(f"  Removed {n_cleaned} suspect samples → {len(X_fit)} fit samples remain")
+    print(f"  Removed {n_cleaned} suspect samples -> {len(X_fit)} fit samples remain")
 
     # ── Load baseline for comparison ──────────────────────────────────────────
     baseline_metrics = None
@@ -204,7 +205,7 @@ def main():
         print(f"\nBaseline AUC: {baseline_auc:.3f}")
         print("Baseline Equal Opportunity Differences:")
         for attr, m in baseline_metrics.items():
-            flag = "⚠️" if abs(m["equal_opportunity_diff"]) > 0.05 else "✅"
+            flag = "[!]" if abs(m["equal_opportunity_diff"]) > 0.05 else "[OK]"
             print(f"  {attr:<20} EOD = {m['equal_opportunity_diff']:+.3f}  {flag}")
 
     # ── Sample re-weighting ───────────────────────────────────────────────────
@@ -247,7 +248,7 @@ def main():
     print(f"  AUC: {fair_auc:.3f}")
     print("  Equal Opportunity Differences:")
     for attr, m in fair_metrics.items():
-        flag = "⚠️" if abs(m["equal_opportunity_diff"]) > 0.05 else "✅"
+        flag = "[!]" if abs(m["equal_opportunity_diff"]) > 0.05 else "[OK]"
         base_eod = baseline_metrics[attr]["equal_opportunity_diff"] if baseline_metrics else float("nan")
         print(f"    {attr:<20} EOD = {m['equal_opportunity_diff']:+.3f}  {flag}  (baseline: {base_eod:+.3f})")
 
@@ -274,16 +275,16 @@ def main():
 
     # ── Comparison summary ────────────────────────────────────────────────────
     print(f"\n{'='*60}")
-    print("  COMPARISON: Baseline → Fair model")
+    print("  COMPARISON: Baseline -> Fair model")
     print(f"{'='*60}")
     if baseline_metrics and baseline_auc is not None:
-        print(f"  AUC:  {baseline_auc:.3f} → {fair_auc:.3f}  (delta: {fair_auc - baseline_auc:+.3f})")
+        print(f"  AUC:  {baseline_auc:.3f} -> {fair_auc:.3f}  (delta: {fair_auc - baseline_auc:+.3f})")
         for attr in SENSITIVE_ATTRIBUTES:
             b_eod = baseline_metrics[attr]["equal_opportunity_diff"]
             f_eod = fair_metrics[attr]["equal_opportunity_diff"]
             delta = f_eod - b_eod
-            flag = "✅" if abs(f_eod) <= abs(b_eod) else "⚠️"
-            print(f"  EOD ({attr:<18}): {b_eod:+.3f} → {f_eod:+.3f}  (delta: {delta:+.3f}) {flag}")
+            flag = "[OK]" if abs(f_eod) <= abs(b_eod) else "[!]"
+            print(f"  EOD ({attr:<18}): {b_eod:+.3f} -> {f_eod:+.3f}  (delta: {delta:+.3f}) {flag}")
 
     print(f"\nClassification report (fair model):")
     print(classification_report(y_test, y_pred_fair, target_names=["Reject", "Invite"]))
