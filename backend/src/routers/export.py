@@ -71,6 +71,8 @@ def list_candidates(
                 f"""
                 SELECT id, processed_at, source_filename, source_format,
                        parse_quality, recommendation, confidence,
+                       recommendation_base, confidence_base,
+                       hr_decision, override_reason, overridden_at,
                        cv_data->'personal'->>'full_name' AS name,
                        cv_data->'personal'->>'email' AS email,
                        cv_data->>'target_role' AS target_role
@@ -129,7 +131,8 @@ def get_candidate(candidate_id: str):
                 """
                 SELECT id, processed_at, source_filename, source_format,
                        parse_quality, recommendation, confidence, cv_data, missing_fields,
-                       explanation, hr_decision, override_reason, overridden_at
+                       explanation, hr_decision, override_reason, overridden_at,
+                       recommendation_base, confidence_base, explanation_base
                 FROM candidates WHERE id = %s
                 """,
                 (candidate_id,),
@@ -141,7 +144,8 @@ def get_candidate(candidate_id: str):
 
     cols = ["id", "processed_at", "source_filename", "source_format",
             "parse_quality", "recommendation", "confidence", "cv_data", "missing_fields",
-            "explanation", "hr_decision", "override_reason", "overridden_at"]
+            "explanation", "hr_decision", "override_reason", "overridden_at",
+            "recommendation_base", "confidence_base", "explanation_base"]
     result = dict(zip(cols, row))
     if result["processed_at"]:
         result["processed_at"] = result["processed_at"].isoformat()

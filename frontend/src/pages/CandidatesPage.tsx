@@ -7,6 +7,7 @@ import CountUp from '../components/CountUp'
 import RecommendationBadge from '../components/RecommendationBadge'
 import DatePicker from '../components/DatePicker'
 import ScrollArea from '../components/ScrollArea'
+import { useModel } from '../context/ModelContext'
 
 // ─── Feature derivation ───────────────────────────────────────────────────────
 
@@ -501,11 +502,14 @@ function GlassStatCard({ label, value }: { label: string; value: number }) {
 // ─── Simple view — card grid ──────────────────────────────────────────────────
 
 function SimpleView({ items, onOpen }: { items: CandidateRow[]; onOpen: (c: CandidateRow) => void }) {
+  const { model } = useModel()
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {items.map((c, i) => {
-        const inv = c.recommendation === 'Invite'
-        const rej = c.recommendation === 'Reject'
+        const rec  = (model === 'base' ? c.recommendation_base : c.recommendation) ?? c.recommendation
+        const conf = model === 'base' ? c.confidence_base : c.confidence
+        const inv = rec === 'Invite'
+        const rej = rec === 'Reject'
         const barColor = inv ? 'var(--teal)' : rej ? 'var(--text-faint)' : 'var(--text-4)'
         return (
           <motion.div
@@ -538,22 +542,25 @@ function SimpleView({ items, onOpen }: { items: CandidateRow[]; onOpen: (c: Cand
 
                 {/* Recommendation + confidence */}
                 <div className="flex items-center justify-between mb-2">
-                  <RecommendationBadge value={c.recommendation} />
-                  {c.confidence !== null && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <RecommendationBadge value={rec as 'Invite' | 'Reject' | 'pending'} />
+                    {c.hr_decision && <HROverrideBadge decision={c.hr_decision} />}
+                  </div>
+                  {conf !== null && (
                     <span className="text-sm font-semibold font-jetbrains tabular-nums"
                       style={{ color: 'var(--text-body)' }}>
-                      {(c.confidence * 100).toFixed(0)}%
+                      {((conf ?? 0) * 100).toFixed(0)}%
                     </span>
                   )}
                 </div>
 
                 {/* Confidence bar */}
-                {c.confidence !== null && (
+                {conf !== null && (
                   <div className="h-[3px] rounded-full overflow-hidden mb-3"
                     style={{ background: 'var(--glass)' }}>
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: `${(c.confidence * 100).toFixed(0)}%` }}
+                      animate={{ width: `${((conf ?? 0) * 100).toFixed(0)}%` }}
                       transition={{ delay: i * 0.04 + 0.2, duration: 0.6, ease: 'easeOut' }}
                       className="h-full rounded-full"
                       style={{ background: barColor }}
@@ -578,12 +585,13 @@ function SimpleView({ items, onOpen }: { items: CandidateRow[]; onOpen: (c: Cand
 // ─── Advanced view — table ────────────────────────────────────────────────────
 
 function AdvancedView({ items, onOpen }: { items: CandidateRow[]; onOpen: (id: string) => void }) {
+  const { model } = useModel()
   return (
     <div className="glass-card overflow-hidden overflow-x-auto">
       <table className="w-full min-w-[640px] text-sm">
         <thead style={{ borderBottom: '1px solid var(--border-dim)' }}>
           <tr>
-            {['Candidate', 'Outcome', 'Confidence', 'Parse quality', 'Format', 'Processed'].map(h => (
+            {['Candidate', 'Outcome', 'RH Decision', 'Confidence', 'Parse quality', 'Format', 'Processed'].map(h => (
               <th key={h} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider"
                 style={{ color: 'var(--text-3)' }}>
                 {h}
@@ -593,9 +601,10 @@ function AdvancedView({ items, onOpen }: { items: CandidateRow[]; onOpen: (id: s
         </thead>
         <tbody>
           {items.map((c, i) => {
-            const inv = c.recommendation === 'Invite'
-            const rej = c.recommendation === 'Reject'
-            const accentColor = inv ? 'var(--teal)' : rej ? 'var(--text-faint)' : 'var(--text-ghost)'
+            const rec  = (model === 'base' ? c.recommendation_base : c.recommendation) ?? c.recommendation
+            const conf = model === 'base' ? c.confidence_base : c.confidence
+            const inv = rec === 'Invite'
+            const rej = rec === 'Reject'
             return (
               <motion.tr
                 key={c.id}
@@ -620,18 +629,24 @@ function AdvancedView({ items, onOpen }: { items: CandidateRow[]; onOpen: (id: s
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-3"><RecommendationBadge value={c.recommendation} /></td>
+                <td className="px-4 py-3"><RecommendationBadge value={rec as 'Invite' | 'Reject' | 'pending'} /></td>
+                <td className="px-4 py-3">
+                  {c.hr_decision
+                    ? <HROverrideBadge decision={c.hr_decision} />
+                    : <span className="text-xs" style={{ color: 'var(--text-ghost)' }}>—</span>
+                  }
+                </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
                     <div className="w-20 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--glass-hover)' }}>
                       <div className="h-full rounded-full"
                         style={{
-                          width: c.confidence !== null ? `${(c.confidence * 100).toFixed(0)}%` : '0%',
+                          width: conf !== null ? `${((conf ?? 0) * 100).toFixed(0)}%` : '0%',
                           background: inv ? 'var(--teal)' : rej ? 'var(--text-ghost)' : 'var(--text-4)',
                         }} />
                     </div>
                     <span className="font-jetbrains text-xs" style={{ color: 'var(--text-body)' }}>
-                      {c.confidence !== null ? `${(c.confidence * 100).toFixed(1)}%` : '—'}
+                      {conf !== null ? `${((conf ?? 0) * 100).toFixed(1)}%` : '—'}
                     </span>
                   </div>
                 </td>
@@ -654,8 +669,11 @@ function AdvancedView({ items, onOpen }: { items: CandidateRow[]; onOpen: (id: s
 function QuickLookModal({ candidate, onClose, onOpenFull }: {
   candidate: CandidateRow; onClose: () => void; onOpenFull: () => void
 }) {
-  const inv = candidate.recommendation === 'Invite'
-  const rej = candidate.recommendation === 'Reject'
+  const { model } = useModel()
+  const rec  = (model === 'base' ? candidate.recommendation_base : candidate.recommendation) ?? candidate.recommendation
+  const conf = model === 'base' ? candidate.confidence_base : candidate.confidence
+  const inv = rec === 'Invite'
+  const rej = rec === 'Reject'
   const accentColor = inv ? 'var(--teal)' : rej ? 'var(--text-3)' : 'var(--text-muted)'
 
   return (
@@ -687,7 +705,7 @@ function QuickLookModal({ candidate, onClose, onOpenFull }: {
           style={{ background: `radial-gradient(ellipse at 50% -15%, ${inv ? 'var(--teal-dim)' : 'transparent'} 0%, transparent 60%)` }} />
 
         <button onClick={onClose}
-          className="absolute top-4 right-4 w-7 h-7 rounded-full flex items-center justify-center text-lg leading-none transition-colors z-10"
+          className="absolute top-4 right-4 w-7 h-7 rounded-full flex items-center justify-center text-lg leading-none transition-colors z-20"
           style={{ color: 'var(--text-muted)', background: 'var(--glass-hover)' }}
           onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-bright)')}
           onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}>
@@ -711,13 +729,13 @@ function QuickLookModal({ candidate, onClose, onOpenFull }: {
           </div>
 
           <div className="flex justify-center mb-5">
-            <RecommendationBadge value={candidate.recommendation} large />
+            <RecommendationBadge value={rec as 'Invite' | 'Reject' | 'pending'} large />
           </div>
 
-          {candidate.confidence !== null && (
+          {conf !== null && (
             <div className="text-center mb-5">
               <p className="font-jetbrains text-4xl font-semibold tabular-nums" style={{ color: 'var(--text-heading)' }}>
-                {(candidate.confidence * 100).toFixed(0)}
+                {((conf ?? 0) * 100).toFixed(0)}
                 <span className="text-xl" style={{ color: 'var(--text-faint)' }}>%</span>
               </p>
               <p className="text-xs mt-0.5" style={{ color: 'var(--text-3)' }}>model confidence</p>
@@ -725,7 +743,7 @@ function QuickLookModal({ candidate, onClose, onOpenFull }: {
                 style={{ background: 'var(--glass)' }}>
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: `${(candidate.confidence * 100).toFixed(0)}%` }}
+                  animate={{ width: `${((conf ?? 0) * 100).toFixed(0)}%` }}
                   transition={{ duration: 0.65, ease: 'easeOut' }}
                   className="h-full rounded-full"
                   style={{
@@ -770,6 +788,7 @@ function QuickLookModal({ candidate, onClose, onOpenFull }: {
 
 function DetailPanel({ candidate: initialCandidate, onClose }: { candidate: CandidateDetail; onClose: () => void }) {
   const [candidate, setCandidate] = useState(initialCandidate)
+  const { model } = useModel()
   const [overrideOpen, setOverrideOpen] = useState(false)
   const [overrideDecision, setOverrideDecision] = useState<'Invite' | 'Reject'>(
     initialCandidate.hr_decision ?? 'Invite'
@@ -799,8 +818,11 @@ function DetailPanel({ candidate: initialCandidate, onClose }: { candidate: Cand
 
   const cv = candidate.cv_data
   const f = deriveFeatures(cv)
-  const inv = candidate.recommendation === 'Invite'
-  const rej = candidate.recommendation === 'Reject'
+  const activeRec  = (model === 'base' ? candidate.recommendation_base : candidate.recommendation) ?? candidate.recommendation
+  const activeConf = model === 'base' ? candidate.confidence_base : candidate.confidence
+  const activeExpl = model === 'base' ? candidate.explanation_base : candidate.explanation
+  const inv = activeRec === 'Invite'
+  const rej = activeRec === 'Reject'
   const statusColor = inv ? 'var(--teal)' : rej ? 'var(--text-muted)' : 'var(--text-faint)'
 
   return (
@@ -1027,19 +1049,19 @@ function DetailPanel({ candidate: initialCandidate, onClose }: { candidate: Cand
                     AI Recommendation
                   </p>
                   <div className="flex justify-center mb-3 relative z-10">
-                    <RecommendationBadge value={candidate.recommendation} large />
+                    <RecommendationBadge value={activeRec as 'Invite' | 'Reject' | 'pending'} large />
                   </div>
-                  {candidate.confidence !== null && (
+                  {activeConf !== null && (
                     <>
                       <p className="font-jetbrains text-3xl font-semibold mt-3 tabular-nums relative z-10" style={{ color: 'var(--text-heading)' }}>
-                        {(candidate.confidence * 100).toFixed(0)}
+                        {((activeConf ?? 0) * 100).toFixed(0)}
                         <span className="text-lg" style={{ color: 'var(--text-faint)' }}>%</span>
                       </p>
                       <p className="text-xs mb-2 relative z-10" style={{ color: 'var(--text-faint)' }}>model confidence</p>
                       <div className="h-2 rounded-full overflow-hidden relative z-10" style={{ background: 'var(--glass-hover)' }}>
                         <div className="h-full rounded-full transition-all"
                           style={{
-                            width: `${(candidate.confidence * 100).toFixed(0)}%`,
+                            width: `${((activeConf ?? 0) * 100).toFixed(0)}%`,
                             background: inv ? 'var(--teal)' : rej ? 'var(--text-ghost)' : 'var(--text-4)',
                           }} />
                       </div>
@@ -1082,13 +1104,13 @@ function DetailPanel({ candidate: initialCandidate, onClose }: { candidate: Cand
                 </div>
 
                 {/* SHAP Explanation */}
-                {candidate.explanation && (
+                {activeExpl && (
                   <div className="pt-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
                     <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--text-faint)' }}>
                       Why this decision
                     </p>
                     <div className="space-y-2">
-                      {candidate.explanation.positive.map(c => (
+                      {activeExpl.positive.map(c => (
                         <div key={c.feature}>
                           <div className="flex justify-between text-xs mb-0.5">
                             <span style={{ color: 'var(--teal)' }}>+ {c.label}</span>
@@ -1099,7 +1121,7 @@ function DetailPanel({ candidate: initialCandidate, onClose }: { candidate: Cand
                           </div>
                         </div>
                       ))}
-                      {candidate.explanation.negative.map(c => (
+                      {activeExpl.negative.map(c => (
                         <div key={c.feature}>
                           <div className="flex justify-between text-xs mb-0.5">
                             <span style={{ color: 'var(--text-muted)' }}>− {c.label}</span>
@@ -1270,6 +1292,23 @@ function ParseQualityBadge({ value }: { value: string }) {
   )
 }
 
+
+function HROverrideBadge({ decision }: { decision: 'Invite' | 'Reject' }) {
+  const inv = decision === 'Invite'
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
+      style={{
+        background: inv ? 'rgba(251,146,60,0.12)' : 'rgba(239,68,68,0.10)',
+        color: inv ? 'rgb(251,146,60)' : 'rgb(239,68,68)',
+        border: `1px solid ${inv ? 'rgba(251,146,60,0.25)' : 'rgba(239,68,68,0.25)'}`,
+      }}>
+      <svg className="w-2.5 h-2.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+      </svg>
+      RH → {decision}
+    </span>
+  )
+}
 
 function initials(name: string | null): string {
   if (!name) return '?'

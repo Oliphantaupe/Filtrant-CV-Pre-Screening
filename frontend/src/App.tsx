@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
 import AnimatedBackground from './components/AnimatedBackground'
+import { useModel } from './context/ModelContext'
 
 type Theme = 'dark' | 'light'
 
@@ -27,6 +28,7 @@ export default function App() {
   const [theme, setTheme] = useState<Theme>(() =>
     (localStorage.getItem('theme') as Theme) ?? 'dark'
   )
+  const { model, setModel } = useModel()
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
@@ -47,6 +49,25 @@ export default function App() {
           <NavItem to="/dashboard">Dashboard</NavItem>
           <NavItem to="/candidates">Candidates</NavItem>
           <NavItem to="/upload">Upload CV</NavItem>
+          <div className="w-px h-4 bg-[--glass-active] mx-1" />
+
+          {/* Model toggle */}
+          <div className="flex items-center rounded-full p-0.5" style={{ background: 'var(--glass-subtle)', border: '1px solid var(--border-subtle)' }}>
+            {(['fair', 'base'] as const).map(m => (
+              <button
+                key={m}
+                onClick={() => setModel(m)}
+                className="px-2.5 py-1 rounded-full text-xs font-semibold transition-all duration-150"
+                style={model === m
+                  ? { background: 'var(--teal)', color: '#fff' }
+                  : { color: 'var(--text-muted)' }
+                }
+              >
+                {m === 'fair' ? 'Équitable' : 'Standard'}
+              </button>
+            ))}
+          </div>
+
           <div className="w-px h-4 bg-[--glass-active] mx-1" />
           <button
             onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}

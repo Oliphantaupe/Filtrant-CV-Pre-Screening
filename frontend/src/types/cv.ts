@@ -6,9 +6,14 @@ export interface CandidateRow {
   parse_quality: string
   recommendation: 'Invite' | 'Reject' | 'pending'
   confidence: number | null
+  recommendation_base: 'Invite' | 'Reject' | null
+  confidence_base: number | null
   name: string | null
   email: string | null
   target_role: string | null
+  hr_decision: 'Invite' | 'Reject' | null
+  override_reason: string | null
+  overridden_at: string | null
 }
 
 export interface ShapContribution {
@@ -26,9 +31,7 @@ export interface CandidateDetail extends CandidateRow {
   cv_data: CVData
   missing_fields: string[]
   explanation: Explanation | null
-  hr_decision: 'Invite' | 'Reject' | null
-  override_reason: string | null
-  overridden_at: string | null
+  explanation_base: Explanation | null
 }
 
 export interface CVData {
@@ -72,7 +75,8 @@ export interface UploadResult {
   name: string | null
   recommendation: 'Invite' | 'Reject' | 'pending'
   confidence: number | null
+  recommendation_base: 'Invite' | 'Reject' | null
+  confidence_base: number | null
   parse_quality: string
   missing_fields: string[]
-  fairness_mitigated?: boolean
 }

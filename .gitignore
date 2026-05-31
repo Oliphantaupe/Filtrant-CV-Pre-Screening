@@ -17,8 +17,7 @@ build/
 *.egg-info/
 .pytest_cache/
 
-# ML models (commit intentionally when ready)
-backend/ml/model.joblib
+# ML models — both committed so dual-model toggle works in prod
 
 # Node / Frontend
 node_modules/

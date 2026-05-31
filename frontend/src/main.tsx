@@ -5,10 +5,12 @@ import App from './App'
 import DashboardPage from './pages/DashboardPage'
 import UploadPage from './pages/UploadPage'
 import CandidatesPage from './pages/CandidatesPage'
+import { ModelProvider } from './context/ModelContext'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
+    <ModelProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />}>
@@ -19,5 +21,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </Route>
       </Routes>
     </BrowserRouter>
+    </ModelProvider>
   </React.StrictMode>,
 )

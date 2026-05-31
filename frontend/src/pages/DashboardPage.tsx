@@ -5,58 +5,7 @@ import type { CandidateRow } from '../types/cv'
 import CountUp from '../components/CountUp'
 import RecommendationBadge from '../components/RecommendationBadge'
 import { fmtUTC } from '../utils/date'
-
-interface ByGroupRaw { selection_rate: Record<string, number>; tpr: Record<string, number> }
-interface AttributeMetricsRaw {
-  equal_opportunity_diff: number
-  demographic_parity_diff: number
-  by_group: ByGroupRaw
-}
-interface FairnessReportRaw {
-  model: string
-  auc: number
-  baseline: { auc: number; metrics: Record<string, AttributeMetricsRaw> }
-  fair: { auc: number; metrics: Record<string, AttributeMetricsRaw> }
-}
-interface GroupMetric { selection_rate: number; tpr: number }
-interface AttributeMetrics {
-  eod: number
-  dp_diff: number
-  by_group: Record<string, GroupMetric>
-}
-interface FairnessMetrics {
-  model_name: string
-  fairness_mitigated: boolean
-  auc: number
-  baseline_auc: number
-  metrics: Record<string, AttributeMetrics>
-}
-
-function parseFairnessReport(raw: FairnessReportRaw): FairnessMetrics {
-  const metrics: Record<string, AttributeMetrics> = {}
-  const src = raw.fair?.metrics ?? {}
-  for (const [attr, m] of Object.entries(src)) {
-    const byGroup: Record<string, GroupMetric> = {}
-    for (const grp of Object.keys(m.by_group.selection_rate ?? {})) {
-      byGroup[grp] = {
-        selection_rate: m.by_group.selection_rate[grp] ?? 0,
-        tpr: m.by_group.tpr?.[grp] ?? 0,
-      }
-    }
-    metrics[attr] = {
-      eod: m.equal_opportunity_diff ?? 0,
-      dp_diff: m.demographic_parity_diff ?? 0,
-      by_group: byGroup,
-    }
-  }
-  return {
-    model_name: raw.model ?? 'Unknown',
-    fairness_mitigated: true,
-    auc: raw.fair?.auc ?? 0,
-    baseline_auc: raw.baseline?.auc ?? 0,
-    metrics,
-  }
-}
+import { useModel } from '../context/ModelContext'
 
 
 function lastNDays(n: number): string[] {
@@ -74,22 +23,22 @@ export default function DashboardPage() {
   const [items, setItems] = useState<CandidateRow[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [fairness, setFairness] = useState<FairnessMetrics | null>(null)
+  const { model } = useModel()
 
   useEffect(() => {
     api.listCandidates({ page: 1, page_size: 100 })
       .then(res => { setItems(res.items); setTotal(res.total) })
       .finally(() => setLoading(false))
-    api.getFairnessMetrics()
-      .then(data => setFairness(parseFairnessReport(data as unknown as FairnessReportRaw)))
-      .catch(() => {})
   }, [])
 
-  const invited  = items.filter(c => c.recommendation === 'Invite').length
-  const rejected = items.filter(c => c.recommendation === 'Reject').length
-  const pending  = items.filter(c => c.recommendation === 'pending').length
+  const getRec  = (c: CandidateRow) => (model === 'base' ? c.recommendation_base : c.recommendation) ?? c.recommendation
+  const getConf = (c: CandidateRow) => model === 'base' ? c.confidence_base : c.confidence
 
-  const confs    = items.filter(c => c.confidence !== null).map(c => c.confidence!)
+  const invited  = items.filter(c => getRec(c) === 'Invite').length
+  const rejected = items.filter(c => getRec(c) === 'Reject').length
+  const pending  = items.filter(c => getRec(c) === 'pending').length
+
+  const confs    = items.map(getConf).filter((v): v is number => v !== null)
   const avgConf  = confs.length ? Math.round(confs.reduce((a, b) => a + b, 0) / confs.length * 100) : 0
 
   const complete   = items.filter(c => c.parse_quality === 'complete').length
@@ -241,158 +190,6 @@ export default function DashboardPage() {
         </motion.div>
       </div>
 
-      {/* Fairness metrics */}
-      {fairness && (
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.36, type: 'spring', stiffness: 280, damping: 28 }}
-          className="glass-card overflow-hidden">
-
-          {/* Header */}
-          <div className="px-5 py-4 flex items-center justify-between"
-            style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-            <div>
-              <div className="flex items-center gap-2 mb-0.5">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="var(--teal)" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1M4.22 4.22l.7.7m13.86 13.86.7.7M1 12h1m20 0h1M4.22 19.78l.7-.7M18.64 5.36l.7-.7" />
-                  <circle cx="12" cy="12" r="4" />
-                </svg>
-                <p className="font-bricolage text-sm font-semibold" style={{ color: 'var(--text-body)' }}>
-                  Fairness Audit
-                </p>
-                <span className="text-xs font-medium px-1.5 py-0.5 rounded" style={{ background: 'var(--glass-hover)', color: 'var(--text-muted)' }}>
-                  {fairness.model_name}
-                </span>
-              </div>
-              <p className="text-xs" style={{ color: 'var(--text-faint)' }}>
-                Equal Opportunity &amp; Demographic Parity by protected attribute
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              {/* AUC comparison */}
-              <div className="hidden sm:flex items-center gap-2 text-xs">
-                <span style={{ color: 'var(--text-faint)' }}>Baseline</span>
-                <span className="font-jetbrains font-semibold" style={{ color: 'var(--text-muted)' }}>
-                  {fairness.baseline_auc.toFixed(3)}
-                </span>
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="var(--text-faint)" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-                <span className="font-jetbrains font-semibold" style={{ color: 'var(--teal)' }}>
-                  {fairness.auc.toFixed(3)}
-                </span>
-                <span style={{ color: 'var(--text-faint)' }}>Fair AUC</span>
-              </div>
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5"
-                style={{
-                  background: 'var(--teal-dim)',
-                  color: 'var(--teal)',
-                  border: '1px solid var(--teal-border)',
-                }}>
-                <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: 'var(--teal)' }} />
-                Fair Model v2
-              </span>
-            </div>
-          </div>
-
-          {/* Attribute cards */}
-          <div className="p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {Object.entries(fairness.metrics).map(([attr, m]) => {
-              const eodBad = Math.abs(m.eod) > 0.1
-              const dpBad  = Math.abs(m.dp_diff) > 0.1
-              const attrLabel: Record<string, string> = {
-                gender: 'Gender',
-                age_cohort: 'Age cohort',
-                is_multilingual: 'Multilingual',
-              }
-              return (
-                <div key={attr} className="rounded-2xl overflow-hidden"
-                  style={{ background: 'var(--glass-subtle)', border: '1px solid var(--border-subtle)' }}>
-
-                  {/* Attribute header */}
-                  <div className="px-4 py-2.5 flex items-center justify-between"
-                    style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--glass-dim)' }}>
-                    <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
-                      {attrLabel[attr] ?? attr.replace(/_/g, ' ')}
-                    </p>
-                    <div className="flex items-center gap-1">
-                      {(eodBad || dpBad) && (
-                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="var(--reject)" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                        </svg>
-                      )}
-                      <span className="text-xs" style={{ color: (eodBad || dpBad) ? 'var(--reject)' : 'var(--teal)' }}>
-                        {(eodBad || dpBad) ? 'Review' : 'OK'}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-4 space-y-4">
-                    {/* EOD + DP scores */}
-                    <div className="grid grid-cols-2 gap-3">
-                      {[
-                        { label: 'EOD', value: m.eod, bad: eodBad },
-                        { label: 'DP diff', value: m.dp_diff, bad: dpBad },
-                      ].map(({ label, value, bad }) => (
-                        <div key={label} className="rounded-xl p-3 text-center"
-                          style={{
-                            background: bad ? 'rgba(239,68,68,0.06)' : 'var(--teal-dim)',
-                            border: `1px solid ${bad ? 'rgba(239,68,68,0.2)' : 'var(--teal-border)'}`,
-                          }}>
-                          <p className="font-jetbrains text-xl font-bold leading-none mb-1"
-                            style={{ color: bad ? 'var(--reject)' : 'var(--teal)' }}>
-                            {Math.abs(value).toFixed(2)}
-                          </p>
-                          <p className="text-xs font-medium" style={{ color: bad ? 'var(--reject)' : 'var(--teal)', opacity: 0.7 }}>
-                            {label}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Per-group bars */}
-                    <div className="space-y-2.5">
-                      {Object.entries(m.by_group).map(([grp, g]) => (
-                        <div key={grp}>
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-medium" style={{ color: 'var(--text-label)' }}>{grp}</span>
-                            <span className="text-xs font-jetbrains" style={{ color: 'var(--text-faint)' }}>
-                              {(g.selection_rate * 100).toFixed(0)}% sel · {(g.tpr * 100).toFixed(0)}% tpr
-                            </span>
-                          </div>
-                          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--glass-active)' }}>
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${Math.min(100, g.selection_rate * 100)}%` }}
-                              transition={{ duration: 0.6, ease: 'easeOut' }}
-                              className="h-full rounded-full"
-                              style={{ background: 'linear-gradient(to right, var(--teal-muted), var(--teal))' }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          {/* Footer legend */}
-          <div className="px-5 pb-4 flex flex-wrap gap-x-5 gap-y-1">
-            {[
-              { dot: 'var(--teal)', text: 'EOD ≤ 0.10 — acceptable gap' },
-              { dot: 'var(--reject)', text: 'EOD / DP > 0.10 — warrants review' },
-              { dot: 'var(--text-faint)', text: 'sel = selection rate · tpr = true positive rate' },
-            ].map(({ dot, text }) => (
-              <div key={text} className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--text-faint)' }}>
-                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: dot }} />
-                {text}
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      )}
-
       {/* Recent uploads */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.38, type: 'spring', stiffness: 280, damping: 28 }}
@@ -417,7 +214,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3 shrink-0">
-                <RecommendationBadge value={c.recommendation} />
+                <RecommendationBadge value={getRec(c) as 'Invite' | 'Reject' | 'pending'} />
                 <span className="text-xs hidden sm:block" style={{ color: 'var(--text-faint)' }}>
                   {new Date(c.processed_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
                 </span>

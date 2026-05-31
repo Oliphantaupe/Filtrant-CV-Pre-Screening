@@ -1,8 +1,8 @@
 """
 predictor.py — ML inference + SHAP explanations (WP2)
 ======================================================
-Loads model_fair.joblib (fair model) with fallback to model.joblib (baseline).
-Returns prediction + top contributing features via SHAP.
+Loads both model_fair.joblib and model.joblib at startup.
+Exposes predict(features, model='fair'|'base') for dual-model support.
 """
 import logging
 import os
@@ -12,14 +12,8 @@ from src.services.features import FEATURE_COLUMNS
 
 logger = logging.getLogger(__name__)
 
-_model              = None
-_explainer          = None
-_feat_cols          = None
-_calibrator         = None
-_calibrator_logit   = False
-_decision_threshold = 0.5
-
 FAIR_MODEL_PATH = os.path.join(os.path.dirname(settings.ml_model_path), "model_fair.joblib")
+BASE_MODEL_PATH = settings.ml_model_path
 
 FEATURE_LABELS = {
     "total_years_experience":     "Years of experience",
@@ -45,120 +39,133 @@ FEATURE_LABELS = {
     "latest_title_seniority":     "Current role seniority",
 }
 
+# Per-model state keyed by 'fair' | 'base'
+_state: dict[str, dict] = {
+    "fair": {"model": None, "explainer": None, "feat_cols": None,
+             "calibrator": None, "calibrator_logit": False, "threshold": 0.5},
+    "base": {"model": None, "explainer": None, "feat_cols": None,
+             "calibrator": None, "calibrator_logit": False, "threshold": 0.5},
+}
+_initialized = False
 
-def _load_model():
-    global _model, _explainer, _feat_cols, _calibrator, _calibrator_logit, _decision_threshold
-    import joblib
 
-    # Prefer fair model, fall back to baseline
-    path = FAIR_MODEL_PATH if os.path.exists(FAIR_MODEL_PATH) else settings.ml_model_path
+def _load_artifact(path: str, key: str) -> None:
     if not os.path.exists(path):
+        logger.warning("Model not found at %s — %s predictions will return 'pending'", path, key)
         return
-
+    import joblib
     artifact = joblib.load(path)
+    s = _state[key]
     if isinstance(artifact, dict) and "pipeline" in artifact:
-        _model            = artifact["pipeline"]
-        _feat_cols        = artifact.get("feature_columns", artifact.get("effective_features", FEATURE_COLUMNS))
-        _calibrator         = artifact.get("calibrator")
-        _calibrator_logit   = artifact.get("calibrator_logit_transform", False)
-        _decision_threshold = float(artifact.get("decision_threshold", 0.5))
-        is_fair             = artifact.get("fairness_mitigated", False)
-        T                   = artifact.get("temperature")
-        logger.info(
-            "Loaded model: %s (fair=%s, T=%s) — %d features",
-            artifact.get("model_name"), is_fair, f"{T:.2f}" if T else "none", len(_feat_cols),
-        )
+        s["model"]            = artifact["pipeline"]
+        s["feat_cols"]        = artifact.get("feature_columns", artifact.get("effective_features", FEATURE_COLUMNS))
+        s["calibrator"]       = artifact.get("calibrator")
+        s["calibrator_logit"] = artifact.get("calibrator_logit_transform", False)
+        s["threshold"]        = float(artifact.get("decision_threshold", 0.5))
+        logger.info("Loaded %s model: %s (fair=%s, T=%s) — %d features",
+                    key, artifact.get("model_name"),
+                    artifact.get("fairness_mitigated"),
+                    f"{artifact['temperature']:.2f}" if artifact.get("temperature") else "none",
+                    len(s["feat_cols"]))
     else:
-        _model     = artifact
-        _feat_cols = FEATURE_COLUMNS
-        logger.info("Loaded model (legacy) — %d features", len(_feat_cols))
+        s["model"]     = artifact
+        s["feat_cols"] = FEATURE_COLUMNS
+        logger.info("Loaded %s model (legacy) — %d features", key, len(s["feat_cols"]))
 
-    _build_explainer()
+    _build_explainer(key)
 
 
-def _build_explainer():
-    global _explainer
+def _build_explainer(key: str) -> None:
+    s = _state[key]
+    model, feat_cols = s["model"], s["feat_cols"]
     try:
         import shap
-        clf = getattr(_model, "named_steps", {}).get("clf") or _model
+        clf = getattr(model, "named_steps", {}).get("clf") or model
         if hasattr(clf, "feature_importances_"):
-            _explainer = shap.TreeExplainer(clf)
+            s["explainer"] = shap.TreeExplainer(clf)
         elif hasattr(clf, "coef_"):
-            _explainer = shap.LinearExplainer(clf, masker=shap.maskers.Independent(np.zeros((1, len(_feat_cols)))))
+            s["explainer"] = shap.LinearExplainer(
+                clf, masker=shap.maskers.Independent(np.zeros((1, len(feat_cols))))
+            )
         else:
-            _explainer = None
-            logger.info("SHAP: no compatible explainer for this model type")
+            s["explainer"] = None
+            logger.info("SHAP (%s): no compatible explainer", key)
     except Exception as e:
-        _explainer = None
-        logger.warning("SHAP explainer could not be built: %s", e)
+        s["explainer"] = None
+        logger.warning("SHAP explainer (%s) could not be built: %s", key, e)
 
 
-def _compute_shap(X_scaled: np.ndarray) -> list[dict] | None:
-    if _explainer is None:
+def _load_models() -> None:
+    global _initialized
+    if _initialized:
+        return
+    _initialized = True
+    _load_artifact(FAIR_MODEL_PATH, "fair")
+    _load_artifact(BASE_MODEL_PATH, "base")
+
+
+def _compute_shap(key: str, X_scaled: np.ndarray) -> dict | None:
+    s = _state[key]
+    if s["explainer"] is None:
         return None
     try:
         import shap
-        shap_values = _explainer.shap_values(X_scaled)
-        # For binary classifiers TreeExplainer returns list [class0, class1]
-        if isinstance(shap_values, list):
-            sv = shap_values[1][0]
-        else:
-            sv = shap_values[0]
-
+        shap_values = s["explainer"].shap_values(X_scaled)
+        sv = shap_values[1][0] if isinstance(shap_values, list) else shap_values[0]
         contributions = [
             {"feature": f, "label": FEATURE_LABELS.get(f, f), "contribution": round(float(v), 4)}
-            for f, v in zip(_feat_cols, sv)
+            for f, v in zip(s["feat_cols"], sv)
         ]
         contributions.sort(key=lambda x: abs(x["contribution"]), reverse=True)
-        positive = [c for c in contributions if c["contribution"] > 0][:3]
-        negative = [c for c in contributions if c["contribution"] < 0][:3]
-        return {"positive": positive, "negative": negative}
+        return {
+            "positive": [c for c in contributions if c["contribution"] > 0][:3],
+            "negative": [c for c in contributions if c["contribution"] < 0][:3],
+        }
     except Exception as e:
-        logger.warning("SHAP computation failed: %s", e)
+        logger.warning("SHAP computation (%s) failed: %s", key, e)
         return None
 
 
-def _get_scaled_input(features: dict) -> np.ndarray:
-    """Run only the scaler step on raw features, return scaled array."""
-    X_raw = np.array([[features.get(col, 0) for col in _feat_cols]])
-    scaler = getattr(_model, "named_steps", {}).get("scaler")
-    if scaler is not None:
-        return scaler.transform(X_raw)
-    return X_raw
-
-
-def predict(features: dict) -> tuple[str, float | None, dict | None]:
+def predict(features: dict, model: str = "fair") -> tuple[str, float | None, dict | None]:
     """
-    Returns (recommendation, confidence, explanation).
-    recommendation : 'Invite' | 'Reject' | 'pending'
-    confidence     : 0.0–1.0 or None
-    explanation    : {'positive': [...], 'negative': [...]} or None
+    Returns (recommendation, confidence, explanation) for the given model key.
+    model: 'fair' (default, production model) | 'base' (baseline for comparison)
     """
-    if _model is None:
-        _load_model()
-    if _model is None:
+    _load_models()
+    s = _state.get(model, _state["fair"])
+    if s["model"] is None:
         return "pending", None, None
 
-    X_raw = np.array([[features.get(col, 0) for col in _feat_cols]])
-    proba = _model.predict_proba(X_raw)[0]
+    feat_cols = s["feat_cols"]
+    X_raw = np.array([[features.get(col, 0) for col in feat_cols]])
+    proba = s["model"].predict_proba(X_raw)[0]
 
-    if _calibrator is not None:
+    if s["calibrator"] is not None:
         raw_p = float(np.clip(proba[1], 1e-7, 1 - 1e-7))
-        if _calibrator_logit:
+        if s["calibrator_logit"]:
             import math
             logit_p = math.log(raw_p / (1 - raw_p))
-            p_cal = float(_calibrator.predict_proba([[logit_p]])[0, 1])
+            p_cal = float(s["calibrator"].predict_proba([[logit_p]])[0, 1])
         else:
-            p_cal = float(_calibrator.predict_proba([[raw_p]])[0, 1])
+            p_cal = float(s["calibrator"].predict_proba([[raw_p]])[0, 1])
         proba = np.array([1 - p_cal, p_cal])
 
-    is_invite      = bool(proba[1] >= _decision_threshold)
+    is_invite      = bool(proba[1] >= s["threshold"])
     label_idx      = 1 if is_invite else 0
     confidence     = round(float(proba[label_idx]), 3)
     recommendation = "Invite" if is_invite else "Reject"
 
-    # SHAP on the scaled representation
-    X_scaled  = _get_scaled_input(features)
-    explanation = _compute_shap(X_scaled)
+    # SHAP — scale through the pipeline's scaler step if present
+    scaler = getattr(s["model"], "named_steps", {}).get("scaler")
+    X_scaled = scaler.transform(X_raw) if scaler is not None else X_raw
+    explanation = _compute_shap(model, X_scaled)
 
     return recommendation, confidence, explanation
+
+
+# Kept for backward compat with any code that still imports these directly
+def _load_model():
+    _load_models()
+
+_model              = property(lambda self: _state["fair"]["model"])
+_decision_threshold = property(lambda self: _state["fair"]["threshold"])

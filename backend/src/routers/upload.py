@@ -56,10 +56,15 @@ async def _process_cv_bytes(file_bytes: bytes, filename: str) -> dict:
         raise HTTPException(status_code=502, detail=f"CV parsing failed: {e}")
 
     features = extract_features(cv)
-    recommendation, confidence, explanation = predict(features)
+
+    # Run both models — fair model is the production model, base is for comparison
+    recommendation, confidence, explanation = predict(features, model="fair")
+    recommendation_base, confidence_base, explanation_base = predict(features, model="base")
+
     logger.info(
-        "Prediction [%s]: %s (confidence=%.3f)",
+        "Prediction [%s]: fair=%s (%.3f) base=%s (%.3f)",
         candidate_id[:8], recommendation, confidence or 0,
+        recommendation_base, confidence_base or 0,
     )
 
     cv_dict = cv.model_dump()
@@ -70,33 +75,26 @@ async def _process_cv_bytes(file_bytes: bytes, filename: str) -> dict:
                 INSERT INTO candidates
                     (id, source_filename, source_format, parse_quality,
                      cv_data, recommendation, confidence, file_hash, missing_fields,
-                     explanation)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                     explanation,
+                     recommendation_base, confidence_base, explanation_base)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """,
                 (
                     candidate_id, filename, fmt, cv.parse_quality,
                     json.dumps(cv_dict), recommendation, confidence,
                     file_hash, json.dumps(cv.missing_fields),
                     json.dumps(explanation) if explanation else None,
+                    recommendation_base if recommendation_base != "pending" else None,
+                    confidence_base,
+                    json.dumps(explanation_base) if explanation_base else None,
                 ),
             )
             cur.execute(
                 "INSERT INTO processing_log (candidate_id, event, detail) VALUES (%s, %s, %s)",
                 (candidate_id, "uploaded",
-                 f"format={fmt} quality={cv.parse_quality} prediction={recommendation}"),
+                 f"format={fmt} quality={cv.parse_quality} fair={recommendation} base={recommendation_base}"),
             )
         conn.commit()
-
-    from src.services.predictor import _decision_threshold as _dt, _model as _m
-    import joblib, os
-    _fair = False
-    try:
-        fair_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "ml", "model_fair.joblib")
-        if os.path.exists(fair_path):
-            art = joblib.load(fair_path)
-            _fair = bool(art.get("fairness_mitigated", False)) if isinstance(art, dict) else False
-    except Exception:
-        pass
 
     return {
         "id": candidate_id,
@@ -105,9 +103,10 @@ async def _process_cv_bytes(file_bytes: bytes, filename: str) -> dict:
         "recommendation": recommendation,
         "confidence": confidence,
         "explanation": explanation,
+        "recommendation_base": recommendation_base if recommendation_base != "pending" else None,
+        "confidence_base": confidence_base,
         "parse_quality": cv.parse_quality,
         "missing_fields": cv.missing_fields,
-        "fairness_mitigated": _fair,
     }
 
 

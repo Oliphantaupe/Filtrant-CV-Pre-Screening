@@ -49,6 +49,9 @@ def _create_tables() -> None:
                 ALTER TABLE candidates ADD COLUMN IF NOT EXISTS hr_decision TEXT DEFAULT NULL;
                 ALTER TABLE candidates ADD COLUMN IF NOT EXISTS override_reason TEXT DEFAULT NULL;
                 ALTER TABLE candidates ADD COLUMN IF NOT EXISTS overridden_at TIMESTAMPTZ DEFAULT NULL;
+                ALTER TABLE candidates ADD COLUMN IF NOT EXISTS recommendation_base TEXT DEFAULT NULL;
+                ALTER TABLE candidates ADD COLUMN IF NOT EXISTS confidence_base NUMERIC(4,3) DEFAULT NULL;
+                ALTER TABLE candidates ADD COLUMN IF NOT EXISTS explanation_base JSONB DEFAULT NULL;
 
                 CREATE TABLE IF NOT EXISTS processing_log (
                     id SERIAL PRIMARY KEY,
