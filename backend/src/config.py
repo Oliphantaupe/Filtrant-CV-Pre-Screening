@@ -2,8 +2,10 @@ from pathlib import Path
 from pydantic import ConfigDict, field_validator
 from pydantic_settings import BaseSettings
 
-# Project root = two levels up from this file (backend/src/config.py → backend/ → WP2/)
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+# Root of the backend package — one level above src/
+# Local: backend/src/config.py → backend/
+# Docker: /app/src/config.py → /app/  (matches WORKDIR in Dockerfile)
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
 class Settings(BaseSettings):
