@@ -27,7 +27,9 @@ from imblearn.over_sampling import SMOTE
 from scipy.special import logit as _logit
 from sklearn.base import clone
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, f1_score, roc_auc_score
+from sklearn.metrics import (
+    classification_report, confusion_matrix, f1_score, fbeta_score, roc_auc_score
+)
 from sklearn.model_selection import cross_val_predict, StratifiedKFold, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -41,10 +43,12 @@ from fairlearn.metrics import (
 warnings.filterwarnings("ignore")
 
 HERE = Path(__file__).parent
-DATA_PATH       = HERE / "training_dataset.csv"
-BASELINE_PATH   = HERE / "model.joblib"
-FAIR_MODEL_PATH = HERE / "model_fair.joblib"
-REPORT_PATH     = HERE / "fairness_report.json"
+DATA_PATH            = HERE / "training_dataset.csv"
+BASELINE_PATH        = HERE / "model.joblib"
+FAIR_MODEL_PATH      = HERE / "model_fair.joblib"
+REPORT_PATH          = HERE / "fairness_report.json"
+REPORT_BASE_PATH     = HERE / "fairness_report_base.json"
+REPORT_FAIR_PATH     = HERE / "fairness_report_fair.json"
 
 FEATURE_COLUMNS = [
     "total_years_experience", "num_positions", "avg_tenure_months",
@@ -200,6 +204,7 @@ def main():
     # inflate AUC due to test-set leakage).
     baseline_metrics = None
     baseline_auc = None
+    baseline_report_data = None
     if BASELINE_PATH.exists():
         art = joblib.load(BASELINE_PATH)
         baseline_pipe_eval = clone(art["pipeline"])
@@ -208,6 +213,29 @@ def main():
         y_proba_base  = baseline_pipe_eval.predict_proba(X_test)[:, 1]
         baseline_auc  = roc_auc_score(y_test, y_proba_base)
         baseline_metrics = compute_fairness_metrics(y_test, y_pred_base, df_test)
+        cm_base = confusion_matrix(y_test, y_pred_base)
+        baseline_report_data = {
+            "model_name": art.get("model_name", "HistGradientBoosting"),
+            "model_type": "baseline",
+            "auc": round(baseline_auc, 3),
+            "f0_5": round(fbeta_score(y_test, y_pred_base, beta=0.5, zero_division=0), 3),
+            "f1_invite": round(f1_score(y_test, y_pred_base, pos_label=1, zero_division=0), 3),
+            "decision_threshold": 0.5,
+            "n_test": int(len(y_test)),
+            "n_train": int(len(X_train)),
+            "n_features": int(X_train.shape[1]),
+            "confusion_matrix": {
+                "true_reject":   int(cm_base[0, 0]),
+                "false_invite":  int(cm_base[0, 1]),
+                "false_reject":  int(cm_base[1, 0]),
+                "true_invite":   int(cm_base[1, 1]),
+            },
+            "classification_report": classification_report(
+                y_test, y_pred_base, target_names=["Reject", "Invite"],
+                output_dict=True, zero_division=0,
+            ),
+            "fairness": baseline_metrics,
+        }
         print(f"\nBaseline AUC: {baseline_auc:.3f}")
         print("Baseline Equal Opportunity Differences:")
         for attr, m in baseline_metrics.items():
@@ -292,6 +320,32 @@ def main():
             flag = "[OK]" if abs(f_eod) <= abs(b_eod) else "[!]"
             print(f"  EOD ({attr:<18}): {b_eod:+.3f} -> {f_eod:+.3f}  (delta: {delta:+.3f}) {flag}")
 
+    cm_fair = confusion_matrix(y_test, y_pred_fair)
+    fair_report_data = {
+        "model_name": "LogisticRegression+Reweighting",
+        "model_type": "fair",
+        "mitigation_method": "SampleReweighting",
+        "auc": round(fair_auc, 3),
+        "f0_5": round(fbeta_score(y_test, y_pred_fair, beta=0.5, zero_division=0), 3),
+        "f1_invite": round(f1_score(y_test, y_pred_fair, pos_label=1, zero_division=0), 3),
+        "decision_threshold": round(best_threshold, 2),
+        "temperature": round(T, 3),
+        "n_test": int(len(y_test)),
+        "n_train": int(len(X_train)),
+        "n_features": int(X_train.shape[1]),
+        "confusion_matrix": {
+            "true_reject":   int(cm_fair[0, 0]),
+            "false_invite":  int(cm_fair[0, 1]),
+            "false_reject":  int(cm_fair[1, 0]),
+            "true_invite":   int(cm_fair[1, 1]),
+        },
+        "classification_report": classification_report(
+            y_test, y_pred_fair, target_names=["Reject", "Invite"],
+            output_dict=True, zero_division=0,
+        ),
+        "fairness": fair_metrics,
+    }
+
     print(f"\nClassification report (fair model):")
     print(classification_report(y_test, y_pred_fair, target_names=["Reject", "Invite"]))
 
@@ -350,6 +404,13 @@ def main():
 
     REPORT_PATH.write_text(json.dumps(_clean(report), indent=2), encoding="utf-8")
     print(f"[OK] fairness_report.json saved")
+
+    if baseline_report_data:
+        REPORT_BASE_PATH.write_text(json.dumps(_clean(baseline_report_data), indent=2), encoding="utf-8")
+        print(f"[OK] fairness_report_base.json saved")
+
+    REPORT_FAIR_PATH.write_text(json.dumps(_clean(fair_report_data), indent=2), encoding="utf-8")
+    print(f"[OK] fairness_report_fair.json saved")
     print(f"{'='*60}\n")
 
 

@@ -1,0 +1,121 @@
+{
+  "model_name": "HistGradientBoosting",
+  "model_type": "baseline",
+  "auc": 0.682,
+  "f0_5": 0.357,
+  "f1_invite": 0.333,
+  "decision_threshold": 0.5,
+  "n_test": 100,
+  "n_train": 400,
+  "n_features": 22,
+  "confusion_matrix": {
+    "true_reject": 70,
+    "false_invite": 10,
+    "false_reject": 14,
+    "true_invite": 6
+  },
+  "classification_report": {
+    "Reject": {
+      "precision": 0.8333333333333334,
+      "recall": 0.875,
+      "f1-score": 0.8536585365853658,
+      "support": 80.0
+    },
+    "Invite": {
+      "precision": 0.375,
+      "recall": 0.3,
+      "f1-score": 0.3333333333333333,
+      "support": 20.0
+    },
+    "accuracy": 0.76,
+    "macro avg": {
+      "precision": 0.6041666666666667,
+      "recall": 0.5875,
+      "f1-score": 0.5934959349593496,
+      "support": 100.0
+    },
+    "weighted avg": {
+      "precision": 0.7416666666666667,
+      "recall": 0.76,
+      "f1-score": 0.7495934959349594,
+      "support": 100.0
+    }
+  },
+  "fairness": {
+    "gender": {
+      "by_group": {
+        "selection_rate": {
+          "female": 0.106,
+          "male": 0.208
+        },
+        "tpr": {
+          "female": 0.222,
+          "male": 0.364
+        },
+        "fpr": {
+          "female": 0.079,
+          "male": 0.167
+        }
+      },
+      "overall": {
+        "selection_rate": 0.16,
+        "tpr": 0.3,
+        "fpr": 0.125
+      },
+      "equal_opportunity_diff": 0.141,
+      "demographic_parity_diff": 0.101
+    },
+    "age_cohort": {
+      "by_group": {
+        "selection_rate": {
+          "22-28": 0.038,
+          "29-32": 0.115,
+          "33-36": 0.273,
+          "37-44": 0.2
+        },
+        "tpr": {
+          "22-28": 0.0,
+          "29-32": 0.333,
+          "33-36": 0.385,
+          "37-44": 0.0
+        },
+        "fpr": {
+          "22-28": 0.042,
+          "29-32": 0.087,
+          "33-36": 0.2,
+          "37-44": 0.231
+        }
+      },
+      "overall": {
+        "selection_rate": 0.16,
+        "tpr": 0.3,
+        "fpr": 0.125
+      },
+      "equal_opportunity_diff": 0.385,
+      "demographic_parity_diff": 0.234
+    },
+    "is_multilingual": {
+      "by_group": {
+        "selection_rate": {
+          "monolingual": 0.0,
+          "multilingual": 0.186
+        },
+        "tpr": {
+          "monolingual": 0.0,
+          "multilingual": 0.333
+        },
+        "fpr": {
+          "monolingual": 0.0,
+          "multilingual": 0.147
+        }
+      },
+      "overall": {
+        "selection_rate": 0.16,
+        "tpr": 0.3,
+        "fpr": 0.125
+      },
+      "equal_opportunity_diff": 0.333,
+      "demographic_parity_diff": 0.186
+    }
+  }
+}
