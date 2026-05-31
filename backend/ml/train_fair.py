@@ -25,6 +25,7 @@ import numpy as np
 import pandas as pd
 from imblearn.over_sampling import SMOTE
 from scipy.special import logit as _logit
+from sklearn.base import clone
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, f1_score, roc_auc_score
 from sklearn.model_selection import cross_val_predict, StratifiedKFold, train_test_split
@@ -193,13 +194,18 @@ def main():
     print(f"  Removed {n_cleaned} suspect samples -> {len(X_fit)} fit samples remain")
 
     # ── Load baseline for comparison ──────────────────────────────────────────
+    # Clone the saved model's architecture and refit on X_train only so the
+    # baseline AUC is evaluated on truly held-out data (the production model.joblib
+    # was retrained on all 500 samples after evaluation — loading it directly would
+    # inflate AUC due to test-set leakage).
     baseline_metrics = None
     baseline_auc = None
     if BASELINE_PATH.exists():
         art = joblib.load(BASELINE_PATH)
-        baseline_pipe = art["pipeline"]
-        y_pred_base   = baseline_pipe.predict(X_test)
-        y_proba_base  = baseline_pipe.predict_proba(X_test)[:, 1]
+        baseline_pipe_eval = clone(art["pipeline"])
+        baseline_pipe_eval.fit(X_train, y_train)
+        y_pred_base   = baseline_pipe_eval.predict(X_test)
+        y_proba_base  = baseline_pipe_eval.predict_proba(X_test)[:, 1]
         baseline_auc  = roc_auc_score(y_test, y_proba_base)
         baseline_metrics = compute_fairness_metrics(y_test, y_pred_base, df_test)
         print(f"\nBaseline AUC: {baseline_auc:.3f}")
