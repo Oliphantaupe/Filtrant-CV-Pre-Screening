@@ -542,9 +542,16 @@ function SimpleView({ items, onOpen }: { items: CandidateRow[]; onOpen: (c: Cand
 
                 {/* Recommendation + confidence */}
                 <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <RecommendationBadge value={rec as 'Invite' | 'Reject' | 'pending'} />
-                    {c.hr_decision && <HROverrideBadge decision={c.hr_decision} />}
+                  <div className="flex flex-col gap-0.5">
+                    {c.hr_decision
+                      ? <HROverrideBadge decision={c.hr_decision} />
+                      : <RecommendationBadge value={rec as 'Invite' | 'Reject' | 'pending'} />
+                    }
+                    {c.hr_decision && (
+                      <span className="text-[10px] pl-0.5" style={{ color: 'var(--text-faint)' }}>
+                        AI: {rec}
+                      </span>
+                    )}
                   </div>
                   {conf !== null && (
                     <span className="text-sm font-semibold font-jetbrains tabular-nums"
@@ -1202,7 +1209,7 @@ function DetailPanel({ candidate: initialCandidate, onClose }: { candidate: Cand
                         </button>
                         <button onClick={handleOverride} disabled={overrideLoading}
                           className="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-opacity"
-                          style={{ background: 'var(--accent)', color: 'white', opacity: overrideLoading ? 0.6 : 1 }}>
+                          style={{ background: 'var(--teal)', color: 'white', opacity: overrideLoading ? 0.6 : 1 }}>
                           {overrideLoading ? 'Saving…' : 'Confirm'}
                         </button>
                       </div>
@@ -1296,16 +1303,16 @@ function ParseQualityBadge({ value }: { value: string }) {
 function HROverrideBadge({ decision }: { decision: 'Invite' | 'Reject' }) {
   const inv = decision === 'Invite'
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide"
       style={{
-        background: inv ? 'rgba(251,146,60,0.12)' : 'rgba(239,68,68,0.10)',
-        color: inv ? 'rgb(251,146,60)' : 'rgb(239,68,68)',
-        border: `1px solid ${inv ? 'rgba(251,146,60,0.25)' : 'rgba(239,68,68,0.25)'}`,
+        background: inv ? 'var(--teal-subtle)' : 'var(--glass-dim)',
+        color: inv ? 'var(--teal)' : 'var(--text-muted)',
+        border: '1px solid var(--border-dim)',
       }}>
       <svg className="w-2.5 h-2.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
       </svg>
-      RH → {decision}
+      {decision}
     </span>
   )
 }
