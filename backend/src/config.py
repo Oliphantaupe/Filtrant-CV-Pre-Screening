@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     incoming_cvs_path: str = str(_PROJECT_ROOT / "data" / "incoming_cvs")
     processed_cvs_path: str = str(_PROJECT_ROOT / "data" / "processed_cvs")
     failed_cvs_path: str = str(_PROJECT_ROOT / "data" / "failed_cvs")
-    ml_model_path: str = str(_PROJECT_ROOT / "backend" / "ml" / "model.joblib")
+    ml_model_path: str = str(_PROJECT_ROOT / "ml" / "model.joblib")
 
     # File watcher
     watcher_interval: int = 10  # seconds between polls
