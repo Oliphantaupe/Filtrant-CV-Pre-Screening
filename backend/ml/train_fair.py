@@ -59,7 +59,6 @@ FEATURE_COLUMNS = [
     "experience_education_ratio", "certs_per_year",
     "experience_x_seniority", "experience_x_education",
     "career_trajectory_score", "latest_title_seniority",
-    "distance_km",
 ]
 
 SENSITIVE_ATTRIBUTES = ["gender", "age_cohort", "is_multilingual"]
@@ -116,15 +115,23 @@ def auto_clean_labels(X: np.ndarray, y: np.ndarray, confidence_threshold: float 
     return X[keep_mask], y[keep_mask], keep_mask, int(suspect.sum())
 
 
-def tune_threshold(proba_invite: np.ndarray, y_true: np.ndarray) -> tuple[float, float]:
-    """Find the decision threshold that maximises F1-Invite."""
+def tune_threshold(proba_invite: np.ndarray, y_true: np.ndarray,
+                   beta: float = 0.5) -> tuple[float, float]:
+    """
+    Find the decision threshold that maximises F-beta on the Invite class.
+
+    beta=0.5 weights precision twice as much as recall: in recruitment a false
+    Invite (wasted recruiter time on an unqualified candidate) is costlier than a
+    false Reject, so the conservative F0.5 criterion matches the business cost and
+    is consistent with the baseline model's selection metric.
+    """
     thresholds = np.arange(0.10, 0.90, 0.01)
-    f1_scores = [
-        f1_score(y_true, (proba_invite >= t).astype(int), zero_division=0)
+    scores = [
+        fbeta_score(y_true, (proba_invite >= t).astype(int), beta=beta, zero_division=0)
         for t in thresholds
     ]
-    best_idx = int(np.argmax(f1_scores))
-    return float(thresholds[best_idx]), float(f1_scores[best_idx])
+    best_idx = int(np.argmax(scores))
+    return float(thresholds[best_idx]), float(scores[best_idx])
 
 
 # ── Fairness metrics ──────────────────────────────────────────────────────────
@@ -274,17 +281,10 @@ def main():
     clf.fit(X_fit_sm, y_fit_sm, sample_weight=sample_weights_sm)
     final_pipeline = Pipeline([("scaler", scaler), ("clf", clf)])
 
-    y_pred_fair   = final_pipeline.predict(X_test)
-    y_proba_fair  = final_pipeline.predict_proba(X_test)[:, 1]
-    fair_auc      = roc_auc_score(y_test, y_proba_fair)
-    fair_metrics  = compute_fairness_metrics(y_test, y_pred_fair, df_test)
-
+    # AUC is threshold-independent, so it is read off the raw probabilities.
+    y_proba_fair = final_pipeline.predict_proba(X_test)[:, 1]
+    fair_auc     = roc_auc_score(y_test, y_proba_fair)
     print(f"  AUC: {fair_auc:.3f}")
-    print("  Equal Opportunity Differences:")
-    for attr, m in fair_metrics.items():
-        flag = "[!]" if abs(m["equal_opportunity_diff"]) > 0.05 else "[OK]"
-        base_eod = baseline_metrics[attr]["equal_opportunity_diff"] if baseline_metrics else float("nan")
-        print(f"    {attr:<20} EOD = {m['equal_opportunity_diff']:+.3f}  {flag}  (baseline: {base_eod:+.3f})")
 
     # ── Temperature scaling on holdout ────────────────────────────────────────
     print("\n--- Temperature scaling on holdout ---")
@@ -296,16 +296,34 @@ def main():
     T = 1.0 / float(temp_lr.coef_[0][0])
     print(f"  Temperature T={T:.3f}  ({'softer' if T > 1 else 'sharper'})")
 
-    # Verify calibrated proba range on test set
-    raw_logit_test  = _logit(np.clip(y_proba_fair, 1e-7, 1 - 1e-7))
-    p_cal_test = temp_lr.predict_proba(raw_logit_test.reshape(-1, 1))[:, 1]
-    print(f"  Calibrated invite proba range: [{p_cal_test.min():.3f}, {p_cal_test.max():.3f}]")
+    # Calibrated probabilities — tune the threshold on the holdout, report on test.
+    p_cal_cal      = temp_lr.predict_proba(raw_logit_cal.reshape(-1, 1))[:, 1]
+    raw_logit_test = _logit(np.clip(y_proba_fair, 1e-7, 1 - 1e-7))
+    p_cal_test     = temp_lr.predict_proba(raw_logit_test.reshape(-1, 1))[:, 1]
+    print(f"  Calibrated invite proba range (test): [{p_cal_test.min():.3f}, {p_cal_test.max():.3f}]")
 
-    # ── Decision threshold tuning ─────────────────────────────────────────────
-    print("\n--- Decision threshold tuning ---")
-    best_threshold, threshold_f1 = tune_threshold(p_cal_test, y_test)
-    print(f"  Optimal threshold: {best_threshold:.2f}  (F1-Invite = {threshold_f1:.3f})")
-    print(f"  Default 0.50 would give F1-Invite = {f1_score(y_test, (p_cal_test >= 0.50).astype(int), zero_division=0):.3f}")
+    # ── Decision threshold tuning (calibration holdout — NO test leakage) ──────
+    # Earlier versions tuned the threshold on the test set itself, which inflates
+    # the reported F1. The threshold is now selected on the calibration holdout
+    # (y_cal) and only *evaluated* on the held-out test set.
+    print("\n--- Decision threshold tuning (calibration holdout, F0.5) ---")
+    best_threshold, threshold_f05_cal = tune_threshold(p_cal_cal, y_cal, beta=0.5)
+    print(f"  Optimal threshold: {best_threshold:.2f}  (F0.5-Invite on holdout = {threshold_f05_cal:.3f})")
+
+    # Served decisions = calibrated proba >= tuned threshold. Fairness metrics and
+    # the confusion matrix are computed on THESE predictions so the report matches
+    # exactly what predictor.py serves in production.
+    y_pred_fair  = (p_cal_test >= best_threshold).astype(int)
+    threshold_f1 = float(f1_score(y_test, y_pred_fair, zero_division=0))
+    fair_f05_test = float(fbeta_score(y_test, y_pred_fair, beta=0.5, zero_division=0))
+    fair_metrics = compute_fairness_metrics(y_test, y_pred_fair, df_test)
+    print(f"  Held-out test at this threshold: F1-Invite={threshold_f1:.3f}  F0.5-Invite={fair_f05_test:.3f}")
+    print(f"  (Default 0.50 on test = F1 {f1_score(y_test, (p_cal_test >= 0.50).astype(int), zero_division=0):.3f})")
+    print("  Equal Opportunity Differences (served decisions):")
+    for attr, m in fair_metrics.items():
+        flag = "[!]" if abs(m["equal_opportunity_diff"]) > 0.05 else "[OK]"
+        base_eod = baseline_metrics[attr]["equal_opportunity_diff"] if baseline_metrics else float("nan")
+        print(f"    {attr:<20} EOD = {m['equal_opportunity_diff']:+.3f}  {flag}  (baseline: {base_eod:+.3f})")
 
     # ── Comparison summary ────────────────────────────────────────────────────
     print(f"\n{'='*60}")

@@ -1,0 +1,187 @@
+{
+  "model": "LogisticRegression+Reweighting",
+  "auc": 0.718,
+  "temperature": 1.088,
+  "n_test": 100,
+  "baseline": {
+    "auc": 0.682,
+    "metrics": {
+      "gender": {
+        "by_group": {
+          "selection_rate": {
+            "female": 0.106,
+            "male": 0.208
+          },
+          "tpr": {
+            "female": 0.222,
+            "male": 0.364
+          },
+          "fpr": {
+            "female": 0.079,
+            "male": 0.167
+          }
+        },
+        "overall": {
+          "selection_rate": 0.16,
+          "tpr": 0.3,
+          "fpr": 0.125
+        },
+        "equal_opportunity_diff": 0.141,
+        "demographic_parity_diff": 0.101
+      },
+      "age_cohort": {
+        "by_group": {
+          "selection_rate": {
+            "22-28": 0.038,
+            "29-32": 0.115,
+            "33-36": 0.273,
+            "37-44": 0.2
+          },
+          "tpr": {
+            "22-28": 0.0,
+            "29-32": 0.333,
+            "33-36": 0.385,
+            "37-44": 0.0
+          },
+          "fpr": {
+            "22-28": 0.042,
+            "29-32": 0.087,
+            "33-36": 0.2,
+            "37-44": 0.231
+          }
+        },
+        "overall": {
+          "selection_rate": 0.16,
+          "tpr": 0.3,
+          "fpr": 0.125
+        },
+        "equal_opportunity_diff": 0.385,
+        "demographic_parity_diff": 0.234
+      },
+      "is_multilingual": {
+        "by_group": {
+          "selection_rate": {
+            "monolingual": 0.0,
+            "multilingual": 0.186
+          },
+          "tpr": {
+            "monolingual": 0.0,
+            "multilingual": 0.333
+          },
+          "fpr": {
+            "monolingual": 0.0,
+            "multilingual": 0.147
+          }
+        },
+        "overall": {
+          "selection_rate": 0.16,
+          "tpr": 0.3,
+          "fpr": 0.125
+        },
+        "equal_opportunity_diff": 0.333,
+        "demographic_parity_diff": 0.186
+      }
+    }
+  },
+  "fair": {
+    "auc": 0.718,
+    "metrics": {
+      "gender": {
+        "by_group": {
+          "selection_rate": {
+            "female": 0.17,
+            "male": 0.226
+          },
+          "tpr": {
+            "female": 0.444,
+            "male": 0.545
+          },
+          "fpr": {
+            "female": 0.105,
+            "male": 0.143
+          }
+        },
+        "overall": {
+          "selection_rate": 0.2,
+          "tpr": 0.5,
+          "fpr": 0.125
+        },
+        "equal_opportunity_diff": 0.101,
+        "demographic_parity_diff": 0.056
+      },
+      "age_cohort": {
+        "by_group": {
+          "selection_rate": {
+            "22-28": 0.038,
+            "29-32": 0.115,
+            "33-36": 0.273,
+            "37-44": 0.467
+          },
+          "tpr": {
+            "22-28": 0.0,
+            "29-32": 0.667,
+            "33-36": 0.462,
+            "37-44": 1.0
+          },
+          "fpr": {
+            "22-28": 0.042,
+            "29-32": 0.043,
+            "33-36": 0.15,
+            "37-44": 0.385
+          }
+        },
+        "overall": {
+          "selection_rate": 0.2,
+          "tpr": 0.5,
+          "fpr": 0.125
+        },
+        "equal_opportunity_diff": 1.0,
+        "demographic_parity_diff": 0.428
+      },
+      "is_multilingual": {
+        "by_group": {
+          "selection_rate": {
+            "monolingual": 0.214,
+            "multilingual": 0.198
+          },
+          "tpr": {
+            "monolingual": 1.0,
+            "multilingual": 0.444
+          },
+          "fpr": {
+            "monolingual": 0.083,
+            "multilingual": 0.132
+          }
+        },
+        "overall": {
+          "selection_rate": 0.2,
+          "tpr": 0.5,
+          "fpr": 0.125
+        },
+        "equal_opportunity_diff": 0.556,
+        "demographic_parity_diff": 0.017
+      }
+    }
+  },
+  "label_distribution": {
+    "invite": 100,
+    "reject": 400,
+    "total": 500
+  },
+  "group_counts": {
+    "gender": {
+      "male": 267,
+      "female": 233
+    },
+    "age_cohort": {
+      "33-36": 146,
+      "29-32": 133,
+      "22-28": 124,
+      "37-44": 97
+    },
+    "is_multilingual": {
+      "1": 438,
+      "0": 62
+    }
+  }
+}

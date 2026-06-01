@@ -3,43 +3,43 @@
   "model_type": "fair",
   "mitigation_method": "SampleReweighting",
   "auc": 0.718,
-  "f0_5": 0.417,
-  "f1_invite": 0.481,
-  "decision_threshold": 0.57,
+  "f0_5": 0.5,
+  "f1_invite": 0.5,
+  "decision_threshold": 0.63,
   "temperature": 1.088,
   "n_test": 100,
   "n_train": 400,
-  "n_features": 22,
+  "n_features": 21,
   "confusion_matrix": {
-    "true_reject": 59,
-    "false_invite": 21,
-    "false_reject": 7,
-    "true_invite": 13
+    "true_reject": 70,
+    "false_invite": 10,
+    "false_reject": 10,
+    "true_invite": 10
   },
   "classification_report": {
     "Reject": {
-      "precision": 0.8939393939393939,
-      "recall": 0.7375,
-      "f1-score": 0.8082191780821918,
+      "precision": 0.875,
+      "recall": 0.875,
+      "f1-score": 0.875,
       "support": 80.0
     },
     "Invite": {
-      "precision": 0.38235294117647056,
-      "recall": 0.65,
-      "f1-score": 0.48148148148148145,
+      "precision": 0.5,
+      "recall": 0.5,
+      "f1-score": 0.5,
       "support": 20.0
     },
-    "accuracy": 0.72,
+    "accuracy": 0.8,
     "macro avg": {
-      "precision": 0.6381461675579323,
-      "recall": 0.6937500000000001,
-      "f1-score": 0.6448503297818367,
+      "precision": 0.6875,
+      "recall": 0.6875,
+      "f1-score": 0.6875,
       "support": 100.0
     },
     "weighted avg": {
-      "precision": 0.7916221033868092,
-      "recall": 0.72,
-      "f1-score": 0.7428716387620498,
+      "precision": 0.8,
+      "recall": 0.8,
+      "f1-score": 0.8,
       "support": 100.0
     }
   },
@@ -47,77 +47,77 @@
     "gender": {
       "by_group": {
         "selection_rate": {
-          "female": 0.319,
-          "male": 0.358
+          "female": 0.17,
+          "male": 0.226
         },
         "tpr": {
-          "female": 0.667,
-          "male": 0.636
+          "female": 0.444,
+          "male": 0.545
         },
         "fpr": {
-          "female": 0.237,
-          "male": 0.286
+          "female": 0.105,
+          "male": 0.143
         }
       },
       "overall": {
-        "selection_rate": 0.34,
-        "tpr": 0.65,
-        "fpr": 0.263
+        "selection_rate": 0.2,
+        "tpr": 0.5,
+        "fpr": 0.125
       },
-      "equal_opportunity_diff": 0.03,
-      "demographic_parity_diff": 0.039
+      "equal_opportunity_diff": 0.101,
+      "demographic_parity_diff": 0.056
     },
     "age_cohort": {
       "by_group": {
         "selection_rate": {
           "22-28": 0.038,
-          "29-32": 0.192,
-          "33-36": 0.545,
-          "37-44": 0.667
+          "29-32": 0.115,
+          "33-36": 0.273,
+          "37-44": 0.467
         },
         "tpr": {
           "22-28": 0.0,
           "29-32": 0.667,
-          "33-36": 0.692,
+          "33-36": 0.462,
           "37-44": 1.0
         },
         "fpr": {
           "22-28": 0.042,
-          "29-32": 0.13,
-          "33-36": 0.45,
-          "37-44": 0.615
+          "29-32": 0.043,
+          "33-36": 0.15,
+          "37-44": 0.385
         }
       },
       "overall": {
-        "selection_rate": 0.34,
-        "tpr": 0.65,
-        "fpr": 0.263
+        "selection_rate": 0.2,
+        "tpr": 0.5,
+        "fpr": 0.125
       },
       "equal_opportunity_diff": 1.0,
-      "demographic_parity_diff": 0.628
+      "demographic_parity_diff": 0.428
     },
     "is_multilingual": {
       "by_group": {
         "selection_rate": {
-          "monolingual": 0.286,
-          "multilingual": 0.349
+          "monolingual": 0.214,
+          "multilingual": 0.198
         },
         "tpr": {
           "monolingual": 1.0,
-          "multilingual": 0.611
+          "multilingual": 0.444
         },
         "fpr": {
-          "monolingual": 0.167,
-          "multilingual": 0.279
+          "monolingual": 0.083,
+          "multilingual": 0.132
         }
       },
       "overall": {
-        "selection_rate": 0.34,
-        "tpr": 0.65,
-        "fpr": 0.263
+        "selection_rate": 0.2,
+        "tpr": 0.5,
+        "fpr": 0.125
       },
-      "equal_opportunity_diff": 0.389,
-      "demographic_parity_diff": 0.063
+      "equal_opportunity_diff": 0.556,
+      "demographic_parity_diff": 0.017
     }
   }
 }

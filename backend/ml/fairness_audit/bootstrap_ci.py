@@ -31,6 +31,13 @@ import numpy as np
 # Allow running from repo root inside Docker
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
+# Windows consoles default to cp1252 and crash on Unicode output; force UTF-8 so
+# these audit scripts run natively (no Docker required).
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
 HERE = Path(__file__).parent
 DATA_PATH       = HERE.parent / "training_dataset.csv"
 BASELINE_PATH   = HERE.parent / "model.joblib"
@@ -125,6 +132,7 @@ def main() -> None:
         "has_summary", "num_certifications", "parse_quality_score",
         "experience_education_ratio", "certs_per_year",
         "experience_x_seniority", "experience_x_education",
+        "career_trajectory_score", "latest_title_seniority",
     ]
 
     print("\n" + "=" * 65)

@@ -78,7 +78,6 @@ FEATURE_COLUMNS = [
     "experience_x_education",
     "career_trajectory_score",
     "latest_title_seniority",
-    "distance_km",
 ]
 
 
@@ -283,7 +282,15 @@ def main():
     elif hasattr(clf, "coef_"):
         importances = np.abs(clf.coef_[0])
     else:
-        importances = np.ones(len(FEATURE_COLUMNS))
+        # HistGradientBoosting/SVM expose neither feature_importances_ nor coef_, so
+        # fall back to permutation importance (model-agnostic) instead of printing a
+        # meaningless flat vector.
+        from sklearn.inspection import permutation_importance
+        perm = permutation_importance(
+            best_pipeline, X_test, y_test, n_repeats=10,
+            random_state=42, scoring="roc_auc",
+        )
+        importances = perm.importances_mean
 
     fi = sorted(zip(FEATURE_COLUMNS, importances), key=lambda x: x[1], reverse=True)
     print("\n--- Feature importance ---")

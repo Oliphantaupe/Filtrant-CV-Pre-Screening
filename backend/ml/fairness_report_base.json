@@ -7,7 +7,7 @@
   "decision_threshold": 0.5,
   "n_test": 100,
   "n_train": 400,
-  "n_features": 22,
+  "n_features": 21,
   "confusion_matrix": {
     "true_reject": 70,
     "false_invite": 10,

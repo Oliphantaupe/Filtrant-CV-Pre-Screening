@@ -9,10 +9,10 @@ from src.models.cv_schema import CVSchema, PersonalInfo, Experience, Education, 
 
 # ── Completeness ────────────────────────────────────────────────────────────
 
-def test_all_22_features_present(full_cv):
+def test_all_21_features_present(full_cv):
     feats = extract_features(full_cv)
     assert set(feats.keys()) == set(FEATURE_COLUMNS)
-    assert len(feats) == 22
+    assert len(feats) == 21
 
 
 def test_all_features_are_numeric(full_cv):
@@ -196,14 +196,3 @@ def test_experience_x_seniority_positive(full_cv):
     assert feats["experience_x_seniority"] >= 0
 
 
-# ── Distance feature ────────────────────────────────────────────────────────
-
-def test_distance_km_unknown_returns_minus_one(minimal_cv):
-    # minimal_cv has no address → distance = -1
-    feats = extract_features(minimal_cv)
-    assert feats["distance_km"] == -1.0
-
-
-def test_distance_km_is_numeric(full_cv):
-    feats = extract_features(full_cv)
-    assert isinstance(feats["distance_km"], float)

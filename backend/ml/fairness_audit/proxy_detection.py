@@ -13,6 +13,7 @@ Usage:
     docker compose exec backend python /app/ml/fairness_audit/proxy_detection.py
 """
 
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -23,10 +24,20 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 from sklearn.preprocessing import LabelEncoder
 
+# Windows consoles default to cp1252 and crash on Unicode output; force UTF-8.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
 HERE = Path(__file__).parent.parent
 DATA_PATH = HERE / "training_dataset.csv"
-REPORT_PATH = Path(__file__).parent.parent.parent.parent / "docs" / "fairness_audit_report.md"
+# Auto-generated output. Kept separate from the hand-written narrative
+# docs/fairness_audit_report.md so re-running this script never clobbers it.
+REPORT_PATH = Path(__file__).parent.parent.parent.parent / "docs" / "fairness_audit_proxy.md"
 
+# Must mirror src/services/features.FEATURE_COLUMNS so the audit measures the
+# exact feature set the model consumes (distance_km was removed in WP2).
 FEATURE_COLUMNS = [
     "total_years_experience", "num_positions", "avg_tenure_months",
     "education_level_score", "total_skills_count", "has_certifications",
@@ -35,6 +46,7 @@ FEATURE_COLUMNS = [
     "has_summary", "num_certifications", "parse_quality_score",
     "experience_education_ratio", "certs_per_year",
     "experience_x_seniority", "experience_x_education",
+    "career_trajectory_score", "latest_title_seniority",
 ]
 
 SENSITIVE_ATTRIBUTES = {
