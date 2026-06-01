@@ -131,7 +131,8 @@ def predict(features: dict, model: str = "fair") -> tuple[str, float | None, dic
     Returns (recommendation, confidence, explanation) for the given model key.
     model: 'fair' (default, production model) | 'base' (baseline for comparison)
     """
-    _load_models()
+    if not _initialized:
+        _load_models()
     s = _state.get(model, _state["fair"])
     if s["model"] is None:
         return "pending", None, None
